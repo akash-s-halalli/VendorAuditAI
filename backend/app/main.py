@@ -22,19 +22,19 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     - AI client initialization
     - Cleanup on shutdown
     """
+    from app.db import init_db, close_db
+
     settings = get_settings()
 
     # Startup: Initialize resources
-    # TODO: Initialize database connection pool
-    # TODO: Initialize storage backend
-    # TODO: Initialize AI clients
+    if settings.is_development:
+        # Auto-create tables in development (use Alembic in production)
+        await init_db()
 
     yield
 
     # Shutdown: Cleanup resources
-    # TODO: Close database connections
-    # TODO: Cleanup storage
-    # TODO: Close AI client connections
+    await close_db()
 
 
 def create_app() -> FastAPI:

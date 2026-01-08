@@ -2,10 +2,14 @@
 
 from fastapi import APIRouter
 
+from app.api.v1.endpoints import auth
+
 api_router = APIRouter()
 
+# Include auth router
+api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 
-# Placeholder endpoints - will be replaced with actual route modules
+
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
     """Get API v1 status."""
@@ -26,8 +30,7 @@ async def api_status() -> dict:
 
 
 # TODO: Import and include route modules as they are created
-# from app.api.v1.endpoints import auth, users, vendors, documents, analysis
-# api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+# from app.api.v1.endpoints import users, vendors, documents, analysis
 # api_router.include_router(users.router, prefix="/users", tags=["Users"])
 # api_router.include_router(vendors.router, prefix="/vendors", tags=["Vendors"])
 # api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
