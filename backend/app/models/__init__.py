@@ -4,6 +4,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin, SoftDeleteMixin
 from app.models.organization import Organization
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorTier, VendorStatus
+from app.models.document import Document, DocumentType, DocumentStatus, ProcessingStage
 
 __all__ = [
     "Base",
@@ -16,4 +17,8 @@ __all__ = [
     "Vendor",
     "VendorTier",
     "VendorStatus",
+    "Document",
+    "DocumentType",
+    "DocumentStatus",
+    "ProcessingStage",
 ]

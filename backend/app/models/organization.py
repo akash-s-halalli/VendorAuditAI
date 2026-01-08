@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, UUIDMixin, TimestampMixin
 
 if TYPE_CHECKING:
+    from app.models.document import Document
     from app.models.user import User
     from app.models.vendor import Vendor
 
@@ -34,6 +35,11 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     vendors: Mapped[List["Vendor"]] = relationship(
         "Vendor",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    documents: Mapped[List["Document"]] = relationship(
+        "Document",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

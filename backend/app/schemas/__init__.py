@@ -20,6 +20,13 @@ from app.schemas.vendor import (
     VendorResponse,
     VendorListResponse,
 )
+from app.schemas.document import (
+    DocumentBase,
+    DocumentCreate,
+    DocumentUpdate,
+    DocumentResponse,
+    DocumentListResponse,
+)
 
 __all__ = [
     # Auth
@@ -40,4 +47,10 @@ __all__ = [
     "VendorUpdate",
     "VendorResponse",
     "VendorListResponse",
+    # Document
+    "DocumentBase",
+    "DocumentCreate",
+    "DocumentUpdate",
+    "DocumentResponse",
+    "DocumentListResponse",
 ]
