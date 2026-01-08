@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, documents, search, vendors
+from app.api.v1.endpoints import analysis, auth, documents, search, vendors
 
 api_router = APIRouter()
 
@@ -17,6 +17,9 @@ api_router.include_router(documents.router, prefix="/documents", tags=["Document
 
 # Include search router
 api_router.include_router(search.router, prefix="/search", tags=["Search"])
+
+# Include analysis router
+api_router.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
 
 
 @api_router.get("/status", tags=["Status"])

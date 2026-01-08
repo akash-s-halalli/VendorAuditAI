@@ -11,6 +11,7 @@ from app.models.base import Base, UUIDMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.chunk import DocumentChunk
+    from app.models.finding import AnalysisRun, Finding
     from app.models.organization import Organization
     from app.models.vendor import Vendor
 
@@ -110,6 +111,16 @@ class Document(Base, UUIDMixin, TimestampMixin):
     )
     chunks: Mapped[List["DocumentChunk"]] = relationship(
         "DocumentChunk",
+        back_populates="document",
+        cascade="all, delete-orphan",
+    )
+    analysis_runs: Mapped[List["AnalysisRun"]] = relationship(
+        "AnalysisRun",
+        back_populates="document",
+        cascade="all, delete-orphan",
+    )
+    findings: Mapped[List["Finding"]] = relationship(
+        "Finding",
         back_populates="document",
         cascade="all, delete-orphan",
     )

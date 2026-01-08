@@ -9,6 +9,7 @@ from app.models.base import Base, UUIDMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.document import Document
+    from app.models.finding import AnalysisRun, Finding
     from app.models.user import User
     from app.models.vendor import Vendor
 
@@ -40,6 +41,16 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     documents: Mapped[List["Document"]] = relationship(
         "Document",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    analysis_runs: Mapped[List["AnalysisRun"]] = relationship(
+        "AnalysisRun",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    findings: Mapped[List["Finding"]] = relationship(
+        "Finding",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

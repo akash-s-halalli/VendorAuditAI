@@ -34,6 +34,15 @@ from app.schemas.chunk import (
     SearchResultResponse,
     SearchResponse,
 )
+from app.schemas.finding import (
+    AnalysisRequest,
+    AnalysisRunResponse,
+    AnalysisRunListResponse,
+    FindingResponse,
+    FindingListResponse,
+    FindingUpdate,
+    FindingSummary,
+)
 
 __all__ = [
     # Auth
@@ -66,4 +75,12 @@ __all__ = [
     "SearchQuery",
     "SearchResultResponse",
     "SearchResponse",
+    # Analysis/Findings
+    "AnalysisRequest",
+    "AnalysisRunResponse",
+    "AnalysisRunListResponse",
+    "FindingResponse",
+    "FindingListResponse",
+    "FindingUpdate",
+    "FindingSummary",
 ]
