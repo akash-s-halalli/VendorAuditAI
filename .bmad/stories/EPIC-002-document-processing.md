@@ -1,6 +1,6 @@
 # EPIC-002: Document Processing Pipeline
 
-**Status:** In Progress
+**Status:** Completed
 **Priority:** Critical
 **Complexity:** High
 
@@ -14,75 +14,75 @@ Implement the document processing pipeline that parses uploaded documents, extra
 
 ## Stories
 
-### STORY-008: Document Parsing [PENDING]
+### STORY-008: Document Parsing [COMPLETED]
 **Complexity:** Medium
 
 Parse PDF and DOCX documents to extract text, tables, and structure.
 
 **Acceptance Criteria:**
-- [ ] Implement PDF text extraction with PyMuPDF
-- [ ] Implement DOCX text extraction with python-docx
-- [ ] Extract document metadata (page count, author, creation date)
-- [ ] Handle table extraction and formatting
-- [ ] Create parsing service with error handling
-- [ ] Update document status after parsing
+- [x] Implement PDF text extraction with PyMuPDF
+- [x] Implement DOCX text extraction with python-docx
+- [x] Extract document metadata (page count, author, creation date)
+- [x] Handle table extraction and formatting
+- [x] Create parsing service with error handling
+- [x] Update document status after parsing
 
 ---
 
-### STORY-009: Text Chunking [PENDING]
+### STORY-009: Text Chunking [COMPLETED]
 **Complexity:** Medium
 
 Split parsed documents into semantic chunks suitable for embedding and retrieval.
 
 **Acceptance Criteria:**
-- [ ] Create DocumentChunk model for storing chunks
-- [ ] Implement semantic chunking with overlap
-- [ ] Preserve section headers and context
-- [ ] Add chunk metadata (page number, section, position)
-- [ ] Handle different document types appropriately
-- [ ] Target chunk size of 500-1000 tokens
+- [x] Create DocumentChunk model for storing chunks
+- [x] Implement semantic chunking with overlap
+- [x] Preserve section headers and context
+- [x] Add chunk metadata (page number, section, position)
+- [x] Handle different document types appropriately
+- [x] Target chunk size of 500-1000 tokens
 
 ---
 
-### STORY-010: Embedding Generation [PENDING]
+### STORY-010: Embedding Generation [COMPLETED]
 **Complexity:** Medium
 
 Generate vector embeddings for document chunks using OpenAI.
 
 **Acceptance Criteria:**
-- [ ] Integrate OpenAI embeddings API
-- [ ] Batch embedding generation for efficiency
-- [ ] Store embeddings with chunks
-- [ ] Handle API rate limiting and errors
-- [ ] Add embedding dimension configuration
+- [x] Integrate OpenAI embeddings API
+- [x] Batch embedding generation for efficiency
+- [x] Store embeddings with chunks
+- [x] Handle API rate limiting and errors
+- [x] Add embedding dimension configuration
 
 ---
 
-### STORY-011: Vector Storage [PENDING]
+### STORY-011: Vector Storage [COMPLETED]
 **Complexity:** Medium
 
 Setup pgvector for vector similarity search (SQLite fallback for development).
 
 **Acceptance Criteria:**
-- [ ] Configure pgvector extension for PostgreSQL
-- [ ] Create vector column on DocumentChunk model
-- [ ] Implement cosine similarity search
-- [ ] Add fallback for SQLite (basic search)
-- [ ] Create search service with filters
+- [x] Configure pgvector extension for PostgreSQL
+- [x] Create vector column on DocumentChunk model
+- [x] Implement cosine similarity search
+- [x] Add fallback for SQLite (basic search)
+- [x] Create search service with filters
 
 ---
 
-### STORY-012: Processing Orchestration [PENDING]
+### STORY-012: Processing Orchestration [COMPLETED]
 **Complexity:** High
 
 Orchestrate the full document processing pipeline.
 
 **Acceptance Criteria:**
-- [ ] Create processing pipeline coordinator
-- [ ] Implement status tracking and progress updates
-- [ ] Add error handling and retry logic
-- [ ] Create async processing with background tasks
-- [ ] Add processing status API endpoint
+- [x] Create processing pipeline coordinator
+- [x] Implement status tracking and progress updates
+- [x] Add error handling and retry logic
+- [ ] Create async processing with background tasks (deferred to Celery integration)
+- [x] Add processing status API endpoint
 
 ---
 
