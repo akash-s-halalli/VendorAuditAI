@@ -5,6 +5,7 @@ from app.models.organization import Organization
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorTier, VendorStatus
 from app.models.document import Document, DocumentType, DocumentStatus, ProcessingStage
+from app.models.chunk import DocumentChunk
 
 __all__ = [
     "Base",
@@ -21,4 +22,5 @@ __all__ = [
     "DocumentType",
     "DocumentStatus",
     "ProcessingStage",
+    "DocumentChunk",
 ]

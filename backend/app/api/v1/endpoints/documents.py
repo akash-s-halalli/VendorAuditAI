@@ -16,6 +16,7 @@ from app.schemas.document import (
     DocumentListResponse,
 )
 from app.services import document as document_service
+from app.services import processing as processing_service
 
 router = APIRouter(tags=["Documents"])
 
@@ -228,3 +229,46 @@ async def delete_document(
             detail="Document not found",
         )
     await db.commit()
+
+
+@router.post("/{document_id}/process", response_model=DocumentResponse)
+async def process_document(
+    document_id: str,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> DocumentResponse:
+    """
+    Trigger processing for a document.
+
+    This will parse the document, extract text, and create chunks.
+    The document must be in PENDING status.
+    """
+    # Get the document first
+    document = await document_service.get_document_by_id(
+        db=db,
+        document_id=document_id,
+        org_id=current_user.organization_id,
+    )
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found",
+        )
+
+    # Check if document is already processed or processing
+    if document.status not in ("pending", "failed"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Document cannot be processed (status: {document.status})",
+        )
+
+    try:
+        processed = await processing_service.process_document(db, document)
+        await db.commit()
+        return DocumentResponse.model_validate(processed)
+    except ValueError as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
