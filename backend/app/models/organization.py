@@ -9,6 +9,7 @@ from app.models.base import Base, UUIDMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.user import User
+    from app.models.vendor import Vendor
 
 
 class Organization(Base, UUIDMixin, TimestampMixin):
@@ -28,6 +29,11 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     # Relationships
     users: Mapped[List["User"]] = relationship(
         "User",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    vendors: Mapped[List["Vendor"]] = relationship(
+        "Vendor",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

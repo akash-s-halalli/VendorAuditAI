@@ -13,8 +13,16 @@ from app.schemas.auth import (
     OrganizationResponse,
     RegisterResponse,
 )
+from app.schemas.vendor import (
+    VendorBase,
+    VendorCreate,
+    VendorUpdate,
+    VendorResponse,
+    VendorListResponse,
+)
 
 __all__ = [
+    # Auth
     "UserBase",
     "UserCreate",
     "UserLogin",
@@ -26,4 +34,10 @@ __all__ = [
     "OrganizationBase",
     "OrganizationResponse",
     "RegisterResponse",
+    # Vendor
+    "VendorBase",
+    "VendorCreate",
+    "VendorUpdate",
+    "VendorResponse",
+    "VendorListResponse",
 ]

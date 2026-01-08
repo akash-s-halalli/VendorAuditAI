@@ -2,12 +2,15 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth
+from app.api.v1.endpoints import auth, vendors
 
 api_router = APIRouter()
 
 # Include auth router
 api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+
+# Include vendors router
+api_router.include_router(vendors.router, prefix="/vendors", tags=["Vendors"])
 
 
 @api_router.get("/status", tags=["Status"])
