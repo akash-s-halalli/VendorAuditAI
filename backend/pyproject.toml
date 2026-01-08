@@ -1,0 +1,144 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vendorauditai-backend"
+version = "0.1.0"
+description = "AI-Powered Vendor Security Report Analyzer - Backend"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "Dominic M. Hoang"}
+]
+keywords = ["vendor", "security", "audit", "ai", "compliance", "soc2", "rag"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+]
+
+dependencies = [
+    # Core Framework
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "python-multipart>=0.0.6",
+
+    # Database
+    "sqlalchemy[asyncio]>=2.0.25",
+    "aiosqlite>=0.19.0",
+    "alembic>=1.13.1",
+
+    # Validation
+    "pydantic>=2.5.3",
+    "pydantic-settings>=2.1.0",
+    "email-validator>=2.1.0",
+
+    # Authentication
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "pyotp>=2.9.0",
+
+    # AI/ML
+    "anthropic>=0.18.0",
+    "openai>=1.10.0",
+    "langchain>=0.1.0",
+    "langchain-anthropic>=0.1.0",
+    "langchain-openai>=0.0.5",
+    "tiktoken>=0.5.0",
+
+    # Document Processing
+    "pymupdf>=1.23.0",
+    "python-docx>=1.1.0",
+    "openpyxl>=3.1.0",
+
+    # Storage
+    "aiofiles>=23.2.1",
+
+    # HTTP Client
+    "httpx>=0.26.0",
+
+    # Utilities
+    "structlog>=24.1.0",
+    "tenacity>=8.2.0",
+    "python-dateutil>=2.8.0",
+    "orjson>=3.9.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+postgres = [
+    "asyncpg>=0.29.0",
+    "pgvector>=0.2.4",
+]
+redis = [
+    "celery>=5.3.6",
+    "redis>=5.0.1",
+]
+minio = [
+    "minio>=7.2.3",
+]
+azure = [
+    "azure-ai-documentintelligence>=1.0.0b1",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.26.0",
+    "ruff>=0.1.9",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+all = [
+    "vendorauditai-backend[postgres,redis,minio,azure,dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/VendorAuditAI"
+Documentation = "https://github.com/yourusername/VendorAuditAI#readme"
+Repository = "https://github.com/yourusername/VendorAuditAI"
+Issues = "https://github.com/yourusername/VendorAuditAI/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "W",      # pycodestyle warnings
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # do not perform function calls in argument defaults
+]
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
