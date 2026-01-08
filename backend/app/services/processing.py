@@ -2,7 +2,9 @@
 
 import json
 from datetime import datetime, timezone
+from typing import List
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.document import Document, DocumentStatus, ProcessingStage
@@ -10,6 +12,7 @@ from app.models.chunk import DocumentChunk
 from app.services.storage import get_storage_backend
 from app.services.parsing import DocumentParser, ParsedDocument
 from app.services.chunking import TextChunker, Chunk
+from app.services.embedding import get_embedding_service, embedding_to_json
 
 
 class DocumentProcessor:
@@ -73,14 +76,13 @@ class DocumentProcessor:
             chunks = self._chunk_document(parsed)
 
             # Save chunks to database
-            await self._save_chunks(db, document, chunks)
+            db_chunks = await self._save_chunks(db, document, chunks)
 
-            # Stage 3: Embedding (placeholder for now)
+            # Stage 3: Generate embeddings
             document.processing_stage = ProcessingStage.EMBEDDING.value
             await db.flush()
 
-            # TODO: Generate embeddings when OpenAI integration is ready
-            # For now, skip embedding and mark as completed
+            await self._generate_embeddings(db, db_chunks)
 
             # Mark as completed
             document.status = DocumentStatus.PROCESSED.value
@@ -142,14 +144,18 @@ class DocumentProcessor:
         db: AsyncSession,
         document: Document,
         chunks: list[Chunk],
-    ) -> None:
+    ) -> List[DocumentChunk]:
         """Save chunks to the database.
 
         Args:
             db: Database session
             document: Parent document
             chunks: List of chunks to save
+
+        Returns:
+            List of saved DocumentChunk objects
         """
+        db_chunks = []
         for chunk in chunks:
             db_chunk = DocumentChunk(
                 document_id=document.id,
@@ -161,6 +167,46 @@ class DocumentProcessor:
                 metadata_=json.dumps(chunk.metadata) if chunk.metadata else None,
             )
             db.add(db_chunk)
+            db_chunks.append(db_chunk)
+
+        await db.flush()
+        return db_chunks
+
+    async def _generate_embeddings(
+        self,
+        db: AsyncSession,
+        chunks: List[DocumentChunk],
+    ) -> None:
+        """Generate embeddings for chunks.
+
+        Args:
+            db: Database session
+            chunks: List of DocumentChunk objects to embed
+
+        Note:
+            If OpenAI API key is not configured, embeddings are skipped.
+            Documents can still be processed and searched with keyword matching.
+        """
+        embedding_service = get_embedding_service()
+
+        if not embedding_service.is_configured:
+            # Skip embedding if API key not configured
+            return
+
+        # Extract texts for batch embedding
+        texts = [chunk.content for chunk in chunks]
+
+        try:
+            embeddings = await embedding_service.embed_chunks_batch(texts)
+
+            # Update chunks with embeddings
+            for chunk, embedding in zip(chunks, embeddings):
+                chunk.embedding = embedding_to_json(embedding)
+
+            await db.flush()
+        except ValueError:
+            # Log but don't fail - documents can still work without embeddings
+            pass
 
 
 async def process_document(

@@ -1,5 +1,25 @@
 """Business logic services package."""
 
-from app.services import auth, chunking, document, parsing, processing, storage, vendor
+from app.services import (
+    auth,
+    chunking,
+    document,
+    embedding,
+    parsing,
+    processing,
+    search,
+    storage,
+    vendor,
+)
 
-__all__ = ["auth", "chunking", "document", "parsing", "processing", "storage", "vendor"]
+__all__ = [
+    "auth",
+    "chunking",
+    "document",
+    "embedding",
+    "parsing",
+    "processing",
+    "search",
+    "storage",
+    "vendor",
+]

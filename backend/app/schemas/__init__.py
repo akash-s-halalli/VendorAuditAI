@@ -27,6 +27,13 @@ from app.schemas.document import (
     DocumentResponse,
     DocumentListResponse,
 )
+from app.schemas.chunk import (
+    ChunkResponse,
+    ChunkListResponse,
+    SearchQuery,
+    SearchResultResponse,
+    SearchResponse,
+)
 
 __all__ = [
     # Auth
@@ -53,4 +60,10 @@ __all__ = [
     "DocumentUpdate",
     "DocumentResponse",
     "DocumentListResponse",
+    # Chunk/Search
+    "ChunkResponse",
+    "ChunkListResponse",
+    "SearchQuery",
+    "SearchResultResponse",
+    "SearchResponse",
 ]
