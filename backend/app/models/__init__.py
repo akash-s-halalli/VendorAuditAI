@@ -7,6 +7,7 @@ from app.models.vendor import Vendor, VendorTier, VendorStatus
 from app.models.document import Document, DocumentType, DocumentStatus, ProcessingStage
 from app.models.chunk import DocumentChunk
 from app.models.finding import AnalysisRun, Finding, FindingSeverity, FindingStatus
+from app.models.query import QueryHistory, ConversationThread, QueryStatus
 
 __all__ = [
     "Base",
@@ -28,4 +29,7 @@ __all__ = [
     "Finding",
     "FindingSeverity",
     "FindingStatus",
+    "QueryHistory",
+    "ConversationThread",
+    "QueryStatus",
 ]

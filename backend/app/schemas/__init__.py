@@ -43,6 +43,18 @@ from app.schemas.finding import (
     FindingUpdate,
     FindingSummary,
 )
+from app.schemas.query import (
+    QueryRequest,
+    QueryResponse,
+    ConversationRequest,
+    ConversationResponse,
+    ConversationCreateRequest,
+    ConversationMessage,
+    QueryHistoryResponse,
+    QueryHistoryListResponse,
+    ConversationListResponse,
+    Citation,
+)
 
 __all__ = [
     # Auth
@@ -83,4 +95,15 @@ __all__ = [
     "FindingListResponse",
     "FindingUpdate",
     "FindingSummary",
+    # Query
+    "QueryRequest",
+    "QueryResponse",
+    "ConversationRequest",
+    "ConversationResponse",
+    "ConversationCreateRequest",
+    "ConversationMessage",
+    "QueryHistoryResponse",
+    "QueryHistoryListResponse",
+    "ConversationListResponse",
+    "Citation",
 ]

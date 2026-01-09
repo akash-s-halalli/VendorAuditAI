@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,6 +11,7 @@ from app.models.base import Base, UUIDMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.organization import Organization
+    from app.models.query import ConversationThread, QueryHistory
 
 
 class UserRole(str, Enum):
@@ -57,6 +58,16 @@ class User(Base, UUIDMixin, TimestampMixin):
     organization: Mapped["Organization"] = relationship(
         "Organization",
         back_populates="users",
+    )
+    conversation_threads: Mapped[List["ConversationThread"]] = relationship(
+        "ConversationThread",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    query_history: Mapped[List["QueryHistory"]] = relationship(
+        "QueryHistory",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:
