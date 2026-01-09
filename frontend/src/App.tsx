@@ -1,9 +1,68 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { MainLayout, AuthLayout } from '@/components/layout';
+import { Login, Register, Dashboard, Vendors, Documents, Query } from '@/pages';
+import { useAuthStore } from '@/stores/authStore';
+
+/**
+ * Protected Route wrapper - redirects to login if not authenticated
+ */
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+/**
+ * Public Route wrapper - redirects to dashboard if already authenticated
+ */
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuthStore();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+}
 
 function App() {
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <Routes>
+        {/* Public routes (auth) */}
+        <Route
+          element={
+            <PublicRoute>
+              <AuthLayout />
+            </PublicRoute>
+          }
+        >
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        {/* Protected routes (app) */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/query" element={<Query />} />
+          <Route path="/analysis" element={<Dashboard />} />
+          <Route path="/search" element={<Dashboard />} />
+          <Route path="/settings" element={<Dashboard />} />
+        </Route>
+
+        {/* Landing page */}
         <Route
           path="/"
           element={
@@ -20,31 +79,25 @@ function App() {
                 </p>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <a
-                    href="/dashboard"
+                    href="/login"
                     className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     Get Started
                   </a>
                   <a
-                    href="/docs"
+                    href="/register"
                     className="text-sm font-semibold leading-6 text-foreground"
                   >
-                    Learn more <span aria-hidden="true">-&gt;</span>
+                    Create Account <span aria-hidden="true">-&gt;</span>
                   </a>
                 </div>
               </div>
             </main>
           }
         />
-        <Route
-          path="/dashboard"
-          element={
-            <div className="p-8">
-              <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="text-muted-foreground">Coming soon...</p>
-            </div>
-          }
-        />
+
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
