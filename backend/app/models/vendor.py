@@ -66,7 +66,7 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     # Contact and metadata
     primary_contact: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
     tags: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array of strings
-    metadata: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
+    extra_data: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
 
     # Assessment tracking
     last_assessed: Mapped[datetime | None] = mapped_column(
