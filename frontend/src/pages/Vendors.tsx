@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, MoreVertical, Building2 } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
-import apiClient, { getApiErrorMessage } from '@/lib/api';
+import apiClient from '@/lib/api';
 import type { Vendor, VendorTier, VendorStatus } from '@/types/api';
 
 export function Vendors() {
-  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [_showCreateModal, setShowCreateModal] = useState(false);
 
   const { data: vendorsResponse, isLoading } = useQuery({
     queryKey: ['vendors', searchQuery],

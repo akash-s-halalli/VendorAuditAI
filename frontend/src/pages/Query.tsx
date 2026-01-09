@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Send, MessageSquare, FileText, Loader2, Bot, User } from 'lucide-react';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 
 interface Citation {

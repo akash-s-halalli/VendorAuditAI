@@ -119,19 +119,20 @@ export function Documents() {
           <h1 className="text-3xl font-bold">Documents</h1>
           <p className="text-muted-foreground">Upload and manage security reports</p>
         </div>
-        <label>
+        <div>
           <input
+            id="header-upload"
             type="file"
             className="hidden"
             accept=".pdf,.docx"
             multiple
             onChange={handleFileSelect}
           />
-          <Button as="span" className="cursor-pointer">
+          <Button onClick={() => document.getElementById('header-upload')?.click()}>
             <Upload className="h-4 w-4 mr-2" />
             Upload Document
           </Button>
-        </label>
+        </div>
       </div>
 
       {/* Upload Zone */}
@@ -150,18 +151,19 @@ export function Documents() {
         <p className="text-sm text-muted-foreground mb-4">
           Supports PDF and DOCX files (SOC 2, SIG, HECVAT, etc.)
         </p>
-        <label>
+        <div>
           <input
+            id="dropzone-upload"
             type="file"
             className="hidden"
             accept=".pdf,.docx"
             multiple
             onChange={handleFileSelect}
           />
-          <Button variant="outline" as="span" className="cursor-pointer">
+          <Button variant="outline" onClick={() => document.getElementById('dropzone-upload')?.click()}>
             Browse files
           </Button>
-        </label>
+        </div>
       </div>
 
       {uploadError && (

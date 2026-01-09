@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Building2, FileText, AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
-import apiClient from '@/lib/api';
 
 interface DashboardStats {
   totalVendors: number;
@@ -15,7 +14,7 @@ interface DashboardStats {
 }
 
 export function Dashboard() {
-  const { data: stats, isLoading } = useQuery<DashboardStats>({
+  const { data: stats } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       // Mock data for now - will be replaced with actual API call

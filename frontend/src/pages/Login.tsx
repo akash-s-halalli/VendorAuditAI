@@ -34,16 +34,26 @@ export function Login() {
     setError(null);
 
     try {
-      const response = await apiClient.post('/auth/login', data);
-      const { access_token, refresh_token, user } = response.data;
+      // OAuth2 expects form data with 'username' field
+      const formData = new URLSearchParams();
+      formData.append('username', data.email);
+      formData.append('password', data.password);
+
+      const response = await apiClient.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      const { access_token, refresh_token } = response.data;
 
       setTokens(access_token, refresh_token);
+
+      // Decode user info from JWT token
+      const tokenPayload = JSON.parse(atob(access_token.split('.')[1]));
       setUser({
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name,
-        role: user.role,
-        organizationId: user.organization_id,
+        id: tokenPayload.sub,
+        email: data.email,
+        fullName: '',
+        role: tokenPayload.role,
+        organizationId: tokenPayload.org_id,
       });
 
       navigate('/dashboard');

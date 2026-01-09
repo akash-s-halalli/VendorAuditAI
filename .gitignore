@@ -145,3 +145,6 @@ ml_models/
 *.pkl
 *.h5
 *.onnx
+
+# Local Netlify folder
+.netlify
