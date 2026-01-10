@@ -3,15 +3,14 @@
 import json
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.query import QueryHistory, ConversationThread, QueryStatus
+from app.models.query import ConversationThread, QueryHistory, QueryStatus
 from app.services.llm import get_claude_service
-from app.services.search import get_search_service, SearchResult
+from app.services.search import SearchResult, get_search_service
 
 
 @dataclass
@@ -20,7 +19,7 @@ class QueryResult:
 
     answer: str
     confidence: float
-    citations: List[dict] = field(default_factory=list)
+    citations: list[dict] = field(default_factory=list)
     limitations: str | None = None
     chunks_retrieved: int = 0
     input_tokens: int = 0
@@ -45,7 +44,7 @@ class QueryService:
         question: str,
         org_id: str,
         user_id: str,
-        document_ids: List[str] | None = None,
+        document_ids: list[str] | None = None,
         conversation_id: str | None = None,
         max_chunks: int = 10,
     ) -> tuple[QueryHistory, QueryResult]:
@@ -73,7 +72,7 @@ class QueryService:
             conversation_id=conversation_id,
             document_ids=json.dumps(document_ids) if document_ids else None,
             status=QueryStatus.PROCESSING.value,
-            processing_started_at=datetime.now(timezone.utc),
+            processing_started_at=datetime.now(UTC),
         )
         db.add(query)
         await db.flush()
@@ -117,7 +116,7 @@ class QueryService:
             query.output_tokens = result.output_tokens
             query.response_time_ms = response_time_ms
             query.status = QueryStatus.COMPLETED.value
-            query.completed_at = datetime.now(timezone.utc)
+            query.completed_at = datetime.now(UTC)
 
             # Update conversation thread if applicable
             if conversation_id:
@@ -144,7 +143,7 @@ class QueryService:
         org_id: str,
         user_id: str,
         title: str | None = None,
-        document_ids: List[str] | None = None,
+        document_ids: list[str] | None = None,
     ) -> ConversationThread:
         """Create a new conversation thread.
 
@@ -223,7 +222,7 @@ class QueryService:
         conversation_id: str | None = None,
         page: int = 1,
         limit: int = 20,
-    ) -> tuple[List[QueryHistory], int]:
+    ) -> tuple[list[QueryHistory], int]:
         """Get query history for an organization.
 
         Args:
@@ -275,7 +274,7 @@ class QueryService:
         user_id: str | None = None,
         page: int = 1,
         limit: int = 20,
-    ) -> tuple[List[ConversationThread], int]:
+    ) -> tuple[list[ConversationThread], int]:
         """Get conversation threads for an organization.
 
         Args:
@@ -318,7 +317,7 @@ class QueryService:
         db: AsyncSession,
         conversation_id: str,
         max_messages: int = 10,
-    ) -> List[dict]:
+    ) -> list[dict]:
         """Get recent messages from a conversation for context.
 
         Args:
@@ -377,8 +376,8 @@ class QueryService:
 
     def _build_context_chunks(
         self,
-        search_results: List[SearchResult],
-    ) -> List[dict]:
+        search_results: list[SearchResult],
+    ) -> list[dict]:
         """Convert search results to context chunks for LLM.
 
         Args:
@@ -404,8 +403,8 @@ class QueryService:
     async def _generate_answer(
         self,
         question: str,
-        context_chunks: List[dict],
-        conversation_context: List[dict] | None = None,
+        context_chunks: list[dict],
+        conversation_context: list[dict] | None = None,
     ) -> QueryResult:
         """Generate an answer using the LLM.
 

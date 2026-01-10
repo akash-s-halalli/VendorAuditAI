@@ -1,16 +1,14 @@
 """Analysis service for document compliance analysis."""
 
-from datetime import datetime, timezone
-from typing import List, Tuple
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.document import Document
 from app.models.chunk import DocumentChunk
-from app.models.finding import AnalysisRun, Finding, FindingSeverity
-from app.services.llm import get_claude_service, SUPPORTED_FRAMEWORKS
-from app.services.search import get_search_service
+from app.models.document import Document
+from app.models.finding import AnalysisRun, Finding
+from app.services.llm import SUPPORTED_FRAMEWORKS, get_claude_service
 
 
 async def get_analysis_run_by_id(
@@ -34,7 +32,7 @@ async def get_analysis_runs(
     document_id: str | None = None,
     skip: int = 0,
     limit: int = 20,
-) -> Tuple[List[AnalysisRun], int]:
+) -> tuple[list[AnalysisRun], int]:
     """List analysis runs with pagination."""
     query = select(AnalysisRun).where(AnalysisRun.organization_id == org_id)
 
@@ -63,7 +61,7 @@ async def get_findings(
     status: str | None = None,
     skip: int = 0,
     limit: int = 20,
-) -> Tuple[List[Finding], int]:
+) -> tuple[list[Finding], int]:
     """List findings with pagination and filtering."""
     query = select(Finding).where(Finding.organization_id == org_id)
 
@@ -126,7 +124,7 @@ async def update_finding(
 
     # Track resolution
     if update_data.get("status") in ["remediated", "accepted", "false_positive"]:
-        finding.resolved_at = datetime.now(timezone.utc)
+        finding.resolved_at = datetime.now(UTC)
 
     await db.flush()
     await db.refresh(finding)
@@ -185,7 +183,7 @@ async def run_analysis(
         framework=framework,
         model_used=claude_service.model,
         status="running",
-        started_at=datetime.now(timezone.utc),
+        started_at=datetime.now(UTC),
     )
     db.add(analysis_run)
     await db.flush()
@@ -249,7 +247,7 @@ async def run_analysis(
 
         analysis_run.findings_count = findings_created
         analysis_run.status = "completed"
-        analysis_run.completed_at = datetime.now(timezone.utc)
+        analysis_run.completed_at = datetime.now(UTC)
 
         await db.flush()
         await db.refresh(analysis_run)
@@ -258,9 +256,9 @@ async def run_analysis(
     except Exception as e:
         analysis_run.status = "failed"
         analysis_run.error_message = str(e)
-        analysis_run.completed_at = datetime.now(timezone.utc)
+        analysis_run.completed_at = datetime.now(UTC)
         await db.flush()
-        raise ValueError(f"Analysis failed: {str(e)}")
+        raise ValueError(f"Analysis failed: {e!s}") from e
 
 
 async def get_finding_summary(

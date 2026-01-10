@@ -4,8 +4,6 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from app.models.user import UserRole
-
 
 class UserBase(BaseModel):
     """Base user schema with common fields."""

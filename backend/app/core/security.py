@@ -1,6 +1,6 @@
 """Security utilities for password hashing and JWT tokens."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import bcrypt
@@ -41,16 +41,16 @@ def create_access_token(
         Encoded JWT token string
     """
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(
+        expire = datetime.now(UTC) + timedelta(
             minutes=settings.access_token_expire_minutes
         )
 
     to_encode: dict[str, Any] = {
         "sub": str(subject),
         "exp": expire,
-        "iat": datetime.now(timezone.utc),
+        "iat": datetime.now(UTC),
         "type": "access",
     }
 
@@ -78,16 +78,16 @@ def create_refresh_token(
         Encoded JWT refresh token string
     """
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(
+        expire = datetime.now(UTC) + timedelta(
             days=settings.refresh_token_expire_days
         )
 
     to_encode: dict[str, Any] = {
         "sub": str(subject),
         "exp": expire,
-        "iat": datetime.now(timezone.utc),
+        "iat": datetime.now(UTC),
         "type": "refresh",
     }
 

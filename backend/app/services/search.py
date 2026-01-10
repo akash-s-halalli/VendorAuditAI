@@ -1,17 +1,16 @@
 """Semantic search service for document chunks."""
 
 from dataclasses import dataclass
-from typing import List, Tuple
 
-from sqlalchemy import select, func, or_
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.chunk import DocumentChunk
 from app.models.document import Document
 from app.services.embedding import (
+    cosine_similarity,
     get_embedding_service,
     json_to_embedding,
-    cosine_similarity,
 )
 
 
@@ -41,10 +40,10 @@ class ChunkSearchService:
         db: AsyncSession,
         query: str,
         org_id: str,
-        document_ids: List[str] | None = None,
+        document_ids: list[str] | None = None,
         limit: int = 10,
         min_score: float = 0.5,
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Search chunks using semantic similarity.
 
         Args:
@@ -106,9 +105,9 @@ class ChunkSearchService:
         db: AsyncSession,
         query: str,
         org_id: str,
-        document_ids: List[str] | None = None,
+        document_ids: list[str] | None = None,
         limit: int = 10,
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Search chunks using keyword matching.
 
         Args:
@@ -171,10 +170,10 @@ class ChunkSearchService:
         db: AsyncSession,
         query: str,
         org_id: str,
-        document_ids: List[str] | None = None,
+        document_ids: list[str] | None = None,
         limit: int = 10,
         semantic_weight: float = 0.7,
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Combine semantic and keyword search.
 
         Args:
@@ -197,7 +196,7 @@ class ChunkSearchService:
         )
 
         # Combine scores
-        chunk_scores: dict[str, Tuple[DocumentChunk, float, str | None]] = {}
+        chunk_scores: dict[str, tuple[DocumentChunk, float, str | None]] = {}
 
         for result in semantic_results:
             chunk_scores[result.chunk.id] = (
@@ -239,8 +238,8 @@ class ChunkSearchService:
         self,
         db: AsyncSession,
         org_id: str,
-        document_ids: List[str] | None = None,
-    ) -> List[Tuple[DocumentChunk, str | None]]:
+        document_ids: list[str] | None = None,
+    ) -> list[tuple[DocumentChunk, str | None]]:
         """Get all chunks with embeddings for an organization.
 
         Args:

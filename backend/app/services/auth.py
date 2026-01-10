@@ -1,7 +1,7 @@
 """Authentication service layer."""
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,11 +16,11 @@ from app.core.security import (
 )
 from app.models import Organization, User, UserRole
 from app.schemas import (
+    OrganizationResponse,
     RegisterResponse,
     TokenResponse,
     UserCreate,
     UserResponse,
-    OrganizationResponse,
 )
 
 settings = get_settings()
@@ -114,7 +114,7 @@ async def authenticate_user(
 
 async def update_last_login(db: AsyncSession, user: User) -> None:
     """Update user's last login timestamp."""
-    user.last_login = datetime.now(timezone.utc)
+    user.last_login = datetime.now(UTC)
     await db.flush()
 
 

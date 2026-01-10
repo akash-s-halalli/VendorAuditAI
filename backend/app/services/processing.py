@@ -1,18 +1,16 @@
 """Document processing pipeline orchestration."""
 
 import json
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.document import Document, DocumentStatus, ProcessingStage
 from app.models.chunk import DocumentChunk
-from app.services.storage import get_storage_backend
+from app.models.document import Document, DocumentStatus, ProcessingStage
+from app.services.chunking import Chunk, TextChunker
+from app.services.embedding import embedding_to_json, get_embedding_service
 from app.services.parsing import DocumentParser, ParsedDocument
-from app.services.chunking import TextChunker, Chunk
-from app.services.embedding import get_embedding_service, embedding_to_json
+from app.services.storage import get_storage_backend
 
 
 class DocumentProcessor:
@@ -87,7 +85,7 @@ class DocumentProcessor:
             # Mark as completed
             document.status = DocumentStatus.PROCESSED.value
             document.processing_stage = ProcessingStage.COMPLETED.value
-            document.processed_at = datetime.now(timezone.utc)
+            document.processed_at = datetime.now(UTC)
             document.error_message = None
 
             await db.flush()
@@ -99,7 +97,7 @@ class DocumentProcessor:
             document.processing_stage = ProcessingStage.ERROR.value
             document.error_message = str(e)
             await db.flush()
-            raise ValueError(f"Processing failed: {str(e)}")
+            raise ValueError(f"Processing failed: {e!s}") from e
 
     async def _parse_document(self, document: Document) -> ParsedDocument:
         """Parse a document to extract text.
@@ -113,14 +111,14 @@ class DocumentProcessor:
         # Load file from storage
         try:
             content = await self.storage.get(document.storage_path)
-        except FileNotFoundError:
-            raise ValueError(f"Document file not found: {document.storage_path}")
+        except FileNotFoundError as e:
+            raise ValueError(f"Document file not found: {document.storage_path}") from e
 
         # Parse based on MIME type
         try:
             parsed = DocumentParser.parse(content, document.mime_type)
         except ValueError as e:
-            raise ValueError(f"Failed to parse document: {str(e)}")
+            raise ValueError(f"Failed to parse document: {e!s}") from e
 
         return parsed
 
@@ -144,7 +142,7 @@ class DocumentProcessor:
         db: AsyncSession,
         document: Document,
         chunks: list[Chunk],
-    ) -> List[DocumentChunk]:
+    ) -> list[DocumentChunk]:
         """Save chunks to the database.
 
         Args:
@@ -175,7 +173,7 @@ class DocumentProcessor:
     async def _generate_embeddings(
         self,
         db: AsyncSession,
-        chunks: List[DocumentChunk],
+        chunks: list[DocumentChunk],
     ) -> None:
         """Generate embeddings for chunks.
 
@@ -200,7 +198,7 @@ class DocumentProcessor:
             embeddings = await embedding_service.embed_chunks_batch(texts)
 
             # Update chunks with embeddings
-            for chunk, embedding in zip(chunks, embeddings):
+            for chunk, embedding in zip(chunks, embeddings, strict=True):
                 chunk.embedding = embedding_to_json(embedding)
 
             await db.flush()

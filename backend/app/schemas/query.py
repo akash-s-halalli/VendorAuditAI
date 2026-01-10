@@ -1,10 +1,9 @@
 """Pydantic schemas for natural language queries."""
 
 from datetime import datetime
-from typing import List, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 QueryStatusType = Literal["pending", "processing", "completed", "failed"]
 
@@ -27,7 +26,7 @@ class QueryRequest(BaseModel):
     question: str = Field(
         ..., min_length=3, max_length=2000, description="The question to ask"
     )
-    document_ids: List[str] | None = Field(
+    document_ids: list[str] | None = Field(
         None, description="Optional list of document IDs to search within"
     )
     conversation_id: str | None = Field(
@@ -47,7 +46,7 @@ class QueryResponse(BaseModel):
     question: str
     answer: str
     confidence_score: float = Field(ge=0.0, le=1.0)
-    citations: List[Citation]
+    citations: list[Citation]
     limitations: str | None = None
     conversation_id: str | None = None
     chunks_retrieved: int
@@ -60,7 +59,7 @@ class ConversationMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str
     timestamp: datetime
-    citations: List[Citation] | None = None
+    citations: list[Citation] | None = None
 
 
 class ConversationRequest(BaseModel):
@@ -80,8 +79,8 @@ class ConversationResponse(BaseModel):
 
     conversation_id: str
     title: str | None = None
-    messages: List[ConversationMessage]
-    document_filter: List[str] | None = None
+    messages: list[ConversationMessage]
+    document_filter: list[str] | None = None
     total_tokens: int
     created_at: datetime
 
@@ -90,7 +89,7 @@ class ConversationCreateRequest(BaseModel):
     """Request to create a new conversation."""
 
     title: str | None = Field(None, max_length=255)
-    document_ids: List[str] | None = Field(
+    document_ids: list[str] | None = Field(
         None, description="Documents to scope this conversation to"
     )
     initial_question: str = Field(
@@ -119,7 +118,7 @@ class QueryHistoryResponse(BaseModel):
 class QueryHistoryListResponse(BaseModel):
     """Paginated list of query history."""
 
-    data: List[QueryHistoryResponse]
+    data: list[QueryHistoryResponse]
     total: int
     page: int
     limit: int
@@ -128,7 +127,7 @@ class QueryHistoryListResponse(BaseModel):
 class ConversationListResponse(BaseModel):
     """Paginated list of conversations."""
 
-    data: List[ConversationResponse]
+    data: list[ConversationResponse]
     total: int
     page: int
     limit: int

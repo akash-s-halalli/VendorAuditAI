@@ -2,7 +2,6 @@
 
 import json
 from dataclasses import dataclass, field
-from typing import Any, List
 
 from anthropic import AsyncAnthropic
 
@@ -13,7 +12,7 @@ from app.config import get_settings
 class AnalysisResult:
     """Result from LLM analysis."""
 
-    findings: List[dict] = field(default_factory=list)
+    findings: list[dict] = field(default_factory=list)
     summary: str = ""
     raw_response: str = ""
     model: str = ""
@@ -84,7 +83,7 @@ Respond in JSON format only."""
 
     async def analyze_document(
         self,
-        chunks: List[dict],
+        chunks: list[dict],
         framework: str,
         document_type: str,
         max_tokens: int = 4096,
@@ -134,7 +133,7 @@ Respond in JSON format only."""
             )
 
         except Exception as e:
-            raise ValueError(f"Analysis failed: {str(e)}")
+            raise ValueError(f"Analysis failed: {e!s}") from e
 
     async def generate_finding_details(
         self,
@@ -187,12 +186,12 @@ Provide a detailed assessment in JSON format:
             return self._parse_json_response(raw_text)
 
         except Exception as e:
-            raise ValueError(f"Finding generation failed: {str(e)}")
+            raise ValueError(f"Finding generation failed: {e!s}") from e
 
     async def answer_query(
         self,
         query: str,
-        context_chunks: List[dict],
+        context_chunks: list[dict],
         max_tokens: int = 2048,
     ) -> dict:
         """Answer a natural language query about the documents.
@@ -242,9 +241,9 @@ Provide your answer in JSON format:
             return self._parse_json_response(raw_text)
 
         except Exception as e:
-            raise ValueError(f"Query failed: {str(e)}")
+            raise ValueError(f"Query failed: {e!s}") from e
 
-    def _build_context(self, chunks: List[dict]) -> str:
+    def _build_context(self, chunks: list[dict]) -> str:
         """Build context string from chunks."""
         context_parts = []
         for i, chunk in enumerate(chunks):
@@ -299,7 +298,7 @@ Respond with a JSON object:
     "confidence_score": 0.0-1.0
 }}"""
 
-    def _parse_findings(self, response_text: str) -> List[dict]:
+    def _parse_findings(self, response_text: str) -> list[dict]:
         """Parse findings from Claude response."""
         try:
             data = self._parse_json_response(response_text)
@@ -331,7 +330,7 @@ Respond with a JSON object:
 
         return json.loads(text)
 
-    def _extract_summary(self, findings: List[dict]) -> str:
+    def _extract_summary(self, findings: list[dict]) -> str:
         """Generate a summary from findings."""
         if not findings:
             return "No significant findings identified."

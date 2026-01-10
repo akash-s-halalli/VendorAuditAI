@@ -1,7 +1,6 @@
 """Configuration management using Pydantic Settings."""
 
 from functools import lru_cache
-from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -34,22 +33,22 @@ class Settings(BaseSettings):
     # Storage
     storage_backend: str = "local"  # "local" or "minio"
     local_storage_path: str = "./uploads"
-    minio_endpoint: Optional[str] = None
-    minio_access_key: Optional[str] = None
-    minio_secret_key: Optional[str] = None
+    minio_endpoint: str | None = None
+    minio_access_key: str | None = None
+    minio_secret_key: str | None = None
     minio_bucket: str = "documents"
     minio_secure: bool = False
 
     # AI/ML
-    anthropic_api_key: Optional[str] = None
-    openai_api_key: Optional[str] = None
+    anthropic_api_key: str | None = None
+    openai_api_key: str | None = None
     claude_model: str = "claude-sonnet-4-20250514"
     embedding_model: str = "text-embedding-3-large"
     embedding_dimensions: int = 3072
 
     # Document Processing
-    azure_doc_intel_endpoint: Optional[str] = None
-    azure_doc_intel_key: Optional[str] = None
+    azure_doc_intel_endpoint: str | None = None
+    azure_doc_intel_key: str | None = None
     use_azure_doc_intel: bool = False
 
     # Security - JWT
@@ -59,18 +58,18 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 7
 
     # CORS
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
     cors_allow_credentials: bool = True
-    cors_allow_methods: List[str] = ["*"]
-    cors_allow_headers: List[str] = ["*"]
+    cors_allow_methods: list[str] = ["*"]
+    cors_allow_headers: list[str] = ["*"]
 
     # Rate Limiting
     rate_limit_requests: int = 100
     rate_limit_window_seconds: int = 60
 
     # Celery (optional - for async task processing)
-    celery_broker_url: Optional[str] = None
-    celery_result_backend: Optional[str] = None
+    celery_broker_url: str | None = None
+    celery_result_backend: str | None = None
     use_celery: bool = False
 
     @property
@@ -89,7 +88,7 @@ class Settings(BaseSettings):
         return "sqlite" in self.database_url.lower()
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
     """Get cached settings instance."""
     return Settings()

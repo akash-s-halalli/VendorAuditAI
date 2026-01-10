@@ -1,10 +1,9 @@
 """Pydantic schemas for findings and analysis."""
 
 from datetime import datetime
-from typing import List, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 # Severity and status literals
 SeverityType = Literal["critical", "high", "medium", "low", "info"]
@@ -45,7 +44,7 @@ class AnalysisRunResponse(BaseModel):
 class AnalysisRunListResponse(BaseModel):
     """Paginated list of analysis runs."""
 
-    data: List[AnalysisRunResponse]
+    data: list[AnalysisRunResponse]
     total: int
     page: int
     limit: int
@@ -115,7 +114,7 @@ class FindingResponse(BaseModel):
 class FindingListResponse(BaseModel):
     """Paginated list of findings."""
 
-    data: List[FindingResponse]
+    data: list[FindingResponse]
     total: int
     page: int
     limit: int

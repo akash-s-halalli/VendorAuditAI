@@ -3,7 +3,7 @@
 import io
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
+from typing import ClassVar
 
 import fitz  # PyMuPDF
 from docx import Document as DocxDocument
@@ -15,14 +15,14 @@ class ParsedPage:
 
     page_number: int
     text: str
-    tables: List[List[List[str]]] = field(default_factory=list)
+    tables: list[list[list[str]]] = field(default_factory=list)
 
 
 @dataclass
 class ParsedDocument:
     """Represents a fully parsed document."""
 
-    pages: List[ParsedPage]
+    pages: list[ParsedPage]
     total_pages: int
     metadata: dict = field(default_factory=dict)
 
@@ -56,7 +56,7 @@ class PDFParser:
         try:
             doc = fitz.open(stream=content, filetype="pdf")
         except Exception as e:
-            raise ValueError(f"Failed to open PDF: {str(e)}")
+            raise ValueError(f"Failed to open PDF: {e!s}") from e
 
         pages = []
         for page_num in range(len(doc)):
@@ -94,7 +94,7 @@ class PDFParser:
         )
 
     @staticmethod
-    def _extract_tables(page: fitz.Page) -> List[List[List[str]]]:
+    def _extract_tables(page: fitz.Page) -> list[list[list[str]]]:
         """Extract tables from a PDF page.
 
         This is a simplified table extraction. For production,
@@ -171,7 +171,7 @@ class DOCXParser:
         try:
             doc = DocxDocument(io.BytesIO(content))
         except Exception as e:
-            raise ValueError(f"Failed to open DOCX: {str(e)}")
+            raise ValueError(f"Failed to open DOCX: {e!s}") from e
 
         # DOCX doesn't have pages in the same way as PDF
         # We'll treat the whole document as one "page" with sections
@@ -220,7 +220,7 @@ class DOCXParser:
 class DocumentParser:
     """Main document parser that delegates to specific parsers."""
 
-    PARSERS = {
+    PARSERS: ClassVar[dict[str, type[PDFParser] | type[DOCXParser]]] = {
         "application/pdf": PDFParser,
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document": DOCXParser,
         "application/msword": DOCXParser,  # Older .doc format - may not work perfectly
@@ -247,6 +247,6 @@ class DocumentParser:
         return parser_class.parse(content)
 
     @classmethod
-    def supported_types(cls) -> List[str]:
+    def supported_types(cls) -> list[str]:
         """Get list of supported MIME types."""
         return list(cls.PARSERS.keys())

@@ -2,7 +2,16 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import analysis, auth, dashboard, documents, query, search, vendors
+from app.api.v1.endpoints import (
+    analysis,
+    auth,
+    compliance,
+    dashboard,
+    documents,
+    query,
+    search,
+    vendors,
+)
 
 api_router = APIRouter()
 
@@ -26,6 +35,11 @@ api_router.include_router(query.router, prefix="/query", tags=["Query"])
 
 # Include dashboard router
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+
+# Include compliance frameworks router
+api_router.include_router(
+    compliance.router, prefix="/frameworks", tags=["Compliance Frameworks"]
+)
 
 
 @api_router.get("/status", tags=["Status"])

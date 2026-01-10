@@ -2,12 +2,12 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, UUIDMixin, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.chunk import DocumentChunk
@@ -109,17 +109,17 @@ class Document(Base, UUIDMixin, TimestampMixin):
         "Vendor",
         back_populates="documents",
     )
-    chunks: Mapped[List["DocumentChunk"]] = relationship(
+    chunks: Mapped[list["DocumentChunk"]] = relationship(
         "DocumentChunk",
         back_populates="document",
         cascade="all, delete-orphan",
     )
-    analysis_runs: Mapped[List["AnalysisRun"]] = relationship(
+    analysis_runs: Mapped[list["AnalysisRun"]] = relationship(
         "AnalysisRun",
         back_populates="document",
         cascade="all, delete-orphan",
     )
-    findings: Mapped[List["Finding"]] = relationship(
+    findings: Mapped[list["Finding"]] = relationship(
         "Finding",
         back_populates="document",
         cascade="all, delete-orphan",

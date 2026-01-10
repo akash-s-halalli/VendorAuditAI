@@ -4,18 +4,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_active_user
 from app.db import get_db
+from app.models import User
 from app.schemas import (
-    UserCreate,
-    UserLogin,
-    UserResponse,
-    TokenResponse,
-    TokenRefresh,
     RegisterResponse,
+    TokenRefresh,
+    TokenResponse,
+    UserCreate,
+    UserResponse,
 )
 from app.services import auth as auth_service
-from app.api.deps import get_current_active_user
-from app.models import User
 
 router = APIRouter(tags=["Authentication"])
 
@@ -37,7 +36,7 @@ async def register(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.post("/login", response_model=TokenResponse)

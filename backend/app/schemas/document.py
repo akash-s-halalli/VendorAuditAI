@@ -5,7 +5,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-
 # Define document type literal for reuse
 DocumentType = Literal["soc2", "sig_lite", "sig_core", "hecvat", "iso27001", "other"]
 

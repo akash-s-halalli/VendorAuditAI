@@ -7,15 +7,15 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.api.deps import get_current_active_user
+from app.db import get_db
 from app.models import (
-    User,
-    Vendor,
     Document,
     DocumentStatus,
     Finding,
     FindingSeverity,
+    User,
+    Vendor,
 )
 
 router = APIRouter(tags=["Dashboard"])

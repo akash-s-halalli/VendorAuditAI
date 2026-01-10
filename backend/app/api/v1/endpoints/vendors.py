@@ -5,14 +5,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.api.deps import get_current_active_user
+from app.db import get_db
 from app.models import User
 from app.schemas.vendor import (
     VendorCreate,
-    VendorUpdate,
-    VendorResponse,
     VendorListResponse,
+    VendorResponse,
+    VendorUpdate,
 )
 from app.services import vendor as vendor_service
 
@@ -72,7 +72,7 @@ async def create_vendor(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.get("/{vendor_id}", response_model=VendorResponse)
@@ -126,7 +126,7 @@ async def update_vendor(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.delete("/{vendor_id}", status_code=status.HTTP_204_NO_CONTENT)

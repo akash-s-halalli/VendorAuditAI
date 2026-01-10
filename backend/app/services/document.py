@@ -1,14 +1,14 @@
 """Document service layer for business logic."""
 
-from datetime import datetime, timezone
-from typing import Tuple, List
+import contextlib
+from datetime import UTC, datetime
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.document import Document, DocumentStatus, ProcessingStage
 from app.schemas.document import DocumentCreate, DocumentUpdate
-from app.services.storage import get_storage_backend, generate_storage_path
+from app.services.storage import generate_storage_path, get_storage_backend
 
 
 async def get_document_by_id(
@@ -43,7 +43,7 @@ async def get_documents(
     vendor_id: str | None = None,
     document_type: str | None = None,
     status: str | None = None,
-) -> Tuple[List[Document], int]:
+) -> tuple[list[Document], int]:
     """List documents with pagination and filtering.
 
     Args:
@@ -115,7 +115,7 @@ async def create_document(
     try:
         await storage.save(file_content, storage_path)
     except Exception as e:
-        raise ValueError(f"Failed to save file: {str(e)}")
+        raise ValueError(f"Failed to save file: {e!s}") from e
 
     # Create document record
     document = Document(
@@ -203,7 +203,7 @@ async def update_document_status(
     if page_count is not None:
         document.page_count = page_count
     if status == DocumentStatus.PROCESSED:
-        document.processed_at = datetime.now(timezone.utc)
+        document.processed_at = datetime.now(UTC)
 
     await db.flush()
     await db.refresh(document)
@@ -231,11 +231,8 @@ async def delete_document(
 
     # Delete file from storage
     storage = get_storage_backend()
-    try:
+    with contextlib.suppress(Exception):
         await storage.delete(document.storage_path)
-    except Exception:
-        # Log but don't fail if storage delete fails
-        pass
 
     await db.delete(document)
     await db.flush()
@@ -246,7 +243,7 @@ async def get_document_content(
     db: AsyncSession,
     document_id: str,
     org_id: str,
-) -> Tuple[Document, bytes] | None:
+) -> tuple[Document, bytes] | None:
     """Get document record and file content.
 
     Args:

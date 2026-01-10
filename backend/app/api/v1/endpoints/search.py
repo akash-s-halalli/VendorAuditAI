@@ -2,11 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.api.deps import get_current_active_user
+from app.db import get_db
 from app.models import User
 from app.schemas.chunk import (
     SearchQuery,

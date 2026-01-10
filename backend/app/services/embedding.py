@@ -1,7 +1,6 @@
 """Embedding service for generating vector representations of text."""
 
 import json
-from typing import List
 
 from openai import AsyncOpenAI
 
@@ -43,7 +42,7 @@ class EmbeddingService:
         """Check if the service has valid API credentials."""
         return self._client is not None
 
-    async def embed_text(self, text: str) -> List[float]:
+    async def embed_text(self, text: str) -> list[float]:
         """Generate embedding for a single text.
 
         Args:
@@ -66,9 +65,9 @@ class EmbeddingService:
             )
             return response.data[0].embedding
         except Exception as e:
-            raise ValueError(f"Failed to generate embedding: {str(e)}")
+            raise ValueError(f"Failed to generate embedding: {e!s}") from e
 
-    async def embed_texts(self, texts: List[str]) -> List[List[float]]:
+    async def embed_texts(self, texts: list[str]) -> list[list[float]]:
         """Generate embeddings for multiple texts in a batch.
 
         Args:
@@ -96,13 +95,13 @@ class EmbeddingService:
             sorted_data = sorted(response.data, key=lambda x: x.index)
             return [item.embedding for item in sorted_data]
         except Exception as e:
-            raise ValueError(f"Failed to generate embeddings: {str(e)}")
+            raise ValueError(f"Failed to generate embeddings: {e!s}") from e
 
     async def embed_chunks_batch(
         self,
-        texts: List[str],
+        texts: list[str],
         batch_size: int = 100,
-    ) -> List[List[float]]:
+    ) -> list[list[float]]:
         """Generate embeddings for many texts in batches.
 
         Handles large numbers of texts by processing in batches
@@ -127,7 +126,7 @@ class EmbeddingService:
         return all_embeddings
 
 
-def embedding_to_json(embedding: List[float]) -> str:
+def embedding_to_json(embedding: list[float]) -> str:
     """Convert embedding to JSON string for storage.
 
     Args:
@@ -139,7 +138,7 @@ def embedding_to_json(embedding: List[float]) -> str:
     return json.dumps(embedding)
 
 
-def json_to_embedding(json_str: str) -> List[float]:
+def json_to_embedding(json_str: str) -> list[float]:
     """Parse embedding from JSON string.
 
     Args:
@@ -151,7 +150,7 @@ def json_to_embedding(json_str: str) -> List[float]:
     return json.loads(json_str)
 
 
-def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
     """Calculate cosine similarity between two vectors.
 
     Args:
@@ -164,7 +163,7 @@ def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
     if len(vec1) != len(vec2):
         raise ValueError("Vectors must have same dimensions")
 
-    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    dot_product = sum(a * b for a, b in zip(vec1, vec2, strict=True))
     norm1 = sum(a * a for a in vec1) ** 0.5
     norm2 = sum(b * b for b in vec2) ** 0.5
 

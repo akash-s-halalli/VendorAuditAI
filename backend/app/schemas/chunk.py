@@ -1,7 +1,6 @@
 """Pydantic schemas for document chunks."""
 
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -26,7 +25,7 @@ class ChunkResponse(BaseModel):
 class ChunkListResponse(BaseModel):
     """Paginated list of chunks."""
 
-    data: List[ChunkResponse]
+    data: list[ChunkResponse]
     total: int
     page: int
     limit: int
@@ -36,7 +35,7 @@ class SearchQuery(BaseModel):
     """Search query parameters."""
 
     query: str = Field(..., min_length=1, max_length=1000, description="Search query text")
-    document_ids: List[str] | None = Field(None, description="Optional document IDs to search within")
+    document_ids: list[str] | None = Field(None, description="Optional document IDs to search within")
     limit: int = Field(10, ge=1, le=50, description="Maximum number of results")
     min_score: float = Field(0.5, ge=0.0, le=1.0, description="Minimum relevance score")
     search_type: str = Field("hybrid", description="Search type: semantic, keyword, or hybrid")
@@ -58,6 +57,6 @@ class SearchResultResponse(BaseModel):
 class SearchResponse(BaseModel):
     """Search results response."""
 
-    results: List[SearchResultResponse]
+    results: list[SearchResultResponse]
     query: str
     total_results: int

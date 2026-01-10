@@ -2,7 +2,7 @@
 
 import re
 from dataclasses import dataclass, field
-from typing import List
+from typing import ClassVar
 
 import tiktoken
 
@@ -27,7 +27,7 @@ class TextChunker:
     """
 
     # Section header patterns for common document formats
-    SECTION_PATTERNS = [
+    SECTION_PATTERNS: ClassVar[list[str]] = [
         r"^#+\s+(.+)$",  # Markdown headers
         r"^(\d+\.)+\s+(.+)$",  # Numbered sections (1. 1.1 1.1.1)
         r"^[A-Z][A-Z\s]{2,}:?\s*$",  # ALL CAPS headers
@@ -68,8 +68,8 @@ class TextChunker:
     def chunk_text(
         self,
         text: str,
-        page_numbers: List[int] | None = None,
-    ) -> List[Chunk]:
+        page_numbers: list[int] | None = None,
+    ) -> list[Chunk]:
         """Split text into semantic chunks.
 
         Args:
@@ -138,7 +138,7 @@ class TextChunker:
 
                 # Start new chunk with overlap
                 overlap_parts = self._get_overlap_parts(current_chunk_parts)
-                current_chunk_parts = overlap_parts + [para_text]
+                current_chunk_parts = [*overlap_parts, para_text]
                 current_tokens = sum(self.count_tokens(p) for p in current_chunk_parts)
             else:
                 current_chunk_parts.append(para_text)
@@ -155,7 +155,7 @@ class TextChunker:
 
         return chunks
 
-    def _split_into_paragraphs(self, text: str) -> List[str]:
+    def _split_into_paragraphs(self, text: str) -> list[str]:
         """Split text into paragraphs.
 
         Args:
@@ -168,7 +168,7 @@ class TextChunker:
         paragraphs = re.split(r"\n\s*\n", text)
         return [p.strip() for p in paragraphs if p.strip()]
 
-    def _chunk_by_sentences(self, text: str, start_index: int) -> List[Chunk]:
+    def _chunk_by_sentences(self, text: str, start_index: int) -> list[Chunk]:
         """Split a large text block by sentences.
 
         Args:
@@ -200,7 +200,7 @@ class TextChunker:
 
                 # Start with overlap
                 overlap_parts = self._get_overlap_parts(current_parts)
-                current_parts = overlap_parts + [sentence]
+                current_parts = [*overlap_parts, sentence]
                 current_tokens = sum(self.count_tokens(p) for p in current_parts)
             else:
                 current_parts.append(sentence)
@@ -214,7 +214,7 @@ class TextChunker:
 
     def _create_chunk(
         self,
-        parts: List[str],
+        parts: list[str],
         index: int,
         section: str | None,
     ) -> Chunk:
@@ -236,7 +236,7 @@ class TextChunker:
             section_header=section,
         )
 
-    def _get_overlap_parts(self, parts: List[str]) -> List[str]:
+    def _get_overlap_parts(self, parts: list[str]) -> list[str]:
         """Get the trailing parts for overlap.
 
         Args:
@@ -289,7 +289,7 @@ def chunk_document(
     target_size: int = 500,
     max_size: int = 1000,
     overlap: int = 100,
-) -> List[Chunk]:
+) -> list[Chunk]:
     """Convenience function to chunk a document.
 
     Args:

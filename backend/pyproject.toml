@@ -110,6 +110,8 @@ include = ["app*"]
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",      # pycodestyle errors
     "F",      # pyflakes
@@ -126,9 +128,11 @@ select = [
 ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # do not perform function calls in argument defaults
+    "N815",   # mixedCase variable in class scope (intentional for API compatibility)
+    "RUF022", # __all__ is not sorted (intentionally organized by category)
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["app"]
 
 [tool.pytest.ini_options]

@@ -1,7 +1,6 @@
 """Query API endpoints for natural language document Q&A."""
 
 import json
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,16 +8,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user, get_db
 from app.models.user import User
 from app.schemas.query import (
-    QueryRequest,
-    QueryResponse,
+    Citation,
+    ConversationCreateRequest,
+    ConversationListResponse,
+    ConversationMessage,
     ConversationRequest,
     ConversationResponse,
-    ConversationCreateRequest,
-    ConversationMessage,
-    QueryHistoryResponse,
     QueryHistoryListResponse,
-    ConversationListResponse,
-    Citation,
+    QueryHistoryResponse,
+    QueryRequest,
+    QueryResponse,
 )
 from app.services.query import get_query_service
 

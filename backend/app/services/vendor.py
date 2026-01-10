@@ -1,9 +1,8 @@
 """Vendor service layer for business logic."""
 
 import json
-from typing import Tuple, List
 
-from sqlalchemy import select, func, or_
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.vendor import Vendor
@@ -66,7 +65,7 @@ async def get_vendors(
     tier: str | None = None,
     status: str | None = None,
     search: str | None = None,
-) -> Tuple[List[Vendor], int]:
+) -> tuple[list[Vendor], int]:
     """List vendors with pagination and filtering.
 
     Args:

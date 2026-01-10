@@ -7,12 +7,11 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, UUIDMixin, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.organization import Organization
     from app.models.user import User
-    from app.models.document import Document
 
 
 class QueryStatus(str, Enum):

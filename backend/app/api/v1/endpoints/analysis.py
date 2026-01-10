@@ -5,17 +5,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.api.deps import get_current_active_user
+from app.db import get_db
 from app.models import User
 from app.schemas.finding import (
     AnalysisRequest,
-    AnalysisRunResponse,
     AnalysisRunListResponse,
-    FindingResponse,
+    AnalysisRunResponse,
     FindingListResponse,
-    FindingUpdate,
+    FindingResponse,
     FindingSummary,
+    FindingUpdate,
 )
 from app.services import analysis as analysis_service
 
@@ -50,7 +50,7 @@ async def analyze_document(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.get("/runs", response_model=AnalysisRunListResponse)

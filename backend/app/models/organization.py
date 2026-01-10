@@ -1,11 +1,11 @@
 """Organization model for multi-tenant support."""
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, UUIDMixin, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.document import Document
@@ -30,37 +30,37 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     settings: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
 
     # Relationships
-    users: Mapped[List["User"]] = relationship(
+    users: Mapped[list["User"]] = relationship(
         "User",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    vendors: Mapped[List["Vendor"]] = relationship(
+    vendors: Mapped[list["Vendor"]] = relationship(
         "Vendor",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    documents: Mapped[List["Document"]] = relationship(
+    documents: Mapped[list["Document"]] = relationship(
         "Document",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    analysis_runs: Mapped[List["AnalysisRun"]] = relationship(
+    analysis_runs: Mapped[list["AnalysisRun"]] = relationship(
         "AnalysisRun",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    findings: Mapped[List["Finding"]] = relationship(
+    findings: Mapped[list["Finding"]] = relationship(
         "Finding",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    conversation_threads: Mapped[List["ConversationThread"]] = relationship(
+    conversation_threads: Mapped[list["ConversationThread"]] = relationship(
         "ConversationThread",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-    query_history: Mapped[List["QueryHistory"]] = relationship(
+    query_history: Mapped[list["QueryHistory"]] = relationship(
         "QueryHistory",
         back_populates="organization",
         cascade="all, delete-orphan",

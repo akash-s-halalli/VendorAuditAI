@@ -2,12 +2,12 @@
 
 from datetime import date, datetime
 from enum import Enum
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, UUIDMixin, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.document import Document
@@ -79,7 +79,7 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
         "Organization",
         back_populates="vendors",
     )
-    documents: Mapped[List["Document"]] = relationship(
+    documents: Mapped[list["Document"]] = relationship(
         "Document",
         back_populates="vendor",
     )

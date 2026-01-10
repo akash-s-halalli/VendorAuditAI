@@ -2,14 +2,14 @@
 FastAPI dependencies for authentication and authorization.
 """
 
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.core.security import verify_token
+from app.db import get_db
 from app.models import User, UserRole
 from app.services.auth import get_user_by_id
 
@@ -111,7 +111,7 @@ class RoleChecker:
             ...
     """
 
-    def __init__(self, allowed_roles: List[UserRole]):
+    def __init__(self, allowed_roles: list[UserRole]):
         """
         Initialize RoleChecker with allowed roles.
 

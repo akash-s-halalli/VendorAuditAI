@@ -6,14 +6,14 @@ from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, 
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_db
 from app.api.deps import get_current_active_user
+from app.db import get_db
 from app.models import User
 from app.schemas.document import (
     DocumentCreate,
-    DocumentUpdate,
-    DocumentResponse,
     DocumentListResponse,
+    DocumentResponse,
+    DocumentUpdate,
 )
 from app.services import document as document_service
 from app.services import processing as processing_service
@@ -82,7 +82,7 @@ async def upload_document(
     if file.content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid file type. Allowed types: PDF, DOCX",
+            detail="Invalid file type. Allowed types: PDF, DOCX",
         )
 
     # Read file content
@@ -124,7 +124,7 @@ async def upload_document(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.get("/{document_id}", response_model=DocumentResponse)
@@ -271,4 +271,4 @@ async def process_document(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),
-        )
+        ) from e

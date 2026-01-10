@@ -2,12 +2,12 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Float
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, UUIDMixin, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.document import Document
@@ -90,7 +90,7 @@ class AnalysisRun(Base, UUIDMixin, TimestampMixin):
         "Document",
         back_populates="analysis_runs",
     )
-    findings: Mapped[List["Finding"]] = relationship(
+    findings: Mapped[list["Finding"]] = relationship(
         "Finding",
         back_populates="analysis_run",
         cascade="all, delete-orphan",

@@ -1,13 +1,13 @@
 """FastAPI application entry point."""
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import get_settings
 from app.api.v1.router import api_router
+from app.config import get_settings
 
 API_VERSION = "0.1.0"
 
@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     - AI client initialization
     - Cleanup on shutdown
     """
-    from app.db import init_db, close_db
+    from app.db import close_db, init_db
 
     settings = get_settings()
 
