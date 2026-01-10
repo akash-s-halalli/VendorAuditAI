@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Building2, FileText, AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
+import apiClient, { getApiErrorMessage } from '@/lib/api';
 
 interface DashboardStats {
   totalVendors: number;
@@ -14,20 +15,11 @@ interface DashboardStats {
 }
 
 export function Dashboard() {
-  const { data: stats } = useQuery<DashboardStats>({
+  const { data: stats, isLoading, isError, error } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      // Mock data for now - will be replaced with actual API call
-      return {
-        totalVendors: 24,
-        totalDocuments: 89,
-        pendingAnalysis: 5,
-        completedAnalysis: 84,
-        criticalFindings: 3,
-        highFindings: 12,
-        mediumFindings: 45,
-        lowFindings: 67,
-      };
+      const response = await apiClient.get('/dashboard/stats');
+      return response.data;
     },
   });
 
@@ -64,6 +56,72 @@ export function Dashboard() {
     { severity: 'Medium', count: stats?.mediumFindings || 0, variant: 'medium' as const },
     { severity: 'Low', count: stats?.lowFindings || 0, variant: 'low' as const },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of your vendor security posture</p>
+        </div>
+
+        {/* Loading skeleton for stats */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 bg-muted rounded w-24"></div>
+                <div className="h-4 w-4 bg-muted rounded"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-muted rounded w-16 mb-2"></div>
+                <div className="h-3 bg-muted rounded w-32"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Loading skeleton for findings and activity */}
+        <div className="grid gap-4 md:grid-cols-2 mb-8">
+          {[1, 2].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-6 bg-muted rounded w-48"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="h-4 bg-muted rounded"></div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of your vendor security posture</p>
+        </div>
+
+        <Card className="border-destructive">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
+            <h3 className="text-lg font-medium mb-2">Failed to load dashboard</h3>
+            <p className="text-muted-foreground text-center mb-4">
+              {getApiErrorMessage(error)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">

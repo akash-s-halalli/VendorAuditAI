@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import analysis, auth, documents, query, search, vendors
+from app.api.v1.endpoints import analysis, auth, dashboard, documents, query, search, vendors
 
 api_router = APIRouter()
 
@@ -24,6 +24,9 @@ api_router.include_router(analysis.router, prefix="/analysis", tags=["Analysis"]
 # Include query router
 api_router.include_router(query.router, prefix="/query", tags=["Query"])
 
+# Include dashboard router
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -40,13 +43,6 @@ async def api_status() -> dict:
             "findings": "/api/v1/findings",
             "frameworks": "/api/v1/frameworks",
             "query": "/api/v1/query",
+            "dashboard": "/api/v1/dashboard",
         },
     }
-
-
-# TODO: Import and include route modules as they are created
-# from app.api.v1.endpoints import users, vendors, documents, analysis
-# api_router.include_router(users.router, prefix="/users", tags=["Users"])
-# api_router.include_router(vendors.router, prefix="/vendors", tags=["Vendors"])
-# api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
-# api_router.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
