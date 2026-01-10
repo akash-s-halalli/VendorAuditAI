@@ -12,6 +12,9 @@ VendorAuditAI transforms manual SOC 2, SIG, HECVAT, and security report reviews 
 - **Multi-Framework Gap Analysis** - Compare against NIST 800-53, ISO 27001, SOC 2 TSC, CIS Controls
 - **Confidence-Scored Findings** - Every finding includes a confidence score and page-specific citations
 - **Natural Language Querying** - Ask questions across your entire vendor portfolio
+- **Compliance Framework API** - RESTful API for SOC 2, ISO 27001, NIST CSF, and CIS Controls with search
+- **S3-Compatible Storage** - MinIO backend support for scalable document storage
+- **Real-time Dashboard** - Live metrics for vendors, documents, and findings
 - **Self-Hosted Option** - Full control over your data with on-premise deployment
 
 ## Tech Stack
@@ -98,14 +101,27 @@ DATABASE_URL=sqlite+aiosqlite:///./vendorauditai.db
 ### Running Tests
 
 ```bash
-# Backend
+# Backend (70 tests)
 cd backend
-pytest
+pytest tests/ -v
 
-# Frontend
+# Frontend (33 tests)
 cd frontend
 npm test
 ```
+
+### API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/health` | Health check |
+| `GET /api/v1/dashboard/stats` | Dashboard statistics |
+| `GET /api/v1/frameworks` | List compliance frameworks |
+| `GET /api/v1/frameworks/{id}` | Get framework details |
+| `GET /api/v1/frameworks/search?q=` | Search controls |
+| `GET /api/v1/vendors` | List vendors |
+| `GET /api/v1/documents` | List documents |
+| `POST /api/v1/query` | Natural language query |
 
 ### Code Quality
 
