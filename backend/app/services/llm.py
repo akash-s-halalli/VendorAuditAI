@@ -1,11 +1,21 @@
-"""LLM service for Claude-based document analysis."""
+"""LLM service for Claude-based document analysis.
+
+This module provides the Claude API integration for:
+- Document compliance analysis using RAG
+- Finding generation with citations
+- Natural language queries about documents
+"""
 
 import json
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from anthropic import AsyncAnthropic
 
 from app.config import get_settings
+
+if TYPE_CHECKING:
+    pass
 
 
 @dataclass
@@ -134,6 +144,105 @@ Respond in JSON format only."""
 
         except Exception as e:
             raise ValueError(f"Analysis failed: {e!s}") from e
+
+    async def analyze_document_with_prompt(
+        self,
+        prompt: str,
+        framework: str,
+        document_type: str | None = None,
+        max_tokens: int = 8192,
+    ) -> AnalysisResult:
+        """Analyze document using a pre-built prompt with enhanced templates.
+
+        This method accepts a fully constructed prompt (built using the
+        prompts module) and sends it to Claude for analysis. It supports
+        the enhanced prompt formats that include structured framework
+        controls and citation requirements.
+
+        Args:
+            prompt: Pre-built analysis prompt from prompts module
+            framework: Framework being analyzed (for metadata)
+            document_type: Type of document (for metadata)
+            max_tokens: Maximum tokens in response (default higher for detailed output)
+
+        Returns:
+            AnalysisResult with detailed findings including citations
+
+        Raises:
+            ValueError: If service not configured or API error
+        """
+        if not self.is_configured:
+            raise ValueError("Anthropic API key not configured")
+
+        # Import the enhanced system prompt
+        from app.prompts.compliance_analysis import COMPLIANCE_ANALYSIS_SYSTEM_PROMPT
+
+        try:
+            response = await self._client.messages.create(
+                model=self.model,
+                max_tokens=max_tokens,
+                system=COMPLIANCE_ANALYSIS_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+
+            # Parse the response
+            raw_text = response.content[0].text
+            parsed_response = self._parse_enhanced_response(raw_text)
+
+            # Extract findings from parsed response
+            findings = parsed_response.get("findings", [])
+
+            # Build summary from overall assessment
+            overall = parsed_response.get("overall_assessment", {})
+            summary = overall.get("summary", self._extract_summary(findings))
+
+            return AnalysisResult(
+                findings=findings,
+                summary=summary,
+                raw_response=raw_text,
+                model=self.model,
+                input_tokens=response.usage.input_tokens,
+                output_tokens=response.usage.output_tokens,
+            )
+
+        except Exception as e:
+            raise ValueError(f"Analysis failed: {e!s}") from e
+
+    def _parse_enhanced_response(self, text: str) -> dict:
+        """Parse enhanced response format from compliance analysis.
+
+        This handles the more complex response format that includes
+        findings with structured evidence and overall assessment.
+
+        Args:
+            text: Raw response text from Claude
+
+        Returns:
+            Parsed response dict with findings and assessment
+        """
+        try:
+            parsed = self._parse_json_response(text)
+
+            # Ensure findings have required fields
+            findings = parsed.get("findings", [])
+            for finding in findings:
+                # Ensure confidence is a float
+                conf = finding.get("confidence")
+                if conf is not None:
+                    try:
+                        finding["confidence"] = float(conf)
+                    except (ValueError, TypeError):
+                        finding["confidence"] = 0.5
+
+                # Ensure severity is lowercase
+                if "severity" in finding:
+                    finding["severity"] = str(finding["severity"]).lower()
+
+            return parsed
+
+        except (json.JSONDecodeError, ValueError):
+            # If JSON parsing fails, return empty structure
+            return {"findings": [], "overall_assessment": {}}
 
     async def generate_finding_details(
         self,

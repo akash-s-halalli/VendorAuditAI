@@ -4,3 +4,4 @@ export { Dashboard } from './Dashboard';
 export { Vendors } from './Vendors';
 export { Documents } from './Documents';
 export { Query } from './Query';
+export { Analysis } from './Analysis';

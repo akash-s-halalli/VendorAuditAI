@@ -1,13 +1,30 @@
-"""Analysis service for document compliance analysis."""
+"""Analysis service for document compliance analysis.
+
+This module provides enhanced RAG-based compliance analysis that:
+- Uses structured compliance framework data
+- Generates findings with proper severity levels
+- Includes page-specific citations from document chunks
+- Links findings to the correct framework controls
+"""
 
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.chunk import DocumentChunk
 from app.models.document import Document
-from app.models.finding import AnalysisRun, Finding
+from app.models.finding import AnalysisRun, Finding, FindingSeverity
+from app.prompts.compliance_analysis import (
+    build_chunk_context,
+    build_compliance_analysis_prompt,
+)
+from app.services.compliance import (
+    get_framework_by_id,
+    get_framework_controls,
+    get_framework_summary,
+)
 from app.services.llm import SUPPORTED_FRAMEWORKS, get_claude_service
 
 
@@ -131,24 +148,173 @@ async def update_finding(
     return finding
 
 
+def _validate_severity(severity: str) -> str:
+    """Validate and normalize severity level.
+
+    Args:
+        severity: The severity string from LLM response
+
+    Returns:
+        Validated severity string (defaults to 'medium' if invalid)
+    """
+    valid_severities = {s.value for s in FindingSeverity}
+    severity_lower = severity.lower().strip() if severity else "medium"
+
+    if severity_lower in valid_severities:
+        return severity_lower
+
+    # Handle common variations
+    severity_mapping = {
+        "crit": "critical",
+        "hi": "high",
+        "med": "medium",
+        "lo": "low",
+        "informational": "info",
+        "information": "info",
+    }
+
+    return severity_mapping.get(severity_lower, "medium")
+
+
+def _extract_citation_from_evidence(
+    evidence: dict[str, Any] | str | None,
+    chunks: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Extract citation details from evidence data.
+
+    Args:
+        evidence: Evidence from LLM (dict with excerpt_number, page, quote or string)
+        chunks: List of chunk data for cross-referencing
+
+    Returns:
+        Dict with chunk_id, page_number, section_header, quoted_text
+    """
+    citation = {
+        "chunk_id": None,
+        "page_number": None,
+        "section_header": None,
+        "quoted_text": None,
+    }
+
+    if not evidence:
+        return citation
+
+    # Handle string evidence (just the quote)
+    if isinstance(evidence, str):
+        citation["quoted_text"] = evidence
+        return citation
+
+    # Handle dict evidence
+    if isinstance(evidence, dict):
+        citation["quoted_text"] = evidence.get("quoted_text") or evidence.get("quote")
+        citation["page_number"] = evidence.get("page_number") or evidence.get("page")
+        citation["section_header"] = evidence.get("section_header") or evidence.get(
+            "section"
+        )
+
+        # Try to find the referenced chunk
+        excerpt_num = evidence.get("excerpt_number")
+        if excerpt_num is not None and 0 < excerpt_num <= len(chunks):
+            chunk = chunks[excerpt_num - 1]  # excerpt_number is 1-indexed
+            citation["chunk_id"] = chunk.get("id")
+            if not citation["page_number"]:
+                citation["page_number"] = chunk.get("page_number")
+            if not citation["section_header"]:
+                citation["section_header"] = chunk.get("section_header")
+
+    return citation
+
+
+def _get_framework_control_mapping(framework_id: str) -> dict[str, dict[str, Any]]:
+    """Build a mapping of control IDs to control details for a framework.
+
+    Args:
+        framework_id: The framework identifier
+
+    Returns:
+        Dict mapping control_id -> {name, description, category_id}
+    """
+    controls = get_framework_controls(framework_id)
+    if not controls:
+        return {}
+
+    mapping = {}
+    for control in controls:
+        mapping[control.id] = {
+            "name": control.name,
+            "description": control.description,
+            "category_id": control.category_id,
+            "requirements": [
+                {"id": r.id, "description": r.description, "guidance": r.guidance}
+                for r in control.requirements
+            ],
+        }
+
+    return mapping
+
+
+def _validate_framework_control(
+    control_id: str | None,
+    control_mapping: dict[str, dict[str, Any]],
+    framework_id: str,
+) -> str | None:
+    """Validate that a framework control exists and normalize the ID.
+
+    Args:
+        control_id: The control ID from LLM response
+        control_mapping: Mapping of valid control IDs
+        framework_id: The framework being analyzed
+
+    Returns:
+        Validated control ID or None if not valid
+    """
+    if not control_id:
+        return None
+
+    # Direct match
+    if control_id in control_mapping:
+        return control_id
+
+    # Try case-insensitive match
+    control_upper = control_id.upper()
+    for valid_id in control_mapping:
+        if valid_id.upper() == control_upper:
+            return valid_id
+
+    # Try partial match (e.g., "CC6.1" might be written as "CC6.1.1")
+    for valid_id in control_mapping:
+        if control_id.startswith(valid_id) or valid_id.startswith(control_id):
+            return valid_id
+
+    # Return original if no match found (might be a valid control not in our data)
+    return control_id
+
+
 async def run_analysis(
     db: AsyncSession,
     document_id: str,
     org_id: str,
     framework: str,
     chunk_limit: int = 50,
+    focus_controls: list[str] | None = None,
 ) -> AnalysisRun:
-    """Run compliance analysis on a document.
+    """Run enhanced compliance analysis on a document.
+
+    This function performs RAG-based analysis using:
+    - Structured compliance framework data for accurate control mapping
+    - Enhanced prompts for detailed finding generation
+    - Page-specific citations from document chunks
 
     Args:
         db: Database session
         document_id: Document to analyze
         org_id: Organization ID
-        framework: Compliance framework
+        framework: Compliance framework (e.g., 'soc2', 'iso27001')
         chunk_limit: Maximum chunks to analyze
+        focus_controls: Optional list of specific control IDs to focus on
 
     Returns:
-        AnalysisRun with results
+        AnalysisRun with detailed findings
 
     Raises:
         ValueError: If document not found or analysis fails
@@ -175,6 +341,25 @@ async def run_analysis(
     claude_service = get_claude_service()
     if not claude_service.is_configured:
         raise ValueError("Anthropic API key not configured")
+
+    # Load framework controls for validation and context
+    framework_summary = get_framework_summary(framework)
+    control_mapping = _get_framework_control_mapping(framework)
+
+    # Get specific controls if focus_controls specified
+    controls_for_prompt = None
+    if focus_controls:
+        controls_for_prompt = [
+            {"id": ctrl_id, **control_mapping[ctrl_id]}
+            for ctrl_id in focus_controls
+            if ctrl_id in control_mapping
+        ]
+    elif control_mapping:
+        # Include a sample of controls in the prompt for context
+        sample_controls = list(control_mapping.items())[:15]
+        controls_for_prompt = [
+            {"id": ctrl_id, **details} for ctrl_id, details in sample_controls
+        ]
 
     # Create analysis run
     analysis_run = AnalysisRun(
@@ -203,20 +388,32 @@ async def run_analysis(
 
         analysis_run.chunks_analyzed = len(chunks)
 
-        # Prepare chunks for analysis
+        # Prepare chunks for analysis with full metadata
         chunk_data = [
             {
                 "id": chunk.id,
                 "content": chunk.content,
                 "section_header": chunk.section_header,
                 "page_number": chunk.page_number,
+                "chunk_index": chunk.chunk_index,
             }
             for chunk in chunks
         ]
 
-        # Run analysis
-        result = await claude_service.analyze_document(
-            chunks=chunk_data,
+        # Build enhanced document context
+        document_context = build_chunk_context(chunk_data, include_metadata=True)
+
+        # Build the compliance analysis prompt with framework controls
+        analysis_prompt = build_compliance_analysis_prompt(
+            document_context=document_context,
+            framework_id=framework,
+            document_type=document.document_type or "security_document",
+            controls=controls_for_prompt,
+        )
+
+        # Run analysis with enhanced prompt
+        result = await claude_service.analyze_document_with_prompt(
+            prompt=analysis_prompt,
             framework=framework,
             document_type=document.document_type,
         )
@@ -226,20 +423,77 @@ async def run_analysis(
         analysis_run.output_tokens = result.output_tokens
         analysis_run.summary = result.summary
 
-        # Create findings
+        # Create findings with enhanced citation data
         findings_created = 0
         for finding_data in result.findings:
+            # Validate and normalize severity
+            severity = _validate_severity(finding_data.get("severity"))
+
+            # Validate framework control
+            framework_control = _validate_framework_control(
+                finding_data.get("framework_control"),
+                control_mapping,
+                framework,
+            )
+
+            # Extract citation details
+            evidence_data = finding_data.get("evidence")
+            citation = _extract_citation_from_evidence(evidence_data, chunk_data)
+
+            # Format evidence string (include quote and context)
+            evidence_text = None
+            if citation["quoted_text"]:
+                evidence_parts = [f'"{citation["quoted_text"]}"']
+                if citation["page_number"]:
+                    evidence_parts.append(f"(Page {citation['page_number']})")
+                evidence_text = " ".join(evidence_parts)
+            elif isinstance(evidence_data, str):
+                evidence_text = evidence_data
+
+            # Build impact text
+            impact_text = None
+            impact_data = finding_data.get("impact")
+            if isinstance(impact_data, dict):
+                impact_text = impact_data.get("description", "")
+                risk_scenarios = impact_data.get("risk_scenarios", [])
+                if risk_scenarios:
+                    impact_text += "\n\nRisk Scenarios:\n" + "\n".join(
+                        f"- {s}" for s in risk_scenarios
+                    )
+            elif isinstance(impact_data, str):
+                impact_text = impact_data
+
+            # Build remediation text
+            remediation_text = None
+            remediation_data = finding_data.get("remediation")
+            if isinstance(remediation_data, dict):
+                remediation_text = remediation_data.get("summary", "")
+                steps = remediation_data.get("detailed_steps") or remediation_data.get(
+                    "steps", []
+                )
+                if steps:
+                    remediation_text += "\n\nRemediation Steps:\n" + "\n".join(
+                        f"{i}. {step}" for i, step in enumerate(steps, 1)
+                    )
+            elif isinstance(remediation_data, str):
+                remediation_text = remediation_data
+
+            # Create the finding with full citation data
             finding = Finding(
                 analysis_run_id=analysis_run.id,
                 document_id=document_id,
                 organization_id=org_id,
-                title=finding_data.get("title", "Untitled Finding"),
-                severity=finding_data.get("severity", "medium"),
+                title=finding_data.get("title", "Untitled Finding")[:500],
+                severity=severity,
                 framework=framework,
-                framework_control=finding_data.get("framework_control"),
+                framework_control=framework_control,
                 description=finding_data.get("description", ""),
-                evidence=finding_data.get("evidence"),
-                remediation=finding_data.get("remediation"),
+                evidence=evidence_text,
+                remediation=remediation_text,
+                impact=impact_text,
+                chunk_id=citation["chunk_id"],
+                page_number=citation["page_number"],
+                section_header=citation["section_header"],
                 confidence_score=finding_data.get("confidence"),
             )
             db.add(finding)
@@ -248,6 +502,14 @@ async def run_analysis(
         analysis_run.findings_count = findings_created
         analysis_run.status = "completed"
         analysis_run.completed_at = datetime.now(UTC)
+
+        # Add framework info to summary if available
+        if framework_summary:
+            analysis_run.summary = (
+                f"Analysis against {framework_summary.name} "
+                f"({framework_summary.control_count} controls). "
+                f"{result.summary}"
+            )
 
         await db.flush()
         await db.refresh(analysis_run)
@@ -259,6 +521,43 @@ async def run_analysis(
         analysis_run.completed_at = datetime.now(UTC)
         await db.flush()
         raise ValueError(f"Analysis failed: {e!s}") from e
+
+
+async def run_targeted_analysis(
+    db: AsyncSession,
+    document_id: str,
+    org_id: str,
+    framework: str,
+    control_ids: list[str],
+    chunk_limit: int = 30,
+) -> AnalysisRun:
+    """Run targeted analysis focusing on specific controls.
+
+    This is useful for deep-dive analysis on particular control areas
+    or follow-up analysis after initial findings.
+
+    Args:
+        db: Database session
+        document_id: Document to analyze
+        org_id: Organization ID
+        framework: Compliance framework
+        control_ids: List of specific control IDs to analyze
+        chunk_limit: Maximum chunks to analyze
+
+    Returns:
+        AnalysisRun with targeted findings
+
+    Raises:
+        ValueError: If document not found or analysis fails
+    """
+    return await run_analysis(
+        db=db,
+        document_id=document_id,
+        org_id=org_id,
+        framework=framework,
+        chunk_limit=chunk_limit,
+        focus_controls=control_ids,
+    )
 
 
 async def get_finding_summary(

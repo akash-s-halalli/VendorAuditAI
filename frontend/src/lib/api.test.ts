@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import axios, { AxiosError, AxiosHeaders } from 'axios';
 import { apiClient, getApiErrorMessage, ApiError } from './api';
 

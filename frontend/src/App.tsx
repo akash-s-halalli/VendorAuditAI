@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout, AuthLayout } from '@/components/layout';
-import { Login, Register, Dashboard, Vendors, Documents, Query } from '@/pages';
+import { Login, Register, Dashboard, Vendors, Documents, Query, Analysis } from '@/pages';
 import { useAuthStore } from '@/stores/authStore';
 
 /**
@@ -57,7 +57,7 @@ function App() {
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/query" element={<Query />} />
-          <Route path="/analysis" element={<Dashboard />} />
+          <Route path="/analysis" element={<Analysis />} />
           <Route path="/search" element={<Dashboard />} />
           <Route path="/settings" element={<Dashboard />} />
         </Route>

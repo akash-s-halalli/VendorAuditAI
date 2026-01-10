@@ -20,7 +20,7 @@ vi.mock('@/lib/api', () => ({
 // Import the mocked module
 import apiClient from '@/lib/api';
 
-const mockApiClient = apiClient as { get: ReturnType<typeof vi.fn> };
+const mockApiClient = apiClient as unknown as { get: ReturnType<typeof vi.fn> };
 
 // Helper to create a fresh QueryClient for each test
 function createTestQueryClient() {

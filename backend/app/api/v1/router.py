@@ -8,6 +8,7 @@ from app.api.v1.endpoints import (
     compliance,
     dashboard,
     documents,
+    export,
     query,
     search,
     vendors,
@@ -41,6 +42,9 @@ api_router.include_router(
     compliance.router, prefix="/frameworks", tags=["Compliance Frameworks"]
 )
 
+# Include export router
+api_router.include_router(export.router, prefix="/export", tags=["Export"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -58,5 +62,6 @@ async def api_status() -> dict:
             "frameworks": "/api/v1/frameworks",
             "query": "/api/v1/query",
             "dashboard": "/api/v1/dashboard",
+            "export": "/api/v1/export",
         },
     }
