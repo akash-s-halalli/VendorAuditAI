@@ -1,22 +1,54 @@
 # VendorAuditAI Deployment Guide
 
-## Current Status
+## Live URLs (Share With Customers)
 
-### Frontend (Netlify) - DEPLOYED
-- **URL**: https://vendor-audit-ai.netlify.app
-- **Status**: Live and working
-- **API URL**: Configured to connect to Railway backend
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | https://vendor-audit-ai.netlify.app | Live |
+| **Backend API** | https://vendorauditai-production.up.railway.app | Live |
+| **Health Check** | https://vendorauditai-production.up.railway.app/health | Active |
 
-### Backend (Railway) - CONFIGURING
-- **Project**: loving-appreciation
-- **Service**: VendorAuditAI
-- **Expected URL**: https://vendorauditai-production.up.railway.app
-- **Status**: Build succeeds, awaiting PostgreSQL database setup
+**Quick Customer Demo:** Share https://vendor-audit-ai.netlify.app
 
-### AI Provider - CONFIGURED
-- **LLM Provider**: Google Gemini (gemini-2.0-flash)
-- **Embedding Provider**: Google Gemini (text-embedding-004)
-- **Status**: Fully integrated and tested locally
+---
+
+## Deployment Options
+
+### Option A: Current Split Deployment (Already Live)
+
+**Architecture:**
+```
+[Browser] --> [Netlify CDN] --> [React Frontend]
+                                     |
+                                     v (API calls)
+                              [Railway Backend]
+                                     |
+                                     v
+                              [PostgreSQL DB]
+```
+
+**Pros:** CDN-cached frontend, independent scaling
+**Cons:** Two services to manage
+
+### Option B: Unified Container (Single URL)
+
+Deploy frontend + backend as one container using the root Dockerfile.
+
+**To Switch:**
+1. In Railway dashboard, change "Root Directory" from `backend` to `/`
+2. Redeploy - Railway will use the unified Dockerfile
+3. Single URL serves both API and frontend
+
+### Option C: Self-Hosted Docker
+
+```bash
+git clone https://github.com/YOUR_USERNAME/VendorAuditAI.git
+cd VendorAuditAI
+cp .env.example .env
+# Edit .env with your API keys
+docker-compose up -d
+# Access at http://localhost:8000
+```
 
 ---
 
@@ -116,30 +148,26 @@ netlify deploy --prod --dir=dist
 
 ---
 
-## Railway Project Token
-
-For CLI deployments, use:
-```
-RAILWAY_TOKEN=6df8f143-0958-417b-8f05-737939af2775
-```
-
-## Useful Commands
+## Useful CLI Commands
 
 ```bash
+# Link to project (one-time setup)
+railway link
+
 # Check deployment status
-RAILWAY_TOKEN="6df8f143-0958-417b-8f05-737939af2775" railway status
+railway status
 
 # View build logs
-RAILWAY_TOKEN="6df8f143-0958-417b-8f05-737939af2775" railway logs --build --service VendorAuditAI
+railway logs --build
 
 # View runtime logs
-RAILWAY_TOKEN="6df8f143-0958-417b-8f05-737939af2775" railway logs --service VendorAuditAI
+railway logs
 
 # Set environment variables
-RAILWAY_TOKEN="6df8f143-0958-417b-8f05-737939af2775" railway variables --service VendorAuditAI --set "KEY=value"
+railway variables --set "KEY=value"
 
 # Deploy
-RAILWAY_TOKEN="6df8f143-0958-417b-8f05-737939af2775" railway up --service VendorAuditAI --detach
+railway up --detach
 ```
 
 ---
