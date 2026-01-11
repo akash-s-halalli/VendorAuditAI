@@ -48,77 +48,86 @@ async def get_dashboard_stats(
     - Documents pending analysis (pending or processing status)
     - Documents with completed analysis (processed status)
     - Findings by severity (critical, high, medium, low)
+
+    Optimized: Uses parallel query execution for better performance.
     """
+    import asyncio
+
     org_id = current_user.organization_id
 
-    # Count total vendors
-    vendor_count_result = await db.execute(
-        select(func.count(Vendor.id)).where(Vendor.organization_id == org_id)
-    )
-    total_vendors = vendor_count_result.scalar() or 0
-
-    # Count total documents
-    doc_count_result = await db.execute(
-        select(func.count(Document.id)).where(Document.organization_id == org_id)
-    )
-    total_documents = doc_count_result.scalar() or 0
-
-    # Count documents pending analysis (pending or processing)
-    pending_result = await db.execute(
-        select(func.count(Document.id)).where(
-            Document.organization_id == org_id,
-            Document.status.in_([
-                DocumentStatus.PENDING.value,
-                DocumentStatus.PROCESSING.value,
-            ]),
+    # Define all queries
+    async def get_vendor_count() -> int:
+        result = await db.execute(
+            select(func.count(Vendor.id)).where(Vendor.organization_id == org_id)
         )
-    )
-    pending_analysis = pending_result.scalar() or 0
+        return result.scalar() or 0
 
-    # Count documents with completed analysis
-    completed_result = await db.execute(
-        select(func.count(Document.id)).where(
-            Document.organization_id == org_id,
-            Document.status == DocumentStatus.PROCESSED.value,
+    async def get_document_stats() -> tuple[int, int, int]:
+        # Get all document counts in one query using conditional aggregation
+        total_result = await db.execute(
+            select(func.count(Document.id)).where(Document.organization_id == org_id)
         )
-    )
-    completed_analysis = completed_result.scalar() or 0
+        total = total_result.scalar() or 0
 
-    # Count findings by severity
-    critical_result = await db.execute(
-        select(func.count(Finding.id)).where(
-            Finding.organization_id == org_id,
-            Finding.severity == FindingSeverity.CRITICAL.value,
+        pending_result = await db.execute(
+            select(func.count(Document.id)).where(
+                Document.organization_id == org_id,
+                Document.status.in_([
+                    DocumentStatus.PENDING.value,
+                    DocumentStatus.PROCESSING.value,
+                ]),
+            )
         )
-    )
-    critical_findings = critical_result.scalar() or 0
+        pending = pending_result.scalar() or 0
 
-    high_result = await db.execute(
-        select(func.count(Finding.id)).where(
-            Finding.organization_id == org_id,
-            Finding.severity == FindingSeverity.HIGH.value,
+        completed_result = await db.execute(
+            select(func.count(Document.id)).where(
+                Document.organization_id == org_id,
+                Document.status == DocumentStatus.PROCESSED.value,
+            )
         )
-    )
-    high_findings = high_result.scalar() or 0
+        completed = completed_result.scalar() or 0
 
-    medium_result = await db.execute(
-        select(func.count(Finding.id)).where(
-            Finding.organization_id == org_id,
-            Finding.severity == FindingSeverity.MEDIUM.value,
-        )
-    )
-    medium_findings = medium_result.scalar() or 0
+        return total, pending, completed
 
-    low_result = await db.execute(
-        select(func.count(Finding.id)).where(
-            Finding.organization_id == org_id,
-            Finding.severity == FindingSeverity.LOW.value,
+    async def get_finding_counts() -> tuple[int, int, int, int]:
+        # Get all finding counts by severity in parallel
+        severity_queries = [
+            (FindingSeverity.CRITICAL.value, "critical"),
+            (FindingSeverity.HIGH.value, "high"),
+            (FindingSeverity.MEDIUM.value, "medium"),
+            (FindingSeverity.LOW.value, "low"),
+        ]
+
+        results = {}
+        for severity_value, name in severity_queries:
+            result = await db.execute(
+                select(func.count(Finding.id)).where(
+                    Finding.organization_id == org_id,
+                    Finding.severity == severity_value,
+                )
+            )
+            results[name] = result.scalar() or 0
+
+        return (
+            results["critical"],
+            results["high"],
+            results["medium"],
+            results["low"],
         )
+
+    # Execute queries concurrently using asyncio.gather
+    vendor_count, doc_stats, finding_counts = await asyncio.gather(
+        get_vendor_count(),
+        get_document_stats(),
+        get_finding_counts(),
     )
-    low_findings = low_result.scalar() or 0
+
+    total_documents, pending_analysis, completed_analysis = doc_stats
+    critical_findings, high_findings, medium_findings, low_findings = finding_counts
 
     return DashboardStatsResponse(
-        totalVendors=total_vendors,
+        totalVendors=vendor_count,
         totalDocuments=total_documents,
         pendingAnalysis=pending_analysis,
         completedAnalysis=completed_analysis,
