@@ -2,21 +2,25 @@
 
 # VendorAuditAI
 
+## Version 1.0.0 - Enterprise Security Release
+
 ### Enterprise AI Platform for Third-Party Risk Management
 
 <br/>
 
+[![Version](https://img.shields.io/badge/VERSION-1.0.0-blue?style=for-the-badge)](CHANGELOG.md)
+&nbsp;&nbsp;
 [![Live Demo](https://img.shields.io/badge/DEMO-LIVE-success?style=for-the-badge&logo=vercel)](https://vendor-audit-ai.netlify.app)
 &nbsp;&nbsp;
 [![API Status](https://img.shields.io/badge/API-OPERATIONAL-success?style=for-the-badge&logo=fastapi)](https://vendorauditai-production.up.railway.app/health)
 &nbsp;&nbsp;
-[![Tests](https://img.shields.io/badge/TESTS-70_PASSING-success?style=for-the-badge&logo=pytest)](/)
+[![Tests](https://img.shields.io/badge/TESTS-123_PASSING-success?style=for-the-badge&logo=pytest)](/)
 
 <br/>
 
 **Automate vendor security assessments from 6-8 hours to under 15 minutes**
 
-[View Demo](https://vendor-audit-ai.netlify.app) &nbsp;|&nbsp; [API Docs](https://vendorauditai-production.up.railway.app/docs) &nbsp;|&nbsp; [Contact Sales](mailto:contact@vendorauditai.com)
+[View Demo](https://vendor-audit-ai.netlify.app) &nbsp;|&nbsp; [API Docs](https://vendorauditai-production.up.railway.app/docs) &nbsp;|&nbsp; [Changelog](CHANGELOG.md) &nbsp;|&nbsp; [Contact Sales](mailto:contact@vendorauditai.com)
 
 <br/>
 
@@ -197,7 +201,7 @@ Docker &nbsp;|&nbsp; Railway &nbsp;|&nbsp; Netlify &nbsp;|&nbsp; GitHub Actions
 
 **Security**
 
-JWT + OAuth2 &nbsp;|&nbsp; RBAC &nbsp;|&nbsp; AES-256 &nbsp;|&nbsp; TLS 1.3
+SSO/SAML 2.0 &nbsp;|&nbsp; MFA (TOTP) &nbsp;|&nbsp; JWT + OAuth2 &nbsp;|&nbsp; RBAC &nbsp;|&nbsp; Audit Logging &nbsp;|&nbsp; Rate Limiting &nbsp;|&nbsp; AES-256 &nbsp;|&nbsp; TLS 1.3
 
 </div>
 
@@ -263,13 +267,15 @@ cd ../frontend && npm install && npm run dev
 
 | Category | Endpoints |
 |:---------|:----------|
-| **Auth** | `POST /auth/register` · `POST /auth/login` |
+| **Auth** | `POST /auth/register` · `POST /auth/login` · `POST /auth/mfa/enable` · `POST /auth/mfa/verify` |
+| **SSO** | `GET /sso/metadata/{org}` · `GET /sso/login/{org}` · `POST /sso/acs/{org}` · `POST /sso/configure` |
 | **Vendors** | `GET /vendors` · `POST /vendors` |
 | **Documents** | `GET /documents` · `POST /documents/upload` |
 | **Analysis** | `POST /analysis/run` · `GET /findings` · `POST /query` |
 | **Frameworks** | `GET /frameworks` · `GET /frameworks/search` |
 | **Remediation** | `GET /remediation/tasks` · `POST /remediation/tasks` · `POST /remediation/tasks/{id}/transition` |
 | **Monitoring** | `GET /monitoring/schedules` · `GET /monitoring/alerts` · `POST /monitoring/channels` |
+| **Audit** | `GET /audit/logs` · `GET /audit/logs/export` |
 
 <br/>
 
@@ -289,7 +295,17 @@ cd ../frontend && npm install && npm run dev
 
 <br/>
 
-### Completed
+### v1.0.0 - Enterprise Security Release (January 2026)
+
+- [x] **SSO/SAML 2.0** - Azure AD, Okta, Google, OneLogin
+- [x] **Multi-Factor Authentication** - TOTP with backup codes
+- [x] **System-Wide Audit Logging** - SOC 2 compliant
+- [x] **API Rate Limiting** - Brute force protection
+- [x] Dashboard performance optimization (3x faster)
+
+<br/>
+
+### v0.9.0 - AI & Compliance Release
 
 - [x] Document analysis engine
 - [x] Multi-framework compliance mapping (9 frameworks)
@@ -306,7 +322,10 @@ cd ../frontend && npm install && npm run dev
 
 ### Coming Soon
 
-- [ ] SSO/SAML integration
+- [ ] Vendor Risk Scoring Algorithm
+- [ ] Advanced Analytics Dashboard
+- [ ] Excel Export (XLSX)
+- [ ] Jira Integration
 - [ ] Custom framework builder
 - [ ] GraphQL API
 - [ ] Mobile application
