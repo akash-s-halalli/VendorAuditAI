@@ -27,9 +27,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
 
     # Startup: Initialize resources
-    if settings.is_development:
-        # Auto-create tables in development (use Alembic in production)
-        await init_db()
+    # Always init_db to create tables if they don't exist
+    # TODO: Replace with Alembic migrations for proper production schema management
+    await init_db()
 
     yield
 
