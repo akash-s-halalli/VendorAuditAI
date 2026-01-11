@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// For unified deployment (frontend served from backend), use empty string for same-origin requests
+// For split deployment, set VITE_API_URL to backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
 /**
  * Axios client instance with interceptors for auth and error handling.
