@@ -9,7 +9,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.query import ConversationThread, QueryHistory, QueryStatus
-from app.services.llm import get_claude_service
+from app.services.llm import get_llm_service
 from app.services.search import SearchResult, get_search_service
 
 
@@ -36,7 +36,7 @@ class QueryService:
     def __init__(self):
         """Initialize the query service."""
         self.search_service = get_search_service()
-        self.llm_service = get_claude_service()
+        self.llm_service = get_llm_service()
 
     async def ask_question(
         self,

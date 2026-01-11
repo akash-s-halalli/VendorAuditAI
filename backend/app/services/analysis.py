@@ -21,11 +21,10 @@ from app.prompts.compliance_analysis import (
     build_compliance_analysis_prompt,
 )
 from app.services.compliance import (
-    get_framework_by_id,
     get_framework_controls,
     get_framework_summary,
 )
-from app.services.llm import SUPPORTED_FRAMEWORKS, get_claude_service
+from app.services.llm import SUPPORTED_FRAMEWORKS, get_llm_service
 
 
 async def get_analysis_run_by_id(
@@ -337,10 +336,10 @@ async def run_analysis(
     if not document.is_processed:
         raise ValueError("Document must be processed before analysis")
 
-    # Get Claude service
-    claude_service = get_claude_service()
-    if not claude_service.is_configured:
-        raise ValueError("Anthropic API key not configured")
+    # Get LLM service (supports Anthropic Claude and Google Gemini)
+    llm_service = get_llm_service()
+    if not llm_service.is_configured:
+        raise ValueError("LLM service not configured - check API keys")
 
     # Load framework controls for validation and context
     framework_summary = get_framework_summary(framework)
@@ -366,7 +365,7 @@ async def run_analysis(
         organization_id=org_id,
         document_id=document_id,
         framework=framework,
-        model_used=claude_service.model,
+        model_used=llm_service.model,
         status="running",
         started_at=datetime.now(UTC),
     )
@@ -412,7 +411,7 @@ async def run_analysis(
         )
 
         # Run analysis with enhanced prompt
-        result = await claude_service.analyze_document_with_prompt(
+        result = await llm_service.analyze_document_with_prompt(
             prompt=analysis_prompt,
             framework=framework,
             document_type=document.document_type,
