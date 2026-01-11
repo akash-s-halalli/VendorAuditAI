@@ -5,12 +5,18 @@
 ### Frontend (Netlify) - DEPLOYED
 - **URL**: https://vendor-audit-ai.netlify.app
 - **Status**: Live and working
-- **Note**: Currently pointing to localhost backend (needs update after backend is live)
+- **API URL**: Configured to connect to Railway backend
 
-### Backend (Railway) - IN PROGRESS
+### Backend (Railway) - CONFIGURING
 - **Project**: loving-appreciation
 - **Service**: VendorAuditAI
-- **Status**: Build succeeds, healthcheck failing (needs environment variables and database)
+- **Expected URL**: https://vendorauditai-production.up.railway.app
+- **Status**: Build succeeds, awaiting PostgreSQL database setup
+
+### AI Provider - CONFIGURED
+- **LLM Provider**: Google Gemini (gemini-2.0-flash)
+- **Embedding Provider**: Google Gemini (text-embedding-004)
+- **Status**: Fully integrated and tested locally
 
 ---
 
@@ -20,16 +26,23 @@
 - Created `frontend/netlify.toml` for SPA routing
 - Deployed to Netlify successfully
 - Site live at: https://vendor-audit-ai.netlify.app
+- Created `frontend/.env.production` with Railway backend URL
 
-### 2. Backend Deployment (Partial)
+### 2. Backend Code (Complete)
 - Created `backend/Dockerfile` for Python 3.12
 - Created `backend/requirements.txt` with all dependencies
 - Created `backend/railway.toml` for Railway configuration
+- Added Google Gemini as LLM/embedding provider option
+- Fixed syntax errors and refactored LLM services with ABC pattern
+- All 70 backend tests passing
+
+### 3. Backend Deployment (Partial)
 - Set environment variables on Railway:
   - `JWT_SECRET_KEY` (generated)
   - `CORS_ORIGINS` (includes Netlify domain)
   - `APP_ENV=production`
   - `DEBUG=false`
+- **PENDING**: PostgreSQL database needs to be added
 
 ---
 
@@ -172,7 +185,11 @@ Note: These are for local SQLite database only. Production will need new registr
 | CORS_ORIGINS | Yes | JSON array of allowed origins |
 | APP_ENV | No | "production" or "development" |
 | DEBUG | No | "true" or "false" |
-| ANTHROPIC_API_KEY | No | For AI query features |
+| LLM_PROVIDER | No | "anthropic" or "gemini" (default: anthropic) |
+| EMBEDDING_PROVIDER | No | "openai" or "gemini" (default: openai) |
+| GOOGLE_API_KEY | No | For Gemini AI features |
+| ANTHROPIC_API_KEY | No | For Claude AI features |
+| OPENAI_API_KEY | No | For OpenAI embeddings |
 
 ### Frontend (Netlify)
 
