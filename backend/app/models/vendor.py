@@ -11,6 +11,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.document import Document
+    from app.models.monitoring import MonitoringSchedule
     from app.models.organization import Organization
     from app.models.remediation import RemediationTask
 
@@ -86,6 +87,10 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     )
     remediation_tasks: Mapped[list["RemediationTask"]] = relationship(
         "RemediationTask",
+        back_populates="vendor",
+    )
+    monitoring_schedules: Mapped[list["MonitoringSchedule"]] = relationship(
+        "MonitoringSchedule",
         back_populates="vendor",
     )
 

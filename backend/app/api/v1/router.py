@@ -9,6 +9,7 @@ from app.api.v1.endpoints import (
     dashboard,
     documents,
     export,
+    monitoring,
     query,
     remediation,
     search,
@@ -51,6 +52,11 @@ api_router.include_router(
     remediation.router, prefix="/remediation", tags=["Remediation"]
 )
 
+# Include monitoring router
+api_router.include_router(
+    monitoring.router, prefix="/monitoring", tags=["Monitoring"]
+)
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -70,5 +76,6 @@ async def api_status() -> dict:
             "dashboard": "/api/v1/dashboard",
             "export": "/api/v1/export",
             "remediation": "/api/v1/remediation",
+            "monitoring": "/api/v1/monitoring",
         },
     }

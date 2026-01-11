@@ -4,6 +4,18 @@ from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 from app.models.chunk import DocumentChunk
 from app.models.document import Document, DocumentStatus, DocumentType, ProcessingStage
 from app.models.finding import AnalysisRun, Finding, FindingSeverity, FindingStatus
+from app.models.monitoring import (
+    Alert,
+    AlertRule,
+    AlertSeverity,
+    AlertStatus,
+    MonitoringSchedule,
+    NotificationChannel,
+    NotificationChannelType,
+    ScheduledRun,
+    ScheduleFrequency,
+    ScheduleStatus,
+)
 from app.models.organization import Organization
 from app.models.query import ConversationThread, QueryHistory, QueryStatus
 from app.models.remediation import (
@@ -19,6 +31,10 @@ from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus, VendorTier
 
 __all__ = [
+    "Alert",
+    "AlertRule",
+    "AlertSeverity",
+    "AlertStatus",
     "AnalysisRun",
     "Base",
     "ConversationThread",
@@ -29,6 +45,9 @@ __all__ = [
     "Finding",
     "FindingSeverity",
     "FindingStatus",
+    "MonitoringSchedule",
+    "NotificationChannel",
+    "NotificationChannelType",
     "Organization",
     "ProcessingStage",
     "QueryHistory",
@@ -38,6 +57,9 @@ __all__ = [
     "RemediationPriority",
     "RemediationStatus",
     "RemediationTask",
+    "ScheduledRun",
+    "ScheduleFrequency",
+    "ScheduleStatus",
     "SLAPolicy",
     "SoftDeleteMixin",
     "TimestampMixin",

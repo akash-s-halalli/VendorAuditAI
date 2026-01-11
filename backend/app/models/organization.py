@@ -10,6 +10,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
+    from app.models.monitoring import Alert, AlertRule, MonitoringSchedule, NotificationChannel
     from app.models.query import ConversationThread, QueryHistory
     from app.models.remediation import RemediationTask, SLAPolicy
     from app.models.user import User
@@ -73,6 +74,26 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     sla_policies: Mapped[list["SLAPolicy"]] = relationship(
         "SLAPolicy",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    monitoring_schedules: Mapped[list["MonitoringSchedule"]] = relationship(
+        "MonitoringSchedule",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    alert_rules: Mapped[list["AlertRule"]] = relationship(
+        "AlertRule",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    alerts: Mapped[list["Alert"]] = relationship(
+        "Alert",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    notification_channels: Mapped[list["NotificationChannel"]] = relationship(
+        "NotificationChannel",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
