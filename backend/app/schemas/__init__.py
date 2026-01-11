@@ -1,6 +1,11 @@
 """Pydantic schemas package."""
 
 from app.schemas.auth import (
+    LoginResponse,
+    MFAEnableResponse,
+    MFAStatusResponse,
+    MFAValidateRequest,
+    MFAVerifyRequest,
     OrganizationBase,
     OrganizationResponse,
     PasswordChange,
@@ -83,6 +88,11 @@ __all__ = [
     "OrganizationBase",
     "OrganizationResponse",
     "RegisterResponse",
+    "MFAEnableResponse",
+    "MFAVerifyRequest",
+    "MFAValidateRequest",
+    "MFAStatusResponse",
+    "LoginResponse",
     # Vendor
     "VendorBase",
     "VendorCreate",

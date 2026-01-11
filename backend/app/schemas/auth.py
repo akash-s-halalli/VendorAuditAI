@@ -106,3 +106,42 @@ class RegisterResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+
+# MFA Schemas
+class MFAEnableResponse(BaseModel):
+    """Schema for MFA enable response with secret and provisioning URI."""
+
+    secret: str
+    provisioning_uri: str
+    backup_codes: list[str]
+
+
+class MFAVerifyRequest(BaseModel):
+    """Schema for verifying TOTP code during MFA setup."""
+
+    code: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
+
+
+class MFAValidateRequest(BaseModel):
+    """Schema for validating TOTP code during login."""
+
+    code: str = Field(..., min_length=6, max_length=6, pattern=r"^\d{6}$")
+
+
+class MFAStatusResponse(BaseModel):
+    """Schema for MFA status response."""
+
+    mfa_enabled: bool
+    message: str
+
+
+class LoginResponse(BaseModel):
+    """Schema for login response that may require MFA."""
+
+    access_token: str | None = None
+    refresh_token: str | None = None
+    token_type: str = "bearer"
+    expires_in: int | None = None
+    mfa_required: bool = False
+    mfa_token: str | None = None  # Temporary token for MFA validation

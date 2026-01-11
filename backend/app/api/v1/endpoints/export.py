@@ -2,12 +2,13 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
 from app.db import get_db
+from app.middleware.rate_limit import limiter
 from app.models import User
 from app.services.export import (
     CSVExporter,
@@ -19,7 +20,9 @@ router = APIRouter(tags=["Export"])
 
 
 @router.get("/findings/csv")
+@limiter.limit("5/minute")
 async def export_findings_csv(
+    request: Request,
     current_user: Annotated[User, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
     document_id: str | None = Query(None, description="Filter by document ID"),
@@ -70,7 +73,9 @@ async def export_findings_csv(
 
 
 @router.get("/findings/pdf")
+@limiter.limit("5/minute")
 async def export_findings_pdf(
+    request: Request,
     current_user: Annotated[User, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
     document_id: str | None = Query(None, description="Filter by document ID"),

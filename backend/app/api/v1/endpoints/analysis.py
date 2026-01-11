@@ -2,11 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
 from app.db import get_db
+from app.middleware.rate_limit import limiter
 from app.models import User
 from app.schemas.finding import (
     AnalysisRequest,
@@ -23,9 +24,11 @@ router = APIRouter(tags=["Analysis"])
 
 
 @router.post("/documents/{document_id}/analyze", response_model=AnalysisRunResponse)
+@limiter.limit("10/hour")
 async def analyze_document(
+    request: Request,
     document_id: str,
-    request: AnalysisRequest,
+    analysis_request: AnalysisRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> AnalysisRunResponse:
@@ -40,8 +43,8 @@ async def analyze_document(
             db=db,
             document_id=document_id,
             org_id=current_user.organization_id,
-            framework=request.framework,
-            chunk_limit=request.chunk_limit,
+            framework=analysis_request.framework,
+            chunk_limit=analysis_request.chunk_limit,
         )
         await db.commit()
         return AnalysisRunResponse.model_validate(analysis_run)

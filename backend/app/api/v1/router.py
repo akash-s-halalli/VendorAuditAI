@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     analysis,
+    audit,
     auth,
     compliance,
     dashboard,
@@ -57,6 +58,9 @@ api_router.include_router(
     monitoring.router, prefix="/monitoring", tags=["Monitoring"]
 )
 
+# Include audit router
+api_router.include_router(audit.router, prefix="/audit", tags=["Audit"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -77,5 +81,6 @@ async def api_status() -> dict:
             "export": "/api/v1/export",
             "remediation": "/api/v1/remediation",
             "monitoring": "/api/v1/monitoring",
+            "audit": "/api/v1/audit",
         },
     }

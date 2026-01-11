@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
+    from app.models.audit_log import AuditLog
     from app.models.organization import Organization
     from app.models.query import ConversationThread, QueryHistory
     from app.models.remediation import RemediationTask
@@ -74,6 +75,10 @@ class User(Base, UUIDMixin, TimestampMixin):
         "RemediationTask",
         foreign_keys="RemediationTask.assignee_id",
         back_populates="assignee",
+    )
+    audit_logs: Mapped[list["AuditLog"]] = relationship(
+        "AuditLog",
+        back_populates="user",
     )
 
     def __repr__(self) -> str:

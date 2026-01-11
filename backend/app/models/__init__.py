@@ -1,5 +1,6 @@
 """Database models package."""
 
+from app.models.audit_log import AuditAction, AuditLog
 from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 from app.models.chunk import DocumentChunk
 from app.models.document import Document, DocumentStatus, DocumentType, ProcessingStage
@@ -36,6 +37,8 @@ __all__ = [
     "AlertSeverity",
     "AlertStatus",
     "AnalysisRun",
+    "AuditAction",
+    "AuditLog",
     "Base",
     "ConversationThread",
     "Document",

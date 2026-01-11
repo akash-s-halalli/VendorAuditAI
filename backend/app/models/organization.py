@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
+    from app.models.audit_log import AuditLog
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
     from app.models.monitoring import Alert, AlertRule, MonitoringSchedule, NotificationChannel
@@ -94,6 +95,11 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     notification_channels: Mapped[list["NotificationChannel"]] = relationship(
         "NotificationChannel",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    audit_logs: Mapped[list["AuditLog"]] = relationship(
+        "AuditLog",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
