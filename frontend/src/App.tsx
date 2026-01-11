@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout, AuthLayout } from '@/components/layout';
-import { Landing, Login, Register, Dashboard, Vendors, Documents, Query, Analysis } from '@/pages';
+import { Landing, Login, Register, Dashboard, Vendors, Documents, Query, Analysis, Remediation, Monitoring } from '@/pages';
 import { useAuthStore } from '@/stores/authStore';
 
 /**
@@ -58,6 +58,8 @@ function App() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/query" element={<Query />} />
           <Route path="/analysis" element={<Analysis />} />
+          <Route path="/remediation" element={<Remediation />} />
+          <Route path="/monitoring" element={<Monitoring />} />
           <Route path="/search" element={<Dashboard />} />
           <Route path="/settings" element={<Dashboard />} />
         </Route>
