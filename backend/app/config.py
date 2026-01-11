@@ -78,6 +78,10 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 100
     rate_limit_window_seconds: int = 60
 
+    # SSO/SAML 2.0
+    sso_sp_entity_id: str = "https://vendorauditai.com/sso"
+    sso_callback_url: str = "https://vendorauditai.com/api/v1/sso/acs"
+
     # Celery (optional - for async task processing)
     celery_broker_url: str | None = None
     celery_result_backend: str | None = None

@@ -14,6 +14,7 @@ from app.api.v1.endpoints import (
     query,
     remediation,
     search,
+    sso,
     vendors,
 )
 
@@ -61,6 +62,9 @@ api_router.include_router(
 # Include audit router
 api_router.include_router(audit.router, prefix="/audit", tags=["Audit"])
 
+# Include SSO router
+api_router.include_router(sso.router, prefix="/sso", tags=["SSO"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -82,5 +86,6 @@ async def api_status() -> dict:
             "remediation": "/api/v1/remediation",
             "monitoring": "/api/v1/monitoring",
             "audit": "/api/v1/audit",
+            "sso": "/api/v1/sso",
         },
     }

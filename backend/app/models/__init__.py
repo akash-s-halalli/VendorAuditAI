@@ -28,6 +28,7 @@ from app.models.remediation import (
     SLAPolicy,
     VALID_TRANSITIONS,
 )
+from app.models.sso_config import SSOConfig, SSOProvider
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus, VendorTier
 
@@ -65,6 +66,8 @@ __all__ = [
     "ScheduleStatus",
     "SLAPolicy",
     "SoftDeleteMixin",
+    "SSOConfig",
+    "SSOProvider",
     "TimestampMixin",
     "UUIDMixin",
     "User",

@@ -28,6 +28,7 @@ class AuditAction(str, Enum):
     BULK_OPERATION = "BULK_OPERATION"
     STATUS_CHANGE = "STATUS_CHANGE"
     PERMISSION_CHANGE = "PERMISSION_CHANGE"
+    CONFIG_CHANGE = "CONFIG_CHANGE"
 
 
 class AuditLog(Base, UUIDMixin, TimestampMixin):
