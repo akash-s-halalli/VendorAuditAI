@@ -24,6 +24,8 @@ class DocumentType(str, Enum):
     SIG_CORE = "sig_core"
     HECVAT = "hecvat"
     ISO27001 = "iso27001"
+    CAIQ = "caiq"
+    PENTEST = "pentest"
     OTHER = "other"
 
 

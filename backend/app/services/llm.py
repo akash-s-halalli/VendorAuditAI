@@ -27,6 +27,7 @@ FRAMEWORK_DESCRIPTIONS = {
     "cis_controls": "CIS Critical Security Controls v8",
     "hipaa": "HIPAA Security Rule",
     "pci_dss": "PCI DSS v4.0 Requirements",
+    "caiq": "CSA Cloud Controls Matrix (CAIQ) v4.0",
 }
 
 # Supported frameworks

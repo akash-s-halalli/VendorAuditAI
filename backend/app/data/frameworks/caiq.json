@@ -1,0 +1,1140 @@
+{
+  "id": "caiq",
+  "name": "CSA Cloud Controls Matrix (CAIQ)",
+  "version": "4.0",
+  "description": "The Consensus Assessments Initiative Questionnaire (CAIQ) v4 provides a set of Yes/No questions for cloud consumers and auditors to assess cloud providers across 17 control domains aligned with the Cloud Controls Matrix (CCM).",
+  "organization": "Cloud Security Alliance (CSA)",
+  "categories": [
+    {
+      "id": "A&A",
+      "name": "Audit & Assurance",
+      "description": "Controls related to audit planning, independent assessments, and compliance verification.",
+      "controls": [
+        {
+          "id": "A&A-01",
+          "name": "Audit and Assurance Policy and Procedures",
+          "description": "Are policies and procedures for planning, conducting, and reporting audit activities established and maintained?",
+          "requirements": [
+            {
+              "id": "A&A-01.1",
+              "description": "Establish and maintain audit policies defining scope, frequency, and responsibilities.",
+              "guidance": "Review audit charter, policies, and procedures. Verify annual review cycle."
+            },
+            {
+              "id": "A&A-01.2",
+              "description": "Define audit methodology aligned with industry standards (e.g., ISO 19011).",
+              "guidance": "Examine audit methodology documentation and auditor qualifications."
+            }
+          ]
+        },
+        {
+          "id": "A&A-02",
+          "name": "Independent Assessments",
+          "description": "Are independent reviews and assessments performed at least annually to ensure compliance with security policies?",
+          "requirements": [
+            {
+              "id": "A&A-02.1",
+              "description": "Conduct independent third-party assessments at least annually.",
+              "guidance": "Review SOC 2 reports, ISO certifications, or penetration test reports."
+            },
+            {
+              "id": "A&A-02.2",
+              "description": "Address findings from independent assessments through remediation plans.",
+              "guidance": "Examine remediation tracking and closure evidence."
+            }
+          ]
+        },
+        {
+          "id": "A&A-03",
+          "name": "Risk-Based Planning",
+          "description": "Is audit planning based on risk assessment results and organizational priorities?",
+          "requirements": [
+            {
+              "id": "A&A-03.1",
+              "description": "Develop audit plans based on risk assessment outputs.",
+              "guidance": "Review risk-based audit planning documentation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "AIS",
+      "name": "Application & Interface Security",
+      "description": "Controls for securing applications and APIs throughout the development lifecycle.",
+      "controls": [
+        {
+          "id": "AIS-01",
+          "name": "Application Security Policy",
+          "description": "Are policies and procedures established for application security throughout the development lifecycle?",
+          "requirements": [
+            {
+              "id": "AIS-01.1",
+              "description": "Establish secure software development lifecycle (SSDLC) policies.",
+              "guidance": "Review SDLC documentation and security integration points."
+            },
+            {
+              "id": "AIS-01.2",
+              "description": "Define security requirements for all application development.",
+              "guidance": "Examine security requirements templates and checklists."
+            }
+          ]
+        },
+        {
+          "id": "AIS-02",
+          "name": "Application Security Testing",
+          "description": "Is security testing performed during development and before deployment?",
+          "requirements": [
+            {
+              "id": "AIS-02.1",
+              "description": "Perform static application security testing (SAST) during development.",
+              "guidance": "Review SAST tool configurations and scan results."
+            },
+            {
+              "id": "AIS-02.2",
+              "description": "Perform dynamic application security testing (DAST) before deployment.",
+              "guidance": "Examine DAST reports and remediation tracking."
+            },
+            {
+              "id": "AIS-02.3",
+              "description": "Conduct penetration testing on applications at least annually.",
+              "guidance": "Review penetration test reports and findings remediation."
+            }
+          ]
+        },
+        {
+          "id": "AIS-03",
+          "name": "API Security",
+          "description": "Are APIs designed and managed with security controls including authentication and rate limiting?",
+          "requirements": [
+            {
+              "id": "AIS-03.1",
+              "description": "Implement authentication and authorization for all API endpoints.",
+              "guidance": "Review API gateway configurations and authentication mechanisms."
+            },
+            {
+              "id": "AIS-03.2",
+              "description": "Implement rate limiting and throttling to prevent abuse.",
+              "guidance": "Examine rate limiting policies and monitoring."
+            }
+          ]
+        },
+        {
+          "id": "AIS-04",
+          "name": "Secure Development",
+          "description": "Is secure coding training provided to developers and are secure coding standards enforced?",
+          "requirements": [
+            {
+              "id": "AIS-04.1",
+              "description": "Provide secure coding training to all developers annually.",
+              "guidance": "Review training records and completion rates."
+            },
+            {
+              "id": "AIS-04.2",
+              "description": "Enforce secure coding standards through code review processes.",
+              "guidance": "Examine code review checklists and enforcement mechanisms."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BCR",
+      "name": "Business Continuity Management & Operational Resilience",
+      "description": "Controls for ensuring business continuity and operational resilience during disruptions.",
+      "controls": [
+        {
+          "id": "BCR-01",
+          "name": "Business Continuity Policy",
+          "description": "Are business continuity and disaster recovery policies established and maintained?",
+          "requirements": [
+            {
+              "id": "BCR-01.1",
+              "description": "Establish business continuity management policies aligned with ISO 22301.",
+              "guidance": "Review BCM policy documentation and scope."
+            },
+            {
+              "id": "BCR-01.2",
+              "description": "Define roles and responsibilities for business continuity.",
+              "guidance": "Examine organizational structure and RACI matrices."
+            }
+          ]
+        },
+        {
+          "id": "BCR-02",
+          "name": "Business Impact Analysis",
+          "description": "Is a business impact analysis performed to identify critical business processes?",
+          "requirements": [
+            {
+              "id": "BCR-02.1",
+              "description": "Conduct business impact analysis (BIA) at least annually.",
+              "guidance": "Review BIA documentation and critical process identification."
+            },
+            {
+              "id": "BCR-02.2",
+              "description": "Define recovery time objectives (RTO) and recovery point objectives (RPO).",
+              "guidance": "Examine RTO/RPO definitions and justifications."
+            }
+          ]
+        },
+        {
+          "id": "BCR-03",
+          "name": "Disaster Recovery Planning",
+          "description": "Are disaster recovery plans developed, documented, and tested?",
+          "requirements": [
+            {
+              "id": "BCR-03.1",
+              "description": "Develop and maintain disaster recovery plans for critical systems.",
+              "guidance": "Review DR plan documentation and update history."
+            },
+            {
+              "id": "BCR-03.2",
+              "description": "Test disaster recovery plans at least annually.",
+              "guidance": "Examine DR test results and lessons learned."
+            }
+          ]
+        },
+        {
+          "id": "BCR-04",
+          "name": "Backup and Recovery",
+          "description": "Are backup and recovery procedures implemented and tested regularly?",
+          "requirements": [
+            {
+              "id": "BCR-04.1",
+              "description": "Implement automated backup procedures for critical data.",
+              "guidance": "Review backup configurations and schedules."
+            },
+            {
+              "id": "BCR-04.2",
+              "description": "Test backup restoration procedures quarterly.",
+              "guidance": "Examine restoration test results and success rates."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CCC",
+      "name": "Change Control & Configuration Management",
+      "description": "Controls for managing changes and configurations in a controlled manner.",
+      "controls": [
+        {
+          "id": "CCC-01",
+          "name": "Change Management Policy",
+          "description": "Are change management policies and procedures established and followed?",
+          "requirements": [
+            {
+              "id": "CCC-01.1",
+              "description": "Establish change management policies aligned with ITIL practices.",
+              "guidance": "Review change management policy documentation."
+            },
+            {
+              "id": "CCC-01.2",
+              "description": "Define change classification and approval requirements.",
+              "guidance": "Examine change classification matrix and approval workflows."
+            }
+          ]
+        },
+        {
+          "id": "CCC-02",
+          "name": "Change Testing",
+          "description": "Are changes tested in non-production environments before deployment?",
+          "requirements": [
+            {
+              "id": "CCC-02.1",
+              "description": "Test all changes in staging/test environments before production.",
+              "guidance": "Review test environment configurations and deployment gates."
+            },
+            {
+              "id": "CCC-02.2",
+              "description": "Document test results and approval for production deployment.",
+              "guidance": "Examine change records and test evidence."
+            }
+          ]
+        },
+        {
+          "id": "CCC-03",
+          "name": "Configuration Management",
+          "description": "Are system configurations managed and baselined?",
+          "requirements": [
+            {
+              "id": "CCC-03.1",
+              "description": "Establish configuration baselines for all systems.",
+              "guidance": "Review configuration baseline documentation."
+            },
+            {
+              "id": "CCC-03.2",
+              "description": "Monitor for configuration drift and unauthorized changes.",
+              "guidance": "Examine configuration monitoring tools and alerting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CEK",
+      "name": "Cryptography, Encryption & Key Management",
+      "description": "Controls for cryptographic protections and key management.",
+      "controls": [
+        {
+          "id": "CEK-01",
+          "name": "Encryption Policy",
+          "description": "Are encryption policies established for data at rest and in transit?",
+          "requirements": [
+            {
+              "id": "CEK-01.1",
+              "description": "Establish encryption policies requiring strong algorithms (AES-256, RSA-2048+).",
+              "guidance": "Review encryption policy and approved algorithm list."
+            },
+            {
+              "id": "CEK-01.2",
+              "description": "Encrypt all data at rest using approved encryption methods.",
+              "guidance": "Examine encryption configurations for storage systems."
+            },
+            {
+              "id": "CEK-01.3",
+              "description": "Encrypt all data in transit using TLS 1.2 or higher.",
+              "guidance": "Review TLS configurations and certificate management."
+            }
+          ]
+        },
+        {
+          "id": "CEK-02",
+          "name": "Key Management",
+          "description": "Are cryptographic keys managed securely throughout their lifecycle?",
+          "requirements": [
+            {
+              "id": "CEK-02.1",
+              "description": "Implement key management procedures covering generation, storage, rotation, and destruction.",
+              "guidance": "Review key management policy and procedures."
+            },
+            {
+              "id": "CEK-02.2",
+              "description": "Use hardware security modules (HSMs) or equivalent for key protection.",
+              "guidance": "Examine HSM configurations or cloud KMS usage."
+            },
+            {
+              "id": "CEK-02.3",
+              "description": "Rotate encryption keys according to defined schedules.",
+              "guidance": "Review key rotation logs and schedules."
+            }
+          ]
+        },
+        {
+          "id": "CEK-03",
+          "name": "Certificate Management",
+          "description": "Are digital certificates managed properly including expiration monitoring?",
+          "requirements": [
+            {
+              "id": "CEK-03.1",
+              "description": "Monitor certificate expiration and renew before expiry.",
+              "guidance": "Review certificate inventory and monitoring tools."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DCS",
+      "name": "Datacenter Security",
+      "description": "Controls for physical security of data center facilities.",
+      "controls": [
+        {
+          "id": "DCS-01",
+          "name": "Physical Access Control",
+          "description": "Are physical access controls implemented for data center facilities?",
+          "requirements": [
+            {
+              "id": "DCS-01.1",
+              "description": "Implement multi-factor authentication for data center access.",
+              "guidance": "Review physical access control systems and logs."
+            },
+            {
+              "id": "DCS-01.2",
+              "description": "Maintain visitor logs and escort procedures.",
+              "guidance": "Examine visitor management procedures and logs."
+            }
+          ]
+        },
+        {
+          "id": "DCS-02",
+          "name": "Environmental Controls",
+          "description": "Are environmental controls implemented to protect data center equipment?",
+          "requirements": [
+            {
+              "id": "DCS-02.1",
+              "description": "Implement fire detection and suppression systems.",
+              "guidance": "Review fire safety certifications and testing records."
+            },
+            {
+              "id": "DCS-02.2",
+              "description": "Maintain temperature and humidity controls.",
+              "guidance": "Examine environmental monitoring systems and alerts."
+            }
+          ]
+        },
+        {
+          "id": "DCS-03",
+          "name": "Power and Utilities",
+          "description": "Are redundant power and utilities provided for critical systems?",
+          "requirements": [
+            {
+              "id": "DCS-03.1",
+              "description": "Implement uninterruptible power supply (UPS) systems.",
+              "guidance": "Review UPS configurations and testing records."
+            },
+            {
+              "id": "DCS-03.2",
+              "description": "Maintain backup generator capabilities.",
+              "guidance": "Examine generator testing and fuel management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DSP",
+      "name": "Data Security & Privacy Lifecycle Management",
+      "description": "Controls for protecting data throughout its lifecycle and ensuring privacy compliance.",
+      "controls": [
+        {
+          "id": "DSP-01",
+          "name": "Data Classification",
+          "description": "Is data classified according to sensitivity and business impact?",
+          "requirements": [
+            {
+              "id": "DSP-01.1",
+              "description": "Establish data classification scheme (public, internal, confidential, restricted).",
+              "guidance": "Review data classification policy and examples."
+            },
+            {
+              "id": "DSP-01.2",
+              "description": "Label and handle data according to classification.",
+              "guidance": "Examine data labeling mechanisms and handling procedures."
+            }
+          ]
+        },
+        {
+          "id": "DSP-02",
+          "name": "Data Inventory",
+          "description": "Is a data inventory maintained identifying location and ownership?",
+          "requirements": [
+            {
+              "id": "DSP-02.1",
+              "description": "Maintain data inventory including data types, locations, and owners.",
+              "guidance": "Review data inventory documentation and update process."
+            }
+          ]
+        },
+        {
+          "id": "DSP-03",
+          "name": "Data Retention and Disposal",
+          "description": "Are data retention and secure disposal procedures implemented?",
+          "requirements": [
+            {
+              "id": "DSP-03.1",
+              "description": "Define data retention periods based on legal and business requirements.",
+              "guidance": "Review retention schedule and legal basis documentation."
+            },
+            {
+              "id": "DSP-03.2",
+              "description": "Securely dispose of data using approved methods (NIST 800-88).",
+              "guidance": "Examine disposal procedures and certificates of destruction."
+            }
+          ]
+        },
+        {
+          "id": "DSP-04",
+          "name": "Privacy Policy",
+          "description": "Are privacy policies established and communicated to data subjects?",
+          "requirements": [
+            {
+              "id": "DSP-04.1",
+              "description": "Publish privacy notice compliant with applicable regulations (GDPR, CCPA).",
+              "guidance": "Review privacy notice and regulatory compliance mapping."
+            },
+            {
+              "id": "DSP-04.2",
+              "description": "Implement data subject rights procedures (access, deletion, portability).",
+              "guidance": "Examine DSAR handling procedures and response times."
+            }
+          ]
+        },
+        {
+          "id": "DSP-05",
+          "name": "Data Localization",
+          "description": "Is data storage location controlled according to regulatory requirements?",
+          "requirements": [
+            {
+              "id": "DSP-05.1",
+              "description": "Document data storage locations and jurisdictions.",
+              "guidance": "Review data residency documentation and controls."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GRC",
+      "name": "Governance, Risk and Compliance",
+      "description": "Controls for governance, risk management, and compliance oversight.",
+      "controls": [
+        {
+          "id": "GRC-01",
+          "name": "Information Security Policy",
+          "description": "Is an information security policy established, approved, and communicated?",
+          "requirements": [
+            {
+              "id": "GRC-01.1",
+              "description": "Establish information security policy approved by executive management.",
+              "guidance": "Review security policy approval and communication evidence."
+            },
+            {
+              "id": "GRC-01.2",
+              "description": "Review and update security policy at least annually.",
+              "guidance": "Examine policy review history and version control."
+            }
+          ]
+        },
+        {
+          "id": "GRC-02",
+          "name": "Risk Assessment",
+          "description": "Are risk assessments performed regularly to identify and evaluate risks?",
+          "requirements": [
+            {
+              "id": "GRC-02.1",
+              "description": "Conduct risk assessments at least annually using documented methodology.",
+              "guidance": "Review risk assessment reports and methodology."
+            },
+            {
+              "id": "GRC-02.2",
+              "description": "Maintain risk register with treatment plans.",
+              "guidance": "Examine risk register and treatment status."
+            }
+          ]
+        },
+        {
+          "id": "GRC-03",
+          "name": "Regulatory Compliance",
+          "description": "Are applicable regulatory requirements identified and compliance maintained?",
+          "requirements": [
+            {
+              "id": "GRC-03.1",
+              "description": "Identify applicable legal and regulatory requirements.",
+              "guidance": "Review regulatory inventory and compliance mapping."
+            },
+            {
+              "id": "GRC-03.2",
+              "description": "Monitor regulatory changes and update controls accordingly.",
+              "guidance": "Examine regulatory monitoring process and updates."
+            }
+          ]
+        },
+        {
+          "id": "GRC-04",
+          "name": "Third-Party Risk Management",
+          "description": "Are third-party vendors assessed and monitored for security risks?",
+          "requirements": [
+            {
+              "id": "GRC-04.1",
+              "description": "Perform security assessments of third-party vendors before engagement.",
+              "guidance": "Review vendor assessment questionnaires and results."
+            },
+            {
+              "id": "GRC-04.2",
+              "description": "Monitor third-party vendor security posture on ongoing basis.",
+              "guidance": "Examine vendor monitoring procedures and reassessment schedules."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HRS",
+      "name": "Human Resources Security",
+      "description": "Controls for security aspects of human resources management.",
+      "controls": [
+        {
+          "id": "HRS-01",
+          "name": "Background Screening",
+          "description": "Are background checks performed for employees and contractors?",
+          "requirements": [
+            {
+              "id": "HRS-01.1",
+              "description": "Perform background checks on all employees before hire.",
+              "guidance": "Review background check policy and completion records."
+            },
+            {
+              "id": "HRS-01.2",
+              "description": "Extend background check requirements to contractors with system access.",
+              "guidance": "Examine contractor screening procedures."
+            }
+          ]
+        },
+        {
+          "id": "HRS-02",
+          "name": "Security Awareness Training",
+          "description": "Is security awareness training provided to all personnel?",
+          "requirements": [
+            {
+              "id": "HRS-02.1",
+              "description": "Provide security awareness training during onboarding.",
+              "guidance": "Review onboarding training materials and completion tracking."
+            },
+            {
+              "id": "HRS-02.2",
+              "description": "Conduct annual security awareness refresher training.",
+              "guidance": "Examine annual training completion rates and content."
+            },
+            {
+              "id": "HRS-02.3",
+              "description": "Include phishing awareness and social engineering training.",
+              "guidance": "Review phishing simulation results and training."
+            }
+          ]
+        },
+        {
+          "id": "HRS-03",
+          "name": "Termination Procedures",
+          "description": "Are access termination procedures implemented for departing personnel?",
+          "requirements": [
+            {
+              "id": "HRS-03.1",
+              "description": "Revoke access within 24 hours of termination.",
+              "guidance": "Review termination checklists and access removal logs."
+            },
+            {
+              "id": "HRS-03.2",
+              "description": "Collect company assets including badges and devices.",
+              "guidance": "Examine asset return procedures and tracking."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IAM",
+      "name": "Identity & Access Management",
+      "description": "Controls for managing identities and access to systems and data.",
+      "controls": [
+        {
+          "id": "IAM-01",
+          "name": "Identity Management Policy",
+          "description": "Are identity and access management policies established?",
+          "requirements": [
+            {
+              "id": "IAM-01.1",
+              "description": "Establish IAM policies covering identity lifecycle management.",
+              "guidance": "Review IAM policy documentation."
+            },
+            {
+              "id": "IAM-01.2",
+              "description": "Implement unique identifiers for all users.",
+              "guidance": "Examine identity management system configurations."
+            }
+          ]
+        },
+        {
+          "id": "IAM-02",
+          "name": "Authentication",
+          "description": "Is multi-factor authentication implemented for system access?",
+          "requirements": [
+            {
+              "id": "IAM-02.1",
+              "description": "Require multi-factor authentication for all administrative access.",
+              "guidance": "Review MFA configurations and enforcement."
+            },
+            {
+              "id": "IAM-02.2",
+              "description": "Implement strong password policies (length, complexity, rotation).",
+              "guidance": "Examine password policy settings and enforcement."
+            }
+          ]
+        },
+        {
+          "id": "IAM-03",
+          "name": "Authorization",
+          "description": "Is access based on least privilege and role-based access control?",
+          "requirements": [
+            {
+              "id": "IAM-03.1",
+              "description": "Implement role-based access control (RBAC).",
+              "guidance": "Review role definitions and access mappings."
+            },
+            {
+              "id": "IAM-03.2",
+              "description": "Enforce least privilege principle for all access grants.",
+              "guidance": "Examine access provisioning procedures."
+            }
+          ]
+        },
+        {
+          "id": "IAM-04",
+          "name": "Access Reviews",
+          "description": "Are access rights reviewed periodically?",
+          "requirements": [
+            {
+              "id": "IAM-04.1",
+              "description": "Conduct access reviews at least quarterly for privileged accounts.",
+              "guidance": "Review access review schedules and completion."
+            },
+            {
+              "id": "IAM-04.2",
+              "description": "Conduct access reviews at least annually for all accounts.",
+              "guidance": "Examine access recertification records."
+            }
+          ]
+        },
+        {
+          "id": "IAM-05",
+          "name": "Privileged Access Management",
+          "description": "Are privileged accounts managed with enhanced controls?",
+          "requirements": [
+            {
+              "id": "IAM-05.1",
+              "description": "Implement privileged access management (PAM) solution.",
+              "guidance": "Review PAM tool configurations and session recording."
+            },
+            {
+              "id": "IAM-05.2",
+              "description": "Monitor and log all privileged access activities.",
+              "guidance": "Examine privileged access logs and alerting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IPY",
+      "name": "Interoperability & Portability",
+      "description": "Controls for ensuring data interoperability and portability.",
+      "controls": [
+        {
+          "id": "IPY-01",
+          "name": "Data Portability",
+          "description": "Are data portability mechanisms provided to customers?",
+          "requirements": [
+            {
+              "id": "IPY-01.1",
+              "description": "Provide data export capabilities in standard formats.",
+              "guidance": "Review data export functionality and formats supported."
+            },
+            {
+              "id": "IPY-01.2",
+              "description": "Document data portability procedures and timelines.",
+              "guidance": "Examine data portability documentation."
+            }
+          ]
+        },
+        {
+          "id": "IPY-02",
+          "name": "API Standards",
+          "description": "Are APIs designed using industry standards for interoperability?",
+          "requirements": [
+            {
+              "id": "IPY-02.1",
+              "description": "Use industry-standard API specifications (REST, OpenAPI).",
+              "guidance": "Review API documentation and standards compliance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IVS",
+      "name": "Infrastructure & Virtualization Security",
+      "description": "Controls for securing infrastructure and virtualized environments.",
+      "controls": [
+        {
+          "id": "IVS-01",
+          "name": "Network Security",
+          "description": "Are network security controls implemented including segmentation and monitoring?",
+          "requirements": [
+            {
+              "id": "IVS-01.1",
+              "description": "Implement network segmentation using firewalls and VLANs.",
+              "guidance": "Review network architecture diagrams and firewall rules."
+            },
+            {
+              "id": "IVS-01.2",
+              "description": "Deploy intrusion detection/prevention systems (IDS/IPS).",
+              "guidance": "Examine IDS/IPS configurations and alert handling."
+            }
+          ]
+        },
+        {
+          "id": "IVS-02",
+          "name": "Hypervisor Security",
+          "description": "Are hypervisor and virtualization platforms secured?",
+          "requirements": [
+            {
+              "id": "IVS-02.1",
+              "description": "Harden hypervisor configurations according to vendor guidelines.",
+              "guidance": "Review hypervisor hardening documentation."
+            },
+            {
+              "id": "IVS-02.2",
+              "description": "Isolate tenant workloads using hypervisor security features.",
+              "guidance": "Examine tenant isolation configurations."
+            }
+          ]
+        },
+        {
+          "id": "IVS-03",
+          "name": "Container Security",
+          "description": "Are container environments secured throughout the lifecycle?",
+          "requirements": [
+            {
+              "id": "IVS-03.1",
+              "description": "Scan container images for vulnerabilities before deployment.",
+              "guidance": "Review container scanning tools and policies."
+            },
+            {
+              "id": "IVS-03.2",
+              "description": "Implement runtime container security monitoring.",
+              "guidance": "Examine container runtime security configurations."
+            }
+          ]
+        },
+        {
+          "id": "IVS-04",
+          "name": "Endpoint Security",
+          "description": "Are endpoint security controls deployed on all systems?",
+          "requirements": [
+            {
+              "id": "IVS-04.1",
+              "description": "Deploy endpoint detection and response (EDR) solutions.",
+              "guidance": "Review EDR deployment coverage and configurations."
+            },
+            {
+              "id": "IVS-04.2",
+              "description": "Maintain anti-malware protection with current signatures.",
+              "guidance": "Examine anti-malware configurations and update status."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "LOG",
+      "name": "Logging & Monitoring",
+      "description": "Controls for logging, monitoring, and security event management.",
+      "controls": [
+        {
+          "id": "LOG-01",
+          "name": "Logging Policy",
+          "description": "Are logging policies established defining what events to capture?",
+          "requirements": [
+            {
+              "id": "LOG-01.1",
+              "description": "Establish logging policy defining required log sources and retention.",
+              "guidance": "Review logging policy and standards."
+            },
+            {
+              "id": "LOG-01.2",
+              "description": "Log security-relevant events including authentication, authorization, and system changes.",
+              "guidance": "Examine log source inventory and configurations."
+            }
+          ]
+        },
+        {
+          "id": "LOG-02",
+          "name": "Log Protection",
+          "description": "Are logs protected from unauthorized access and tampering?",
+          "requirements": [
+            {
+              "id": "LOG-02.1",
+              "description": "Store logs in centralized, protected log management system.",
+              "guidance": "Review SIEM/log management architecture."
+            },
+            {
+              "id": "LOG-02.2",
+              "description": "Restrict access to logs to authorized personnel only.",
+              "guidance": "Examine log access controls and audit trails."
+            }
+          ]
+        },
+        {
+          "id": "LOG-03",
+          "name": "Security Monitoring",
+          "description": "Is continuous security monitoring implemented?",
+          "requirements": [
+            {
+              "id": "LOG-03.1",
+              "description": "Implement 24x7 security monitoring capabilities.",
+              "guidance": "Review SOC operations and coverage."
+            },
+            {
+              "id": "LOG-03.2",
+              "description": "Define and monitor for security use cases and indicators of compromise.",
+              "guidance": "Examine detection rules and alert thresholds."
+            }
+          ]
+        },
+        {
+          "id": "LOG-04",
+          "name": "Log Retention",
+          "description": "Are logs retained according to policy and regulatory requirements?",
+          "requirements": [
+            {
+              "id": "LOG-04.1",
+              "description": "Retain logs for minimum 12 months (or as required by regulation).",
+              "guidance": "Review log retention configurations and compliance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SEF",
+      "name": "Security Incident Management, E-Discovery & Cloud Forensics",
+      "description": "Controls for incident response, forensics, and e-discovery support.",
+      "controls": [
+        {
+          "id": "SEF-01",
+          "name": "Incident Response Policy",
+          "description": "Are incident response policies and procedures established?",
+          "requirements": [
+            {
+              "id": "SEF-01.1",
+              "description": "Establish incident response plan aligned with NIST 800-61.",
+              "guidance": "Review incident response policy and procedures."
+            },
+            {
+              "id": "SEF-01.2",
+              "description": "Define incident classification and escalation procedures.",
+              "guidance": "Examine incident severity matrix and escalation paths."
+            }
+          ]
+        },
+        {
+          "id": "SEF-02",
+          "name": "Incident Response Team",
+          "description": "Is an incident response team established with defined roles?",
+          "requirements": [
+            {
+              "id": "SEF-02.1",
+              "description": "Establish incident response team with defined roles and responsibilities.",
+              "guidance": "Review IRT charter and contact information."
+            },
+            {
+              "id": "SEF-02.2",
+              "description": "Provide incident response training to team members.",
+              "guidance": "Examine IRT training records and certifications."
+            }
+          ]
+        },
+        {
+          "id": "SEF-03",
+          "name": "Incident Testing",
+          "description": "Are incident response procedures tested regularly?",
+          "requirements": [
+            {
+              "id": "SEF-03.1",
+              "description": "Conduct incident response tabletop exercises at least annually.",
+              "guidance": "Review tabletop exercise results and lessons learned."
+            }
+          ]
+        },
+        {
+          "id": "SEF-04",
+          "name": "Forensic Capability",
+          "description": "Are forensic investigation capabilities maintained?",
+          "requirements": [
+            {
+              "id": "SEF-04.1",
+              "description": "Maintain forensic investigation capabilities or contracts.",
+              "guidance": "Review forensic tools and procedures or third-party agreements."
+            },
+            {
+              "id": "SEF-04.2",
+              "description": "Preserve evidence according to forensic best practices.",
+              "guidance": "Examine evidence handling procedures and chain of custody."
+            }
+          ]
+        },
+        {
+          "id": "SEF-05",
+          "name": "Breach Notification",
+          "description": "Are breach notification procedures established and tested?",
+          "requirements": [
+            {
+              "id": "SEF-05.1",
+              "description": "Establish breach notification procedures compliant with regulations.",
+              "guidance": "Review breach notification playbooks and timelines."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STA",
+      "name": "Supply Chain Management, Transparency & Accountability",
+      "description": "Controls for supply chain security and transparency.",
+      "controls": [
+        {
+          "id": "STA-01",
+          "name": "Supply Chain Policy",
+          "description": "Are supply chain security policies established?",
+          "requirements": [
+            {
+              "id": "STA-01.1",
+              "description": "Establish supply chain security policy and procedures.",
+              "guidance": "Review supply chain security policy documentation."
+            }
+          ]
+        },
+        {
+          "id": "STA-02",
+          "name": "Supplier Assessment",
+          "description": "Are suppliers assessed for security risks?",
+          "requirements": [
+            {
+              "id": "STA-02.1",
+              "description": "Assess critical suppliers for security risks before engagement.",
+              "guidance": "Review supplier security assessment procedures."
+            },
+            {
+              "id": "STA-02.2",
+              "description": "Include security requirements in supplier contracts.",
+              "guidance": "Examine supplier contract security clauses."
+            }
+          ]
+        },
+        {
+          "id": "STA-03",
+          "name": "Service Transparency",
+          "description": "Is service information transparently communicated to customers?",
+          "requirements": [
+            {
+              "id": "STA-03.1",
+              "description": "Provide transparency reports or security documentation to customers.",
+              "guidance": "Review customer-facing security documentation."
+            }
+          ]
+        },
+        {
+          "id": "STA-04",
+          "name": "Software Supply Chain",
+          "description": "Is software supply chain security implemented?",
+          "requirements": [
+            {
+              "id": "STA-04.1",
+              "description": "Maintain software bill of materials (SBOM) for applications.",
+              "guidance": "Review SBOM generation and maintenance."
+            },
+            {
+              "id": "STA-04.2",
+              "description": "Scan dependencies for known vulnerabilities.",
+              "guidance": "Examine dependency scanning tools and remediation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TVM",
+      "name": "Threat & Vulnerability Management",
+      "description": "Controls for identifying and remediating threats and vulnerabilities.",
+      "controls": [
+        {
+          "id": "TVM-01",
+          "name": "Vulnerability Management Policy",
+          "description": "Are vulnerability management policies and procedures established?",
+          "requirements": [
+            {
+              "id": "TVM-01.1",
+              "description": "Establish vulnerability management policy defining scanning and remediation requirements.",
+              "guidance": "Review vulnerability management policy documentation."
+            }
+          ]
+        },
+        {
+          "id": "TVM-02",
+          "name": "Vulnerability Scanning",
+          "description": "Are vulnerability scans performed regularly?",
+          "requirements": [
+            {
+              "id": "TVM-02.1",
+              "description": "Perform authenticated vulnerability scans at least weekly.",
+              "guidance": "Review vulnerability scanning schedules and coverage."
+            },
+            {
+              "id": "TVM-02.2",
+              "description": "Scan external-facing assets at least monthly.",
+              "guidance": "Examine external vulnerability scan reports."
+            }
+          ]
+        },
+        {
+          "id": "TVM-03",
+          "name": "Vulnerability Remediation",
+          "description": "Are vulnerabilities remediated within defined SLAs?",
+          "requirements": [
+            {
+              "id": "TVM-03.1",
+              "description": "Define vulnerability remediation SLAs by severity (Critical: 7 days, High: 30 days).",
+              "guidance": "Review remediation SLA definitions."
+            },
+            {
+              "id": "TVM-03.2",
+              "description": "Track and report vulnerability remediation metrics.",
+              "guidance": "Examine vulnerability metrics and aging reports."
+            }
+          ]
+        },
+        {
+          "id": "TVM-04",
+          "name": "Patch Management",
+          "description": "Is patch management implemented for all systems?",
+          "requirements": [
+            {
+              "id": "TVM-04.1",
+              "description": "Implement automated patch management where possible.",
+              "guidance": "Review patch management tools and procedures."
+            },
+            {
+              "id": "TVM-04.2",
+              "description": "Deploy critical patches within defined timeframes.",
+              "guidance": "Examine patch deployment timelines and compliance."
+            }
+          ]
+        },
+        {
+          "id": "TVM-05",
+          "name": "Threat Intelligence",
+          "description": "Is threat intelligence gathered and used for defense?",
+          "requirements": [
+            {
+              "id": "TVM-05.1",
+              "description": "Subscribe to threat intelligence feeds relevant to the organization.",
+              "guidance": "Review threat intelligence sources and integration."
+            },
+            {
+              "id": "TVM-05.2",
+              "description": "Use threat intelligence to inform security monitoring.",
+              "guidance": "Examine threat intelligence operationalization."
+            }
+          ]
+        },
+        {
+          "id": "TVM-06",
+          "name": "Penetration Testing",
+          "description": "Are penetration tests performed regularly?",
+          "requirements": [
+            {
+              "id": "TVM-06.1",
+              "description": "Conduct external penetration tests at least annually.",
+              "guidance": "Review penetration test reports and findings."
+            },
+            {
+              "id": "TVM-06.2",
+              "description": "Remediate penetration test findings according to severity.",
+              "guidance": "Examine penetration test remediation tracking."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
