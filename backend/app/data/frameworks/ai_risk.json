@@ -1,0 +1,394 @@
+{
+  "id": "ai_risk",
+  "name": "AI Vendor Risk Assessment Framework",
+  "version": "1.0",
+  "description": "Proprietary framework for assessing AI/ML vendor risks including model poisoning, bias detection, data provenance, and AI-specific security controls. Built on NIST AI RMF principles with additional vendor-specific assessments.",
+  "organization": "VendorAuditAI",
+  "categories": [
+    {
+      "id": "DP",
+      "name": "Data Provenance",
+      "description": "Controls for training data documentation, licensing, data quality, and PII handling in AI systems.",
+      "controls": [
+        {
+          "id": "DP-01",
+          "name": "Training Data Documentation",
+          "description": "Does the vendor document the sources, composition, and characteristics of training data?",
+          "requirements": [
+            {
+              "id": "DP-01.1",
+              "description": "Maintain comprehensive documentation of training data sources and collection methods.",
+              "guidance": "Review data cards, source documentation, and data collection procedures."
+            },
+            {
+              "id": "DP-01.2",
+              "description": "Document data composition including demographic distributions and potential biases.",
+              "guidance": "Examine data statistics, distribution analyses, and bias assessments."
+            },
+            {
+              "id": "DP-01.3",
+              "description": "Track data versioning and changes over time.",
+              "guidance": "Review version control, change logs, and data lineage documentation."
+            }
+          ]
+        },
+        {
+          "id": "DP-02",
+          "name": "Data Licensing and Rights",
+          "description": "Does the vendor have appropriate rights and licenses for training data?",
+          "requirements": [
+            {
+              "id": "DP-02.1",
+              "description": "Verify legal rights to use training data for AI model development.",
+              "guidance": "Review licensing agreements, consent documentation, and legal assessments."
+            },
+            {
+              "id": "DP-02.2",
+              "description": "Document third-party data sources and associated licensing terms.",
+              "guidance": "Examine vendor agreements, data purchase contracts, and usage rights."
+            }
+          ]
+        },
+        {
+          "id": "DP-03",
+          "name": "PII and Sensitive Data Handling",
+          "description": "How does the vendor handle personally identifiable information in training data?",
+          "requirements": [
+            {
+              "id": "DP-03.1",
+              "description": "Implement data anonymization or de-identification procedures for training data.",
+              "guidance": "Review anonymization techniques, k-anonymity measures, and PII detection."
+            },
+            {
+              "id": "DP-03.2",
+              "description": "Document consent mechanisms for data subjects whose data is used in training.",
+              "guidance": "Examine consent records, opt-out mechanisms, and privacy notices."
+            },
+            {
+              "id": "DP-03.3",
+              "description": "Implement data retention policies specific to AI training data.",
+              "guidance": "Review retention schedules, deletion procedures, and compliance documentation."
+            }
+          ]
+        },
+        {
+          "id": "DP-04",
+          "name": "Data Quality Assurance",
+          "description": "What data quality controls are in place for AI training data?",
+          "requirements": [
+            {
+              "id": "DP-04.1",
+              "description": "Implement data validation and cleansing procedures before training.",
+              "guidance": "Review data quality metrics, validation rules, and cleansing procedures."
+            },
+            {
+              "id": "DP-04.2",
+              "description": "Monitor for data drift and quality degradation over time.",
+              "guidance": "Examine drift detection mechanisms, quality dashboards, and alerting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MP",
+      "name": "Model Poisoning Prevention",
+      "description": "Controls to prevent and detect adversarial attacks on AI model training pipelines.",
+      "controls": [
+        {
+          "id": "MP-01",
+          "name": "Training Pipeline Security",
+          "description": "Are AI training pipelines protected against unauthorized modifications?",
+          "requirements": [
+            {
+              "id": "MP-01.1",
+              "description": "Implement access controls and authentication for training pipeline components.",
+              "guidance": "Review access control policies, authentication mechanisms, and audit logs."
+            },
+            {
+              "id": "MP-01.2",
+              "description": "Sign and verify training data, code, and model artifacts.",
+              "guidance": "Examine digital signatures, integrity checks, and verification procedures."
+            },
+            {
+              "id": "MP-01.3",
+              "description": "Monitor training pipelines for anomalous behavior.",
+              "guidance": "Review monitoring dashboards, anomaly detection, and alerting mechanisms."
+            }
+          ]
+        },
+        {
+          "id": "MP-02",
+          "name": "Data Integrity Protection",
+          "description": "How is training data protected from tampering or poisoning?",
+          "requirements": [
+            {
+              "id": "MP-02.1",
+              "description": "Implement cryptographic integrity checks for training data.",
+              "guidance": "Review hashing, checksums, and tamper detection mechanisms."
+            },
+            {
+              "id": "MP-02.2",
+              "description": "Detect and filter potentially poisoned or adversarial samples.",
+              "guidance": "Examine outlier detection, sample validation, and filtering procedures."
+            }
+          ]
+        },
+        {
+          "id": "MP-03",
+          "name": "Model Artifact Security",
+          "description": "Are trained model artifacts protected and verified?",
+          "requirements": [
+            {
+              "id": "MP-03.1",
+              "description": "Store model artifacts in secure, access-controlled repositories.",
+              "guidance": "Review model storage security, access controls, and encryption."
+            },
+            {
+              "id": "MP-03.2",
+              "description": "Verify model integrity before deployment.",
+              "guidance": "Examine deployment verification, signature checks, and integrity validation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BD",
+      "name": "Bias Detection and Fairness",
+      "description": "Controls for detecting, measuring, and mitigating bias in AI systems.",
+      "controls": [
+        {
+          "id": "BD-01",
+          "name": "Bias Assessment",
+          "description": "Does the vendor conduct bias assessments on AI models?",
+          "requirements": [
+            {
+              "id": "BD-01.1",
+              "description": "Conduct pre-deployment bias testing across protected characteristics.",
+              "guidance": "Review bias test results, demographic analysis, and fairness metrics."
+            },
+            {
+              "id": "BD-01.2",
+              "description": "Document identified biases and their potential impacts.",
+              "guidance": "Examine bias documentation, impact assessments, and disclosure practices."
+            },
+            {
+              "id": "BD-01.3",
+              "description": "Implement ongoing bias monitoring in production.",
+              "guidance": "Review monitoring dashboards, bias metrics, and alerting thresholds."
+            }
+          ]
+        },
+        {
+          "id": "BD-02",
+          "name": "Fairness Metrics",
+          "description": "What fairness metrics does the vendor track and report?",
+          "requirements": [
+            {
+              "id": "BD-02.1",
+              "description": "Define and track appropriate fairness metrics for the use case.",
+              "guidance": "Review fairness metric definitions, measurements, and targets."
+            },
+            {
+              "id": "BD-02.2",
+              "description": "Report fairness metrics to stakeholders transparently.",
+              "guidance": "Examine reporting procedures, stakeholder communication, and disclosure."
+            }
+          ]
+        },
+        {
+          "id": "BD-03",
+          "name": "Bias Mitigation",
+          "description": "What processes exist to mitigate identified biases?",
+          "requirements": [
+            {
+              "id": "BD-03.1",
+              "description": "Implement bias mitigation techniques in model development.",
+              "guidance": "Review mitigation techniques, retraining procedures, and effectiveness testing."
+            },
+            {
+              "id": "BD-03.2",
+              "description": "Document bias mitigation decisions and trade-offs.",
+              "guidance": "Examine decision documentation, trade-off analyses, and approval records."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MS",
+      "name": "Model Security",
+      "description": "Security controls specific to AI model deployment and operation.",
+      "controls": [
+        {
+          "id": "MS-01",
+          "name": "Model Access Control",
+          "description": "How is access to AI models controlled and monitored?",
+          "requirements": [
+            {
+              "id": "MS-01.1",
+              "description": "Implement authentication and authorization for model access.",
+              "guidance": "Review access policies, authentication mechanisms, and role definitions."
+            },
+            {
+              "id": "MS-01.2",
+              "description": "Log and audit all model invocations and access attempts.",
+              "guidance": "Examine audit logs, access reports, and monitoring dashboards."
+            },
+            {
+              "id": "MS-01.3",
+              "description": "Implement rate limiting and abuse detection.",
+              "guidance": "Review rate limits, anomaly detection, and blocking mechanisms."
+            }
+          ]
+        },
+        {
+          "id": "MS-02",
+          "name": "Adversarial Robustness",
+          "description": "Is the model tested against adversarial attacks?",
+          "requirements": [
+            {
+              "id": "MS-02.1",
+              "description": "Conduct adversarial testing to evaluate model robustness.",
+              "guidance": "Review adversarial test results, attack scenarios, and robustness metrics."
+            },
+            {
+              "id": "MS-02.2",
+              "description": "Implement input validation and sanitization.",
+              "guidance": "Examine input validation rules, sanitization procedures, and edge case handling."
+            }
+          ]
+        },
+        {
+          "id": "MS-03",
+          "name": "Model Extraction Prevention",
+          "description": "What controls prevent model theft or extraction?",
+          "requirements": [
+            {
+              "id": "MS-03.1",
+              "description": "Implement controls to prevent model extraction through API queries.",
+              "guidance": "Review query limits, watermarking, and extraction detection mechanisms."
+            },
+            {
+              "id": "MS-03.2",
+              "description": "Monitor for suspicious query patterns indicating extraction attempts.",
+              "guidance": "Examine monitoring rules, detection algorithms, and response procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EX",
+      "name": "Explainability and Transparency",
+      "description": "Controls for AI model explainability, interpretability, and transparency.",
+      "controls": [
+        {
+          "id": "EX-01",
+          "name": "Model Documentation",
+          "description": "Does the vendor provide comprehensive model documentation?",
+          "requirements": [
+            {
+              "id": "EX-01.1",
+              "description": "Provide model cards or equivalent documentation for all deployed models.",
+              "guidance": "Review model cards, technical documentation, and use case specifications."
+            },
+            {
+              "id": "EX-01.2",
+              "description": "Document model limitations, known failure modes, and appropriate use cases.",
+              "guidance": "Examine limitation documentation, failure mode analysis, and usage guidance."
+            }
+          ]
+        },
+        {
+          "id": "EX-02",
+          "name": "Decision Explainability",
+          "description": "Can model decisions be explained to stakeholders?",
+          "requirements": [
+            {
+              "id": "EX-02.1",
+              "description": "Provide explanation capabilities for model outputs when required.",
+              "guidance": "Review explanation mechanisms, interpretability tools, and output documentation."
+            },
+            {
+              "id": "EX-02.2",
+              "description": "Enable human review of high-stakes decisions.",
+              "guidance": "Examine human-in-the-loop processes, review procedures, and override capabilities."
+            }
+          ]
+        },
+        {
+          "id": "EX-03",
+          "name": "Algorithmic Transparency",
+          "description": "What information is disclosed about the AI system's operation?",
+          "requirements": [
+            {
+              "id": "EX-03.1",
+              "description": "Disclose when AI is being used in decision-making processes.",
+              "guidance": "Review disclosure practices, user notifications, and transparency statements."
+            },
+            {
+              "id": "EX-03.2",
+              "description": "Provide information about factors influencing AI decisions.",
+              "guidance": "Examine factor documentation, feature importance, and decision rationale."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PR",
+      "name": "Privacy Protection",
+      "description": "Privacy-specific controls for AI systems beyond general data protection.",
+      "controls": [
+        {
+          "id": "PR-01",
+          "name": "Inference Privacy",
+          "description": "Are measures in place to protect privacy during model inference?",
+          "requirements": [
+            {
+              "id": "PR-01.1",
+              "description": "Minimize data collection during model inference.",
+              "guidance": "Review data collection practices, retention policies, and minimization techniques."
+            },
+            {
+              "id": "PR-01.2",
+              "description": "Protect inference queries and responses from unauthorized access.",
+              "guidance": "Examine encryption, access controls, and data handling procedures."
+            }
+          ]
+        },
+        {
+          "id": "PR-02",
+          "name": "Membership Inference Prevention",
+          "description": "Are controls in place to prevent membership inference attacks?",
+          "requirements": [
+            {
+              "id": "PR-02.1",
+              "description": "Assess risk of membership inference on deployed models.",
+              "guidance": "Review risk assessments, attack testing, and vulnerability analyses."
+            },
+            {
+              "id": "PR-02.2",
+              "description": "Implement differential privacy or similar protections where appropriate.",
+              "guidance": "Examine privacy-preserving techniques, implementation evidence, and effectiveness."
+            }
+          ]
+        },
+        {
+          "id": "PR-03",
+          "name": "Model Inversion Prevention",
+          "description": "What protections exist against model inversion attacks?",
+          "requirements": [
+            {
+              "id": "PR-03.1",
+              "description": "Assess and mitigate model inversion risks.",
+              "guidance": "Review inversion attack testing, risk mitigation, and protection mechanisms."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
