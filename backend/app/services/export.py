@@ -2,7 +2,7 @@
 
 import csv
 import io
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from reportlab.lib import colors
@@ -395,7 +395,7 @@ class PDFExporter:
         elements = []
         elements.append(Spacer(1, 30))
 
-        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
         footer_text = f"Report generated on {timestamp} by VendorAuditAI"
         elements.append(Paragraph(footer_text, self.styles["Footer"]))
 
