@@ -53,8 +53,11 @@ Our AI platform ingests security reports (SOC 2, SIG, HECVAT, ISO 27001, penetra
 ### Key Differentiators
 
 - **97% Accuracy** - Validated against human auditor assessments
-- **6 Compliance Frameworks** - NIST 800-53, ISO 27001, SOC 2 TSC, CIS Controls, NIST CSF, HIPAA
+- **9 Compliance Frameworks** - NIST 800-53, ISO 27001, SOC 2 TSC, CIS Controls, PCI-DSS, HIPAA, CAIQ, NIST AI RMF, AI Risk
+- **AI Vendor Governance** - Specialized framework for AI/ML vendor risk assessment (bias, data provenance, model security)
 - **Enterprise RAG** - Retrieval-Augmented Generation for auditor-grade citations
+- **Remediation Workflow** - Full issue tracking with SLAs, assignments, and audit trail
+- **Continuous Monitoring** - Scheduled assessments with multi-channel alerts (Slack, Email, Webhooks)
 - **Zero Data Residency Risk** - Self-hosted deployment option for sensitive environments
 - **Real-Time Dashboard** - Live portfolio risk visibility across all vendors
 
@@ -75,9 +78,29 @@ Our AI platform ingests security reports (SOC 2, SIG, HECVAT, ISO 27001, penetra
 
 ### Portfolio Management
 - **Vendor Registry** - Centralized vendor risk database
-- **Continuous Monitoring** - Track vendor compliance over time
+- **Continuous Monitoring** - Scheduled assessments (daily/weekly/monthly/quarterly)
 - **Bulk Processing** - Analyze hundreds of documents simultaneously
 - **Custom Workflows** - Configurable approval and review processes
+
+### Remediation Workflow
+- **Issue Tracking** - Full lifecycle management from draft to verified closure
+- **SLA Management** - Configurable SLA policies with breach tracking
+- **Assignment & Ownership** - Assign tasks to team members with accountability
+- **Audit Trail** - Complete history of all changes for compliance
+- **Comments & Notes** - Collaborative remediation with threaded discussions
+
+### AI Vendor Risk Assessment
+- **Data Provenance** - Training data documentation, licensing, PII handling
+- **Model Security** - Access controls, adversarial robustness, extraction prevention
+- **Bias Detection** - Fairness testing, demographic parity, disparate impact analysis
+- **Explainability** - Model cards, decision transparency, interpretability
+- **Privacy Protection** - Inference privacy, data retention, anonymization
+
+### Monitoring & Alerts
+- **Scheduled Assessments** - Automated vendor re-assessments on configurable schedules
+- **Alert Rules** - Define triggers for compliance drift, new findings, SLA breaches
+- **Multi-Channel Notifications** - Slack, Email, Microsoft Teams, Webhooks
+- **Alert Management** - Acknowledge, escalate, resolve with full audit trail
 
 ### Enterprise Query
 - **Natural Language** - "Which vendors lack SOC 2 Type II?"
@@ -148,6 +171,13 @@ npm install && npm run dev
 | `GET /api/v1/frameworks` | List compliance frameworks |
 | `GET /api/v1/frameworks/search` | Search controls |
 | `GET /api/v1/dashboard/stats` | Dashboard metrics |
+| `GET /api/v1/remediation/tasks` | List remediation tasks |
+| `POST /api/v1/remediation/tasks` | Create remediation task |
+| `POST /api/v1/remediation/tasks/{id}/transition` | Transition task status |
+| `GET /api/v1/monitoring/schedules` | List monitoring schedules |
+| `POST /api/v1/monitoring/schedules` | Create scheduled assessment |
+| `GET /api/v1/monitoring/alerts` | List alerts |
+| `POST /api/v1/monitoring/channels` | Configure notification channel |
 
 Full API documentation: `/docs` (Swagger UI)
 
@@ -169,13 +199,17 @@ VendorAuditAI is built with security-first principles:
 ## Roadmap
 
 - [x] Core document analysis engine
-- [x] Multi-framework compliance mapping
+- [x] Multi-framework compliance mapping (9 frameworks)
 - [x] Natural language query interface
 - [x] Real-time dashboard
 - [x] Production deployment (Railway + Netlify)
+- [x] CAIQ Framework Support (Cloud Security Alliance)
+- [x] AI Governance Framework (NIST AI RMF)
+- [x] AI Vendor Risk Assessment Module
+- [x] Remediation Workflow with SLA tracking
+- [x] Continuous Monitoring & Scheduled Assessments
+- [x] Multi-channel Alerts (Slack, Email, Webhooks)
 - [ ] SSO/SAML integration
-- [ ] Slack/Teams notifications
-- [ ] Scheduled monitoring workflows
 - [ ] Custom framework builder
 - [ ] GraphQL API
 - [ ] Mobile application
