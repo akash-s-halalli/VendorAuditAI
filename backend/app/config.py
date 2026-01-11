@@ -52,9 +52,9 @@ class Settings(BaseSettings):
     embedding_model: str = "text-embedding-3-large"
     embedding_dimensions: int = 3072
 
-    # Google Gemini - Using Gemini 3 Pro (Latest as of Jan 2026)
+    # Google Gemini - Using Gemini 2.0 Flash (stable, fast)
     google_api_key: str | None = None
-    gemini_model: str = "gemini-3-pro"
+    gemini_model: str = "gemini-2.0-flash"
     gemini_embedding_model: str = "text-embedding-005"
 
     # Document Processing
