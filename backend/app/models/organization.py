@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
     from app.models.query import ConversationThread, QueryHistory
+    from app.models.remediation import RemediationTask, SLAPolicy
     from app.models.user import User
     from app.models.vendor import Vendor
 
@@ -62,6 +63,16 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     query_history: Mapped[list["QueryHistory"]] = relationship(
         "QueryHistory",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    remediation_tasks: Mapped[list["RemediationTask"]] = relationship(
+        "RemediationTask",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    sla_policies: Mapped[list["SLAPolicy"]] = relationship(
+        "SLAPolicy",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

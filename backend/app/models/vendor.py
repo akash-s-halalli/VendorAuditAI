@@ -12,6 +12,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.organization import Organization
+    from app.models.remediation import RemediationTask
 
 
 class VendorTier(str, Enum):
@@ -81,6 +82,10 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     )
     documents: Mapped[list["Document"]] = relationship(
         "Document",
+        back_populates="vendor",
+    )
+    remediation_tasks: Mapped[list["RemediationTask"]] = relationship(
+        "RemediationTask",
         back_populates="vendor",
     )
 

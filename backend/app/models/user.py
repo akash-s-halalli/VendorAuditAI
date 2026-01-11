@@ -12,6 +12,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 if TYPE_CHECKING:
     from app.models.organization import Organization
     from app.models.query import ConversationThread, QueryHistory
+    from app.models.remediation import RemediationTask
 
 
 class UserRole(str, Enum):
@@ -68,6 +69,11 @@ class User(Base, UUIDMixin, TimestampMixin):
         "QueryHistory",
         back_populates="user",
         cascade="all, delete-orphan",
+    )
+    assigned_tasks: Mapped[list["RemediationTask"]] = relationship(
+        "RemediationTask",
+        foreign_keys="RemediationTask.assignee_id",
+        back_populates="assignee",
     )
 
     def __repr__(self) -> str:

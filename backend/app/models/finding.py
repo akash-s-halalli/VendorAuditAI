@@ -12,6 +12,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.organization import Organization
+    from app.models.remediation import RemediationTask
 
 
 class FindingSeverity(str, Enum):
@@ -177,6 +178,11 @@ class Finding(Base, UUIDMixin, TimestampMixin):
     organization: Mapped["Organization"] = relationship(
         "Organization",
         back_populates="findings",
+    )
+    remediation_task: Mapped["RemediationTask | None"] = relationship(
+        "RemediationTask",
+        back_populates="finding",
+        uselist=False,
     )
 
     def __repr__(self) -> str:

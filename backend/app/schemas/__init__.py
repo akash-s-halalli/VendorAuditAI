@@ -48,6 +48,20 @@ from app.schemas.query import (
     QueryRequest,
     QueryResponse,
 )
+from app.schemas.remediation import (
+    RemediationAuditLogResponse,
+    RemediationCommentCreate,
+    RemediationCommentResponse,
+    RemediationDashboardStats,
+    RemediationTaskCreate,
+    RemediationTaskDetail,
+    RemediationTaskListResponse,
+    RemediationTaskResponse,
+    RemediationTaskUpdate,
+    RemediationTransition,
+    SLAPolicyCreate,
+    SLAPolicyResponse,
+)
 from app.schemas.vendor import (
     VendorBase,
     VendorCreate,
@@ -106,4 +120,17 @@ __all__ = [
     "QueryHistoryListResponse",
     "ConversationListResponse",
     "Citation",
+    # Remediation
+    "RemediationTaskCreate",
+    "RemediationTaskUpdate",
+    "RemediationTaskResponse",
+    "RemediationTaskDetail",
+    "RemediationTaskListResponse",
+    "RemediationTransition",
+    "RemediationCommentCreate",
+    "RemediationCommentResponse",
+    "RemediationAuditLogResponse",
+    "RemediationDashboardStats",
+    "SLAPolicyCreate",
+    "SLAPolicyResponse",
 ]
