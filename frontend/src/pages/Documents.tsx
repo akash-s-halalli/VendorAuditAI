@@ -3,7 +3,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, Search, FileText, MoreVertical, CheckCircle, Clock, AlertCircle, Loader2 } from 'lucide-react';
 import { Button, Input, Card, CardContent, Badge } from '@/components/ui';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
-import type { Document, DocumentStatus, DocumentType } from '@/types/api';
+import type { DocumentStatus, DocumentType } from '@/types/api';
+
+// Backend returns snake_case, so define the actual response type
+interface BackendDocument {
+  id: string;
+  filename: string;
+  file_size: number;
+  mime_type: string;
+  document_type: DocumentType;
+  status: DocumentStatus;
+  page_count?: number;
+  created_at: string;
+}
 
 export function Documents() {
   const queryClient = useQueryClient();
@@ -40,7 +52,7 @@ export function Documents() {
     },
   });
 
-  const documents: Document[] = documentsResponse?.data || [];
+  const documents: BackendDocument[] = documentsResponse?.data || [];
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -225,14 +237,14 @@ export function Documents() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium truncate">{doc.originalFilename}</p>
+                    <p className="font-medium truncate">{doc.filename}</p>
                     {getStatusIcon(doc.status)}
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Badge variant="outline">{getDocTypeLabel(doc.docType)}</Badge>
-                    <span>{formatFileSize(doc.fileSize)}</span>
-                    {doc.pageCount && <span>{doc.pageCount} pages</span>}
-                    <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                    <Badge variant="outline">{getDocTypeLabel(doc.document_type)}</Badge>
+                    <span>{formatFileSize(doc.file_size)}</span>
+                    {doc.page_count && <span>{doc.page_count} pages</span>}
+                    <span>{new Date(doc.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <button className="rounded-full p-2 hover:bg-accent">
