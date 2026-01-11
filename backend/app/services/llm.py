@@ -28,6 +28,7 @@ FRAMEWORK_DESCRIPTIONS = {
     "hipaa": "HIPAA Security Rule",
     "pci_dss": "PCI DSS v4.0 Requirements",
     "caiq": "CSA Cloud Controls Matrix (CAIQ) v4.0",
+    "nist_ai_rmf": "NIST AI Risk Management Framework 1.0",
 }
 
 # Supported frameworks

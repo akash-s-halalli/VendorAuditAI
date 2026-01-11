@@ -1,0 +1,505 @@
+{
+  "id": "nist_ai_rmf",
+  "name": "NIST AI Risk Management Framework",
+  "version": "1.0",
+  "description": "The NIST AI Risk Management Framework (AI RMF) provides guidance for organizations to manage risks associated with AI systems throughout their lifecycle. It focuses on trustworthy AI characteristics: valid, reliable, safe, secure, resilient, accountable, transparent, explainable, interpretable, privacy-enhanced, and fair.",
+  "organization": "National Institute of Standards and Technology (NIST)",
+  "categories": [
+    {
+      "id": "GOVERN",
+      "name": "Govern",
+      "description": "Cultivate and implement a culture of risk management within organizations designing, developing, deploying, evaluating, or acquiring AI systems.",
+      "controls": [
+        {
+          "id": "GOVERN-1",
+          "name": "AI Risk Management Strategy",
+          "description": "Establish organizational AI risk management policies, processes, procedures, and practices.",
+          "requirements": [
+            {
+              "id": "GOVERN-1.1",
+              "description": "Legal and regulatory requirements involving AI are understood, managed, and documented.",
+              "guidance": "Review AI governance policies, regulatory compliance mapping, and legal review processes."
+            },
+            {
+              "id": "GOVERN-1.2",
+              "description": "AI risk tolerance is determined and documented for the organization.",
+              "guidance": "Examine AI risk tolerance statements and risk appetite documentation."
+            },
+            {
+              "id": "GOVERN-1.3",
+              "description": "Processes, procedures, and practices are in place to determine the needed level of risk management activities.",
+              "guidance": "Review AI risk tiering methodology and assessment procedures."
+            },
+            {
+              "id": "GOVERN-1.4",
+              "description": "Ongoing monitoring and periodic review of the risk management process and outcomes are planned and organizational roles and responsibilities established.",
+              "guidance": "Examine AI governance committee structure, roles, and monitoring cadence."
+            },
+            {
+              "id": "GOVERN-1.5",
+              "description": "Organizational policies and practices are in place to foster a critical thinking culture regarding AI risk.",
+              "guidance": "Review AI ethics training, escalation procedures, and dissent mechanisms."
+            },
+            {
+              "id": "GOVERN-1.6",
+              "description": "Mechanisms are in place to inventory AI systems and track risk decisions.",
+              "guidance": "Examine AI system inventory, model registry, and risk decision logs."
+            },
+            {
+              "id": "GOVERN-1.7",
+              "description": "Processes and procedures are in place for decommissioning AI systems safely.",
+              "guidance": "Review AI decommissioning policies and data retention procedures."
+            }
+          ]
+        },
+        {
+          "id": "GOVERN-2",
+          "name": "Accountability Structures",
+          "description": "Establish accountability structures, roles, and responsibilities for AI risk management.",
+          "requirements": [
+            {
+              "id": "GOVERN-2.1",
+              "description": "Roles and responsibilities for AI risk management are defined and understood.",
+              "guidance": "Review RACI matrix, job descriptions, and organizational charts for AI governance."
+            },
+            {
+              "id": "GOVERN-2.2",
+              "description": "Mechanisms are in place to ensure accountability for AI system impacts.",
+              "guidance": "Examine incident response procedures, audit trails, and escalation paths."
+            },
+            {
+              "id": "GOVERN-2.3",
+              "description": "Executive leadership takes responsibility for decisions about AI system risks.",
+              "guidance": "Review executive sign-off procedures and risk acceptance documentation."
+            }
+          ]
+        },
+        {
+          "id": "GOVERN-3",
+          "name": "AI Workforce Diversity",
+          "description": "Build diverse and inclusive AI teams to enhance AI system trustworthiness.",
+          "requirements": [
+            {
+              "id": "GOVERN-3.1",
+              "description": "Decision-making related to mapping, measuring, and managing AI risks involves diverse perspectives and teams.",
+              "guidance": "Review team composition, cross-functional review processes, and diversity metrics."
+            },
+            {
+              "id": "GOVERN-3.2",
+              "description": "Policies and procedures address skill gaps related to AI development and deployment.",
+              "guidance": "Examine training programs, hiring practices, and competency frameworks."
+            }
+          ]
+        },
+        {
+          "id": "GOVERN-4",
+          "name": "Organizational Context",
+          "description": "Understand the organizational context including mission, goals, and values relative to AI risk management.",
+          "requirements": [
+            {
+              "id": "GOVERN-4.1",
+              "description": "Organizational policies and practices align AI system objectives with human values and societal benefits.",
+              "guidance": "Review AI ethics policies, value statements, and societal impact assessments."
+            },
+            {
+              "id": "GOVERN-4.2",
+              "description": "Organizational teams document AI system context including intended purpose, domain, and deployment environment.",
+              "guidance": "Examine model cards, system documentation, and use case definitions."
+            },
+            {
+              "id": "GOVERN-4.3",
+              "description": "Organizational policies address procurement and use of third-party AI systems.",
+              "guidance": "Review vendor assessment procedures and third-party AI due diligence processes."
+            }
+          ]
+        },
+        {
+          "id": "GOVERN-5",
+          "name": "Third-Party AI Risk",
+          "description": "Manage AI risks related to third-party entities throughout the AI lifecycle.",
+          "requirements": [
+            {
+              "id": "GOVERN-5.1",
+              "description": "Policies and procedures are in place for assessing third-party AI systems and data.",
+              "guidance": "Review vendor questionnaires, assessment frameworks, and due diligence checklists."
+            },
+            {
+              "id": "GOVERN-5.2",
+              "description": "Contractual mechanisms address AI-specific risks with third parties.",
+              "guidance": "Examine contract templates, SLAs, and AI-specific clauses."
+            }
+          ]
+        },
+        {
+          "id": "GOVERN-6",
+          "name": "Stakeholder Engagement",
+          "description": "Engage with relevant stakeholders including affected communities in AI risk management.",
+          "requirements": [
+            {
+              "id": "GOVERN-6.1",
+              "description": "Policies and procedures are in place for engaging with AI system stakeholders.",
+              "guidance": "Review stakeholder engagement plans, feedback mechanisms, and community involvement."
+            },
+            {
+              "id": "GOVERN-6.2",
+              "description": "Mechanisms exist for stakeholders to provide input on AI system development and deployment.",
+              "guidance": "Examine feedback channels, public comment processes, and user testing procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MAP",
+      "name": "Map",
+      "description": "Identify and categorize AI system context, capabilities, purposes, and potential impacts to inform risk management activities.",
+      "controls": [
+        {
+          "id": "MAP-1",
+          "name": "Context and Use Case",
+          "description": "Establish the context and intended use of AI systems.",
+          "requirements": [
+            {
+              "id": "MAP-1.1",
+              "description": "The intended purposes, potentially beneficial uses, context of use, and design specifications are documented.",
+              "guidance": "Review system design documents, use case specifications, and requirements."
+            },
+            {
+              "id": "MAP-1.2",
+              "description": "Potential positive and negative impacts of AI systems are identified and documented.",
+              "guidance": "Examine impact assessments, risk registers, and benefit-risk analyses."
+            },
+            {
+              "id": "MAP-1.3",
+              "description": "AI system functions, capabilities, and limitations are clearly documented.",
+              "guidance": "Review technical specifications, model cards, and capability statements."
+            },
+            {
+              "id": "MAP-1.4",
+              "description": "AI system goals, objectives, and constraints are defined and documented.",
+              "guidance": "Examine requirements documents, design rationale, and constraint specifications."
+            },
+            {
+              "id": "MAP-1.5",
+              "description": "The AI system is mapped to relevant AI Actor Tasks and AI lifecycle phases.",
+              "guidance": "Review lifecycle documentation and actor responsibility matrices."
+            },
+            {
+              "id": "MAP-1.6",
+              "description": "Scientific integrity and data quality standards are identified and documented.",
+              "guidance": "Examine data quality policies, validation procedures, and methodology documentation."
+            }
+          ]
+        },
+        {
+          "id": "MAP-2",
+          "name": "AI Impact Categorization",
+          "description": "Categorize AI systems based on potential impacts to inform risk management priorities.",
+          "requirements": [
+            {
+              "id": "MAP-2.1",
+              "description": "AI system risks are identified and assessed based on potential impacts to individuals, communities, and society.",
+              "guidance": "Review impact categorization methodology and risk tiering criteria."
+            },
+            {
+              "id": "MAP-2.2",
+              "description": "Potential harms and unintended consequences of AI systems are identified and documented.",
+              "guidance": "Examine harm taxonomies, consequence analyses, and risk scenarios."
+            },
+            {
+              "id": "MAP-2.3",
+              "description": "AI system risk categorization considers frequency, severity, and reversibility of potential impacts.",
+              "guidance": "Review risk scoring methodology and impact assessment criteria."
+            }
+          ]
+        },
+        {
+          "id": "MAP-3",
+          "name": "Benefits and Costs",
+          "description": "Evaluate and document AI system benefits and costs to enable informed decision-making.",
+          "requirements": [
+            {
+              "id": "MAP-3.1",
+              "description": "Potential benefits of the AI system are documented and weighed against potential risks.",
+              "guidance": "Review benefit-cost analyses, value propositions, and risk-benefit trade-offs."
+            },
+            {
+              "id": "MAP-3.2",
+              "description": "Decisions about AI system deployment consider effects on different populations.",
+              "guidance": "Examine equity assessments and disparate impact analyses."
+            }
+          ]
+        },
+        {
+          "id": "MAP-4",
+          "name": "Risks and Benefits over Time",
+          "description": "Monitor and manage evolving AI system risks and benefits throughout the lifecycle.",
+          "requirements": [
+            {
+              "id": "MAP-4.1",
+              "description": "Processes are in place to continually assess AI system risks and benefits.",
+              "guidance": "Review ongoing monitoring plans, reassessment schedules, and change management procedures."
+            },
+            {
+              "id": "MAP-4.2",
+              "description": "Changes in the deployment environment or use context trigger reassessment of AI system risks.",
+              "guidance": "Examine change triggers, reassessment criteria, and adaptation procedures."
+            }
+          ]
+        },
+        {
+          "id": "MAP-5",
+          "name": "AI Actor Risks",
+          "description": "Identify and manage risks associated with AI actors throughout the AI lifecycle.",
+          "requirements": [
+            {
+              "id": "MAP-5.1",
+              "description": "Potential negative impacts from AI actors are identified and documented.",
+              "guidance": "Review actor risk assessments, insider threat considerations, and access controls."
+            },
+            {
+              "id": "MAP-5.2",
+              "description": "Practices are in place to evaluate trustworthiness of AI actors.",
+              "guidance": "Examine background check procedures, training requirements, and certification processes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MEASURE",
+      "name": "Measure",
+      "description": "Analyze, assess, benchmark, and monitor AI risks and impacts, based on the AI system's context and potential impacts.",
+      "controls": [
+        {
+          "id": "MEASURE-1",
+          "name": "AI Risk Assessment",
+          "description": "Develop and apply methodologies for measuring AI-specific risks.",
+          "requirements": [
+            {
+              "id": "MEASURE-1.1",
+              "description": "Approaches and metrics for measuring AI system trustworthiness characteristics are identified and implemented.",
+              "guidance": "Review trustworthiness metrics, measurement methodologies, and evaluation criteria."
+            },
+            {
+              "id": "MEASURE-1.2",
+              "description": "Appropriate methods and metrics are used to evaluate AI system performance and safety.",
+              "guidance": "Examine performance testing procedures, safety evaluations, and validation methods."
+            },
+            {
+              "id": "MEASURE-1.3",
+              "description": "AI system testing and evaluation results are documented and maintained.",
+              "guidance": "Review test documentation, evaluation reports, and results archives."
+            }
+          ]
+        },
+        {
+          "id": "MEASURE-2",
+          "name": "Trustworthiness Evaluation",
+          "description": "Evaluate AI systems for trustworthiness characteristics including reliability, validity, and safety.",
+          "requirements": [
+            {
+              "id": "MEASURE-2.1",
+              "description": "AI systems are tested for validity and reliability under expected operating conditions.",
+              "guidance": "Review validation testing, reliability assessments, and robustness evaluations."
+            },
+            {
+              "id": "MEASURE-2.2",
+              "description": "AI systems are evaluated for safety including fail-safe behaviors.",
+              "guidance": "Examine safety testing, failure mode analysis, and contingency procedures."
+            },
+            {
+              "id": "MEASURE-2.3",
+              "description": "AI systems are tested for security and resilience against attacks.",
+              "guidance": "Review adversarial testing, security assessments, and resilience evaluations."
+            },
+            {
+              "id": "MEASURE-2.4",
+              "description": "AI systems are evaluated for privacy risks and data protection.",
+              "guidance": "Examine privacy impact assessments, data protection evaluations, and anonymization testing."
+            },
+            {
+              "id": "MEASURE-2.5",
+              "description": "AI systems are evaluated for explainability and transparency.",
+              "guidance": "Review explainability testing, transparency assessments, and interpretability evaluations."
+            },
+            {
+              "id": "MEASURE-2.6",
+              "description": "AI systems are evaluated for fairness and bias.",
+              "guidance": "Examine bias testing, fairness metrics, and disparate impact analyses."
+            },
+            {
+              "id": "MEASURE-2.7",
+              "description": "AI system training data is evaluated for representativeness and quality.",
+              "guidance": "Review data quality assessments, representativeness analyses, and data provenance."
+            },
+            {
+              "id": "MEASURE-2.8",
+              "description": "AI models are evaluated for drift and degradation over time.",
+              "guidance": "Examine model monitoring, drift detection, and performance degradation tracking."
+            },
+            {
+              "id": "MEASURE-2.9",
+              "description": "Human oversight mechanisms are tested and evaluated.",
+              "guidance": "Review human-in-the-loop testing, override capabilities, and escalation procedures."
+            },
+            {
+              "id": "MEASURE-2.10",
+              "description": "Environmental impacts of AI systems are considered and evaluated.",
+              "guidance": "Examine carbon footprint assessments, resource utilization, and sustainability metrics."
+            },
+            {
+              "id": "MEASURE-2.11",
+              "description": "Safety metrics are defined and tracked for AI systems with safety implications.",
+              "guidance": "Review safety KPIs, incident metrics, and harm prevention measures."
+            },
+            {
+              "id": "MEASURE-2.12",
+              "description": "AI systems are evaluated in real-world or representative environments.",
+              "guidance": "Examine field testing, pilot deployments, and real-world evaluation procedures."
+            },
+            {
+              "id": "MEASURE-2.13",
+              "description": "Effectiveness of risk mitigation measures is evaluated.",
+              "guidance": "Review mitigation effectiveness testing and control validation."
+            }
+          ]
+        },
+        {
+          "id": "MEASURE-3",
+          "name": "Feedback and Monitoring",
+          "description": "Establish mechanisms for ongoing monitoring, feedback, and assessment of AI systems.",
+          "requirements": [
+            {
+              "id": "MEASURE-3.1",
+              "description": "Feedback mechanisms are established for AI system stakeholders to report issues.",
+              "guidance": "Review feedback channels, issue reporting procedures, and stakeholder communication."
+            },
+            {
+              "id": "MEASURE-3.2",
+              "description": "AI system performance is continuously monitored in deployment.",
+              "guidance": "Examine monitoring dashboards, alerting mechanisms, and performance tracking."
+            },
+            {
+              "id": "MEASURE-3.3",
+              "description": "AI system incidents and near-misses are tracked and analyzed.",
+              "guidance": "Review incident tracking systems, root cause analysis procedures, and lessons learned."
+            }
+          ]
+        },
+        {
+          "id": "MEASURE-4",
+          "name": "Independent Evaluation",
+          "description": "Conduct independent evaluations and audits of AI systems.",
+          "requirements": [
+            {
+              "id": "MEASURE-4.1",
+              "description": "AI systems undergo independent evaluation or audit as appropriate.",
+              "guidance": "Review third-party audit reports, independent assessments, and external evaluations."
+            },
+            {
+              "id": "MEASURE-4.2",
+              "description": "Results of independent evaluations are documented and addressed.",
+              "guidance": "Examine audit findings, remediation plans, and follow-up actions."
+            },
+            {
+              "id": "MEASURE-4.3",
+              "description": "Processes are in place to share measurement results with relevant stakeholders.",
+              "guidance": "Review reporting procedures, stakeholder communication, and transparency mechanisms."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MANAGE",
+      "name": "Manage",
+      "description": "Prioritize and respond to AI risks through risk treatment plans, resource allocation, and monitoring.",
+      "controls": [
+        {
+          "id": "MANAGE-1",
+          "name": "Risk Prioritization",
+          "description": "Prioritize AI risks to allocate resources effectively.",
+          "requirements": [
+            {
+              "id": "MANAGE-1.1",
+              "description": "AI system risks are prioritized based on assessed likelihood and impact.",
+              "guidance": "Review risk prioritization methodology, scoring criteria, and ranking procedures."
+            },
+            {
+              "id": "MANAGE-1.2",
+              "description": "Risk prioritization considers context-specific factors and stakeholder input.",
+              "guidance": "Examine stakeholder input processes, contextual factors, and prioritization rationale."
+            },
+            {
+              "id": "MANAGE-1.3",
+              "description": "Risk prioritization decisions and rationale are documented.",
+              "guidance": "Review decision documentation, risk registers, and prioritization records."
+            }
+          ]
+        },
+        {
+          "id": "MANAGE-2",
+          "name": "Risk Treatment",
+          "description": "Develop and implement risk treatment plans for identified AI risks.",
+          "requirements": [
+            {
+              "id": "MANAGE-2.1",
+              "description": "Risk treatment plans are developed for prioritized AI system risks.",
+              "guidance": "Review risk treatment strategies, mitigation plans, and control implementations."
+            },
+            {
+              "id": "MANAGE-2.2",
+              "description": "Mechanisms are in place to track risk treatment implementation and effectiveness.",
+              "guidance": "Examine treatment tracking, effectiveness monitoring, and remediation status."
+            },
+            {
+              "id": "MANAGE-2.3",
+              "description": "Post-deployment AI system monitoring plans are developed and implemented.",
+              "guidance": "Review monitoring strategies, alerting mechanisms, and ongoing assessment procedures."
+            },
+            {
+              "id": "MANAGE-2.4",
+              "description": "Risk treatment decisions are documented and communicated to stakeholders.",
+              "guidance": "Examine decision documentation, stakeholder communication, and transparency measures."
+            }
+          ]
+        },
+        {
+          "id": "MANAGE-3",
+          "name": "Resource Allocation",
+          "description": "Allocate resources commensurate with AI risk levels and treatment needs.",
+          "requirements": [
+            {
+              "id": "MANAGE-3.1",
+              "description": "Resources are allocated for AI risk management activities based on risk levels.",
+              "guidance": "Review resource allocation decisions, budget documentation, and staffing plans."
+            },
+            {
+              "id": "MANAGE-3.2",
+              "description": "AI risk management teams have appropriate expertise and authority.",
+              "guidance": "Examine team composition, expertise assessments, and authority documentation."
+            }
+          ]
+        },
+        {
+          "id": "MANAGE-4",
+          "name": "Residual Risk",
+          "description": "Document and communicate residual risks after treatment implementation.",
+          "requirements": [
+            {
+              "id": "MANAGE-4.1",
+              "description": "Residual AI system risks are documented and communicated to decision-makers.",
+              "guidance": "Review residual risk documentation, acceptance decisions, and communication records."
+            },
+            {
+              "id": "MANAGE-4.2",
+              "description": "Plans are in place to monitor and manage residual risks over time.",
+              "guidance": "Examine ongoing monitoring plans, reassessment schedules, and residual risk tracking."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

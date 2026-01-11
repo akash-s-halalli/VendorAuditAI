@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # Severity and status literals
 SeverityType = Literal["critical", "high", "medium", "low", "info"]
 FindingStatusType = Literal["open", "acknowledged", "remediated", "accepted", "false_positive"]
-FrameworkType = Literal["nist_800_53", "soc2_tsc", "iso_27001", "cis_controls", "hipaa", "pci_dss", "caiq"]
+FrameworkType = Literal["nist_800_53", "soc2_tsc", "iso_27001", "cis_controls", "hipaa", "pci_dss", "caiq", "nist_ai_rmf"]
 
 
 class AnalysisRequest(BaseModel):
