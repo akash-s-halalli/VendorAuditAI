@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Play, FileText, AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
+import { Play, FileText, AlertTriangle, Loader2, RefreshCw, Download, FileSpreadsheet } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { FindingsSummary, FindingsList } from '@/components/findings';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
@@ -19,6 +19,37 @@ export function Analysis() {
   const queryClient = useQueryClient();
   const [selectedDocumentId, setSelectedDocumentId] = useState<string>('');
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | null>(null);
+
+  // Export findings as CSV or PDF
+  const handleExport = async (format: 'csv' | 'pdf') => {
+    if (!selectedDocumentId) return;
+
+    setIsExporting(format);
+    try {
+      const response = await apiClient.get(`/export/findings/${format}`, {
+        params: { document_id: selectedDocumentId },
+        responseType: 'blob',
+      });
+
+      // Create download link
+      const blob = new Blob([response.data], {
+        type: format === 'csv' ? 'text/csv' : 'application/pdf',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `findings-${selectedDocumentId.slice(0, 8)}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setAnalysisError(getApiErrorMessage(error));
+    } finally {
+      setIsExporting(null);
+    }
+  };
 
   // Fetch documents for dropdown
   const { data: documentsResponse, isLoading: isLoadingDocuments } = useQuery({
@@ -282,7 +313,37 @@ export function Analysis() {
 
               {/* Findings List with Filtering */}
               <div>
-                <h2 className="text-xl font-semibold mb-4">Findings</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">Findings</h2>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleExport('csv')}
+                      disabled={isExporting !== null}
+                    >
+                      {isExporting === 'csv' ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      )}
+                      Export CSV
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleExport('pdf')}
+                      disabled={isExporting !== null}
+                    >
+                      {isExporting === 'pdf' ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-2" />
+                      )}
+                      Export PDF
+                    </Button>
+                  </div>
+                </div>
                 <FindingsList findings={findings} />
               </div>
             </div>
