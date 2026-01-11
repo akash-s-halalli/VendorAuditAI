@@ -1,0 +1,76 @@
+# VendorAuditAI - Docker Compose for Local Development
+# Usage:
+#   docker-compose up --build        # Start with SQLite
+#   docker-compose --profile postgres up --build  # Start with PostgreSQL
+
+version: '3.8'
+
+services:
+  # Main application - unified frontend + backend
+  app:
+    build: .
+    container_name: vendorauditai
+    ports:
+      - "8000:8000"
+    environment:
+      # Application
+      - APP_ENV=development
+      - DEBUG=true
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production-min32}
+
+      # Database (SQLite by default)
+      - DATABASE_URL=${DATABASE_URL:-sqlite+aiosqlite:///./data/vendorauditai.db}
+
+      # Security
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-jwt-dev-secret-change-in-production-32}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+      # CORS
+      - CORS_ORIGINS=["http://localhost:8000","http://localhost:3000","http://localhost:5173"]
+
+      # AI Providers
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-20250514}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_MODEL=gemini-2.0-flash
+      - EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+      # Storage
+      - STORAGE_BACKEND=local
+      - LOCAL_STORAGE_PATH=/app/uploads
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # PostgreSQL database (optional - use --profile postgres)
+  db:
+    image: postgres:16-alpine
+    container_name: vendorauditai-db
+    environment:
+      POSTGRES_USER: vendoraudit
+      POSTGRES_PASSWORD: vendoraudit
+      POSTGRES_DB: vendorauditai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vendoraudit -d vendorauditai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local

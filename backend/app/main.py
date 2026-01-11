@@ -1,10 +1,14 @@
 """FastAPI application entry point."""
 
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -85,18 +89,58 @@ def create_app() -> FastAPI:
             "environment": settings.app_env,
         }
 
-    @app.get("/", tags=["Root"])
-    async def root() -> dict:
-        """Root endpoint with API information."""
-        return {
-            "name": settings.app_name,
-            "version": API_VERSION,
-            "docs": "/docs" if settings.debug else None,
-            "health": "/health",
-        }
+    # Root endpoint - returns API info when no static files, otherwise SPA handles it
+    static_dir_env = os.getenv("STATIC_FILES_DIR")
+    if not static_dir_env or not Path(static_dir_env).exists():
+
+        @app.get("/", tags=["Root"])
+        async def root() -> dict:
+            """Root endpoint with API information."""
+            return {
+                "name": settings.app_name,
+                "version": API_VERSION,
+                "docs": "/docs" if settings.debug else None,
+                "health": "/health",
+            }
 
     # Include API router
     app.include_router(api_router, prefix="/api/v1")
+
+    # Serve React SPA from unified container (when STATIC_FILES_DIR is set)
+    static_dir = os.getenv("STATIC_FILES_DIR")
+    if static_dir and Path(static_dir).exists():
+        static_path = Path(static_dir)
+
+        # Serve static assets (JS, CSS, images) from /assets
+        assets_dir = static_path / "assets"
+        if assets_dir.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+        # Serve other static files (favicon, etc.)
+        for static_file in static_path.iterdir():
+            if static_file.is_file() and static_file.name != "index.html":
+                # Create route for each static file at root level
+
+                @app.get(f"/{static_file.name}", include_in_schema=False)
+                async def serve_static_file(
+                    file_path: str = str(static_file),
+                ) -> FileResponse:
+                    return FileResponse(file_path)
+
+        # Catch-all route for SPA client-side routing (must be last)
+        @app.get("/{full_path:path}", include_in_schema=False)
+        async def serve_spa(full_path: str) -> FileResponse:
+            """Serve React SPA for all non-API routes."""
+            # Don't intercept API or special routes
+            if full_path.startswith(
+                ("api/", "docs", "redoc", "openapi.json", "health", "assets/")
+            ):
+                raise HTTPException(status_code=404, detail="Not found")
+
+            index_file = static_path / "index.html"
+            if index_file.exists():
+                return FileResponse(str(index_file))
+            raise HTTPException(status_code=404, detail="Frontend not found")
 
     return app
 
