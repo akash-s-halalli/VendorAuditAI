@@ -173,7 +173,7 @@
 
 **AI & ML**
 
-Claude 3.5 Sonnet &nbsp;|&nbsp; Gemini 2.0 Flash &nbsp;|&nbsp; OpenAI Embeddings &nbsp;|&nbsp; RAG
+Claude Opus 4.5 &nbsp;|&nbsp; Gemini 3 Pro &nbsp;|&nbsp; OpenAI Embeddings &nbsp;|&nbsp; RAG
 
 <br/>
 

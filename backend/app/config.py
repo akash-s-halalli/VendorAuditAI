@@ -43,19 +43,19 @@ class Settings(BaseSettings):
     llm_provider: str = "anthropic"  # "anthropic" or "gemini"
     embedding_provider: str = "openai"  # "openai" or "gemini"
 
-    # Anthropic (Claude)
+    # Anthropic (Claude) - Using Claude Opus 4.5 (Latest as of Jan 2026)
     anthropic_api_key: str | None = None
-    claude_model: str = "claude-sonnet-4-20250514"
+    claude_model: str = "claude-opus-4-5-20251101"
 
     # OpenAI
     openai_api_key: str | None = None
     embedding_model: str = "text-embedding-3-large"
     embedding_dimensions: int = 3072
 
-    # Google Gemini
+    # Google Gemini - Using Gemini 3 Pro (Latest as of Jan 2026)
     google_api_key: str | None = None
-    gemini_model: str = "gemini-2.0-flash"
-    gemini_embedding_model: str = "text-embedding-004"
+    gemini_model: str = "gemini-3-pro"
+    gemini_embedding_model: str = "text-embedding-005"
 
     # Document Processing
     azure_doc_intel_endpoint: str | None = None
