@@ -15,7 +15,7 @@ export type DocumentType =
   | 'pentest'
   | 'questionnaire'
   | 'other';
-export type DocumentStatus = 'uploaded' | 'processing' | 'parsed' | 'analyzed' | 'failed';
+export type DocumentStatus = 'pending' | 'processing' | 'processed' | 'analyzed' | 'failed';
 export type FindingType = 'gap' | 'exception' | 'weakness' | 'observation' | 'strength';
 export type UserRole = 'admin' | 'analyst' | 'viewer';
 
@@ -115,15 +115,26 @@ export interface Document {
 // Analysis
 export interface AnalysisRun {
   id: string;
-  documentId: string;
-  frameworkIds: string[];
-  analysisType: string;
-  status: string;
-  progress: number;
+  document_id: string;
+  organization_id: string;
+  framework: string;
+  model_used: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  error_message?: string;
+  input_tokens?: number;
+  output_tokens?: number;
+  started_at?: string;
+  completed_at?: string;
+  created_at: string;
+  // Frontend aliases for compatibility
+  documentId?: string;
+  frameworkIds?: string[];
+  analysisType?: string;
+  progress?: number;
   startedAt?: string;
   completedAt?: string;
+  createdAt?: string;
   summary?: AnalysisSummary;
-  createdAt: string;
 }
 
 export interface AnalysisSummary {
