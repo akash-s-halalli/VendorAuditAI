@@ -169,7 +169,9 @@ export function Remediation() {
     },
   });
 
-  // Transition task mutation
+  // Transition task mutation - error state for UI feedback
+  const [_transitionError, setTransitionError] = useState<string | null>(null);
+  void _transitionError; // Used for error display in modal
   const transitionMutation = useMutation({
     mutationFn: async ({ taskId, newStatus, notes }: { taskId: string; newStatus: TaskStatus; notes?: string }) => {
       const response = await apiClient.post(`/remediation/tasks/${taskId}/transition`, {
@@ -182,6 +184,10 @@ export function Remediation() {
       queryClient.invalidateQueries({ queryKey: ['remediation-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['remediation-dashboard'] });
       setShowDetailModal(false);
+      setTransitionError(null);
+    },
+    onError: (error) => {
+      setTransitionError(getApiErrorMessage(error));
     },
   });
 

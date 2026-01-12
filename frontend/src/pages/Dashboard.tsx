@@ -118,7 +118,7 @@ export function Dashboard() {
               <p className="text-xs text-red-400/60 mt-1 uppercase tracking-wider font-mono">Immediate Action Required</p>
             </div>
             <Badge variant="outline" className="border-red-500/30 text-red-400 bg-red-500/10 animate-pulse">
-              ACTTIVE
+              ACTIVE
             </Badge>
           </div>
 

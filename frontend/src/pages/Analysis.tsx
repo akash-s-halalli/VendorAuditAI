@@ -32,11 +32,15 @@ export function Analysis() {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState<'csv' | 'pdf' | null>(null);
 
-  // Export findings as CSV or PDF
+  // Export findings as CSV or PDF - success state for UI feedback
+  const [_exportSuccess, setExportSuccess] = useState<string | null>(null);
+  void _exportSuccess; // Used for success notification
   const handleExport = async (format: 'csv' | 'pdf') => {
     if (!selectedDocumentId) return;
 
     setIsExporting(format);
+    setAnalysisError(null);
+    setExportSuccess(null);
     try {
       const response = await apiClient.get(`/export/findings/${format}`, {
         params: { document_id: selectedDocumentId },
@@ -55,6 +59,9 @@ export function Analysis() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      setExportSuccess(`Successfully exported as ${format.toUpperCase()}`);
+      // Clear success message after 3 seconds
+      setTimeout(() => setExportSuccess(null), 3000);
     } catch (error) {
       setAnalysisError(getApiErrorMessage(error));
     } finally {

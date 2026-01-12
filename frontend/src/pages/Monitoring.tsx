@@ -226,17 +226,31 @@ export function Monitoring() {
     },
   });
 
-  // Test channel mutation
+  // Test channel mutation - error state for UI feedback
+  const [_testError, setTestError] = useState<string | null>(null);
+  void _testError; // Used for error display
+  const [testingChannelId, setTestingChannelId] = useState<string | null>(null);
   const testChannelMutation = useMutation({
     mutationFn: async (channelId: string) => {
+      setTestingChannelId(channelId);
       const response = await apiClient.post(`/monitoring/channels/${channelId}/test`, {
         message: 'Test notification from VendorAuditAI',
       });
       return response.data;
     },
+    onSuccess: () => {
+      setTestError(null);
+      setTestingChannelId(null);
+    },
+    onError: (error) => {
+      setTestError(getApiErrorMessage(error));
+      setTestingChannelId(null);
+    },
   });
 
-  // Acknowledge alert mutation
+  // Acknowledge alert mutation - error state for UI feedback
+  const [_alertActionError, setAlertActionError] = useState<string | null>(null);
+  void _alertActionError; // Used for error display
   const acknowledgeAlertMutation = useMutation({
     mutationFn: async (alertId: string) => {
       const response = await apiClient.post(`/monitoring/alerts/${alertId}/acknowledge`, {});
@@ -246,6 +260,10 @@ export function Monitoring() {
       queryClient.invalidateQueries({ queryKey: ['monitoring-alerts'] });
       queryClient.invalidateQueries({ queryKey: ['monitoring-dashboard'] });
       setShowAlertDetailModal(false);
+      setAlertActionError(null);
+    },
+    onError: (error) => {
+      setAlertActionError(getApiErrorMessage(error));
     },
   });
 
@@ -261,6 +279,10 @@ export function Monitoring() {
       queryClient.invalidateQueries({ queryKey: ['monitoring-alerts'] });
       queryClient.invalidateQueries({ queryKey: ['monitoring-dashboard'] });
       setShowAlertDetailModal(false);
+      setAlertActionError(null);
+    },
+    onError: (error) => {
+      setAlertActionError(getApiErrorMessage(error));
     },
   });
 
@@ -581,7 +603,7 @@ export function Monitoring() {
           isLoading={channelsLoading}
           onAddChannel={() => setShowCreateChannelModal(true)}
           onTestChannel={(id) => testChannelMutation.mutate(id)}
-          testingChannelId={testChannelMutation.isPending ? testChannelMutation.variables : undefined}
+          testingChannelId={testChannelMutation.isPending ? testingChannelId ?? undefined : undefined}
         />
       )}
     </div>

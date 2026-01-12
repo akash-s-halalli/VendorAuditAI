@@ -84,9 +84,13 @@ export function Agents() {
     enabled: !!selectedAgent && showLogsModal,
   });
 
-  // Run task mutation
+  // Run task mutation - error state for UI feedback
+  const [runningAgentId, setRunningAgentId] = useState<string | null>(null);
+  const [_runTaskError, setRunTaskError] = useState<string | null>(null);
+  void _runTaskError; // Used for error display
   const runTaskMutation = useMutation({
     mutationFn: async ({ agentId, taskType }: { agentId: string; taskType: string }) => {
+      setRunningAgentId(agentId);
       const response = await apiClient.post(`/agents/${agentId}/tasks`, {
         task_type: taskType,
         input_data: {},
@@ -97,6 +101,12 @@ export function Agents() {
       queryClient.invalidateQueries({ queryKey: ['agents'] });
       setLastTaskResult(data);
       setShowTaskResultModal(true);
+      setRunningAgentId(null);
+      setRunTaskError(null);
+    },
+    onError: (error) => {
+      setRunTaskError(getApiErrorMessage(error));
+      setRunningAgentId(null);
     },
   });
 
@@ -308,7 +318,7 @@ export function Agents() {
                   onClick={() => handleRunTask(agent)}
                   disabled={runTaskMutation.isPending || agent.status === 'disabled'}
                 >
-                  {runTaskMutation.isPending && runTaskMutation.variables?.agentId === agent.id ? (
+                  {runTaskMutation.isPending && runningAgentId === agent.id ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
                   ) : (
                     <Play className="h-3 w-3" />

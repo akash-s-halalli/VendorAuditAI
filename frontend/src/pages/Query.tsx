@@ -33,6 +33,12 @@ interface QueryResponse {
   response_time_ms: number;
 }
 
+interface QueryPayload {
+  question: string;
+  max_chunks: number;
+  conversation_id?: string;
+}
+
 export function Query() {
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -41,7 +47,7 @@ export function Query() {
 
   const queryMutation = useMutation({
     mutationFn: async (q: string) => {
-      const payload: any = {
+      const payload: QueryPayload = {
         question: q,
         max_chunks: 10,
       };
