@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    admin,
     agents,
     analysis,
     analytics,
@@ -82,6 +83,9 @@ api_router.include_router(agents.router, prefix="/agents", tags=["AI Agents"])
 
 # Include risk scoring router
 api_router.include_router(risk.router, prefix="/risk", tags=["Risk Scoring"])
+
+# Include admin router
+api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 
 
 @api_router.get("/status", tags=["Status"])
