@@ -1,7 +1,19 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Upload, Search, FileText, MoreVertical, CheckCircle, Clock, AlertCircle, Loader2 } from 'lucide-react';
-import { Button, Input, Card, CardContent, Badge } from '@/components/ui';
+import { Upload, Search, FileText, MoreVertical, CheckCircle, Clock, AlertCircle, Loader2, Download, Trash2 } from 'lucide-react';
+import {
+  Button,
+  Input,
+  Card,
+  CardContent,
+  Badge,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import type { DocumentStatus, DocumentType } from '@/types/api';
 
@@ -22,6 +34,21 @@ export function Documents() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<BackendDocument | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const { data: documentsResponse, isLoading } = useQuery({
     queryKey: ['documents', searchQuery],
@@ -49,6 +76,17 @@ export function Documents() {
     },
     onError: (error) => {
       setUploadError(getApiErrorMessage(error));
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiClient.delete(`/documents/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      setShowDeleteModal(false);
+      setSelectedDocument(null);
     },
   });
 
@@ -85,6 +123,40 @@ export function Documents() {
     });
     e.target.value = '';
   }, [uploadMutation]);
+
+  const handleDownload = async (doc: BackendDocument) => {
+    setOpenMenuId(null);
+    try {
+      const response = await apiClient.get(`/documents/${doc.id}/download`, {
+        responseType: 'blob',
+      });
+
+      // Create download link
+      const blob = new Blob([response.data], { type: doc.mime_type });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = doc.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      setUploadError(getApiErrorMessage(error));
+    }
+  };
+
+  const openDeleteModal = (doc: BackendDocument) => {
+    setSelectedDocument(doc);
+    setShowDeleteModal(true);
+    setOpenMenuId(null);
+  };
+
+  const handleDelete = () => {
+    if (!selectedDocument) return;
+    deleteMutation.mutate(selectedDocument.id);
+  };
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -144,6 +216,27 @@ export function Documents() {
           </Button>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Delete Document</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <strong>{selectedDocument?.filename}</strong>? This action cannot be undone and will remove all associated analysis data.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete Document
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Upload Zone */}
       <div
@@ -230,7 +323,7 @@ export function Documents() {
       ) : (
         <div className="space-y-2">
           {documents.map((doc) => (
-            <Card key={doc.id} className="hover:shadow-sm transition-shadow cursor-pointer">
+            <Card key={doc.id} className="hover:shadow-sm transition-shadow">
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded bg-primary/10">
                   <FileText className="h-5 w-5 text-primary" />
@@ -247,9 +340,41 @@ export function Documents() {
                     <span>{new Date(doc.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <button className="rounded-full p-2 hover:bg-accent">
-                  <MoreVertical className="h-4 w-4" />
-                </button>
+                <div className="relative" ref={openMenuId === doc.id ? menuRef : null}>
+                  <button
+                    className="rounded-full p-2 hover:bg-accent"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === doc.id ? null : doc.id);
+                    }}
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </button>
+                  {openMenuId === doc.id && (
+                    <div className="absolute right-0 top-full mt-1 w-40 rounded-md border bg-popover shadow-md z-50">
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownload(doc);
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                        Download
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDeleteModal(doc);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
