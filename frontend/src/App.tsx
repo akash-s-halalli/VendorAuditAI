@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout, AuthLayout } from '@/components/layout';
 import { Landing, Login, Register, Dashboard, Vendors, Documents, Query, Analysis, Remediation, Monitoring, Agents } from '@/pages';
@@ -30,6 +31,12 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  const { init } = useAuthStore();
+
+  useEffect(() => {
+    init();
+  }, [init]);
+
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <Routes>

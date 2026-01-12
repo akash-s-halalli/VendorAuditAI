@@ -82,6 +82,17 @@ export interface CreateVendorRequest {
   tags?: string[];
 }
 
+export interface UpdateVendorRequest {
+  name?: string;
+  description?: string;
+  website?: string;
+  tier?: VendorTier;
+  status?: VendorStatus;
+  criticalityScore?: number;
+  dataClassification?: string;
+  tags?: string[];
+}
+
 // Document
 export interface Document {
   id: string;

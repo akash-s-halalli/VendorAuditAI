@@ -1,70 +1,58 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-export interface User {
-  id: string;
-  email: string;
-  fullName: string;
-  role: 'admin' | 'analyst' | 'viewer';
-  organizationId: string;
-}
+import netlifyIdentity from 'netlify-identity-widget';
 
 interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+  user: netlifyIdentity.User | null;
   isAuthenticated: boolean;
 
   // Actions
-  setUser: (user: User | null) => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  login: () => void;
+  signup: () => void;
   logout: () => void;
+  init: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
 
-      setUser: (user) =>
-        set({
-          user,
-          isAuthenticated: !!user,
-        }),
+  login: () => {
+    netlifyIdentity.open('login');
+  },
 
-      setTokens: (accessToken, refreshToken) => {
-        // Also store in localStorage for API client
-        localStorage.setItem('access_token', accessToken);
-        localStorage.setItem('refresh_token', refreshToken);
+  signup: () => {
+    netlifyIdentity.open('signup');
+  },
 
-        set({
-          accessToken,
-          refreshToken,
-          isAuthenticated: true,
-        });
-      },
+  logout: () => {
+    netlifyIdentity.logout();
+  },
 
-      logout: () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+  init: () => {
+    // Initialize the widget
+    netlifyIdentity.init(); // This will auto-detect if on the confirmation URL
 
-        set({
-          user: null,
-          accessToken: null,
-          refreshToken: null,
-          isAuthenticated: false,
-        });
-      },
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
-);
+    // Get current user if already logged in
+    const currentUser = netlifyIdentity.currentUser();
+    set({
+      user: currentUser,
+      isAuthenticated: !!currentUser
+    });
+
+    // Listen for events
+    netlifyIdentity.on('login', (user) => {
+      console.log('Netlify Identity: Login', user);
+      set({ user, isAuthenticated: true });
+      netlifyIdentity.close();
+    });
+
+    netlifyIdentity.on('logout', () => {
+      console.log('Netlify Identity: Logout');
+      set({ user: null, isAuthenticated: false });
+    });
+
+    netlifyIdentity.on('error', (err) => {
+      console.error('Netlify Identity error', err);
+    });
+  },
+}));
