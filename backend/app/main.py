@@ -94,14 +94,14 @@ def create_app() -> FastAPI:
             "app_env": settings.app_env,
         }
 
-    # Configure CORS - Move to the VERY END to ensure it's hit first (outermost middleware)
+    # Configure CORS - Use settings from config (NOT hardcoded!)
     logger.info(f"Configuring CORS with origins: {settings.cors_origins}")
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=settings.cors_origins,
+        allow_credentials=settings.cors_allow_credentials,
+        allow_methods=settings.cors_allow_methods,
+        allow_headers=settings.cors_allow_headers,
     )
 
 
