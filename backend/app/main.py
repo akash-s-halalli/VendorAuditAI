@@ -6,7 +6,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -72,29 +72,38 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
     app.add_middleware(SlowAPIMiddleware)
 
-    # Configure CORS
-    logger.info(f"Configuring CORS with origins: {settings.cors_origins}")
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.cors_origins,
-        allow_origin_regex=r"https://.*\.netlify\.app",
-        allow_credentials=settings.cors_allow_credentials,
-        allow_methods=settings.cors_allow_methods,
-        allow_headers=settings.cors_allow_headers,
-    )
+    # Include API router
+    app.include_router(api_router, prefix="/api/v1")
 
     # Health check endpoint (outside of API router for load balancer checks)
     @app.get("/health", tags=["Health"])
     async def health_check() -> dict:
-        """Check API health status.
-
-        Returns basic health information for load balancers and monitoring.
-        """
+        """Check API health status."""
         return {
             "status": "healthy",
             "version": API_VERSION,
             "environment": settings.app_env,
         }
+
+    @app.get("/api/v1/cors-debug", tags=["Debug"])
+    async def cors_debug(request: Request) -> dict:
+        """Debug endpoint to inspect CORS headers and configuration."""
+        return {
+            "headers": dict(request.headers),
+            "cors_origins": settings.cors_origins,
+            "app_env": settings.app_env,
+        }
+
+    # Configure CORS - Move to the VERY END to ensure it's hit first (outermost middleware)
+    logger.info(f"Configuring CORS with origins: {settings.cors_origins}")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 
     # Root endpoint - returns API info when no static files, otherwise SPA handles it
     static_dir_env = os.getenv("STATIC_FILES_DIR")
@@ -110,8 +119,6 @@ def create_app() -> FastAPI:
                 "health": "/health",
             }
 
-    # Include API router
-    app.include_router(api_router, prefix="/api/v1")
 
     # Serve React SPA from unified container (when STATIC_FILES_DIR is set)
     static_dir = os.getenv("STATIC_FILES_DIR")
