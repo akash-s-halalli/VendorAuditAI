@@ -17,7 +17,7 @@
 
 <br/>
 
-[![Version](https://img.shields.io/badge/v0.2.0-PRODUCTION-00D4AA?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/v0.3.0-PRODUCTION-00D4AA?style=for-the-badge)](CHANGELOG.md)
 [![Uptime](https://img.shields.io/badge/UPTIME-99.9%25-00D4AA?style=for-the-badge)]()
 [![Tests](https://img.shields.io/badge/129_TESTS-PASSING-00D4AA?style=for-the-badge)]()
 [![Security](https://img.shields.io/badge/SOC_2-COMPLIANT-00D4AA?style=for-the-badge)]()
@@ -161,9 +161,12 @@ Get actionable findings, assign remediation tasks, track SLAs, and monitor conti
 | Framework | Controls | Best For |
 |:---------:|:--------:|:---------|
 | **SOC 2 TSC** | 64 | SaaS vendors, cloud services |
+| **SIG 2026** | 800+ | Industry gold standard, all vendors |
 | **NIST 800-53** | 1,000+ | Federal contractors, regulated industries |
 | **ISO 27001** | 114 | International compliance |
 | **CIS Controls** | 153 | Security baselines |
+| **DORA** | 100+ | EU financial entities (2025) |
+| **HECVAT** | 200+ | Higher education vendors |
 | **PCI-DSS** | 250+ | Payment processors |
 | **HIPAA** | 75 | Healthcare vendors |
 | **CAIQ** | 260+ | Cloud security (CSA) |
@@ -351,6 +354,14 @@ OPENAI_API_KEY=sk-...
 ## Release History
 
 <br/>
+
+### v0.3.0 - Framework Expansion (January 2026)
+- SIG 2026 framework (800+ controls, 21 risk domains)
+- DORA framework for EU financial compliance
+- HECVAT framework for higher education
+- Intelligent vendor auto-categorization system
+- 12 compliance frameworks now supported
+- Vendor risk scoring recommendations
 
 ### v0.2.0 - Production Release (January 2026)
 - CORS configuration for cross-origin deployments

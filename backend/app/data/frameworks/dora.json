@@ -1,0 +1,472 @@
+{
+  "id": "dora",
+  "name": "DORA (Digital Operational Resilience Act)",
+  "version": "2025",
+  "description": "The Digital Operational Resilience Act (DORA) is an EU regulation effective January 2025 that establishes uniform requirements for the security of network and information systems supporting the business processes of financial entities. It applies to financial institutions and their critical ICT third-party service providers.",
+  "organization": "European Union",
+  "categories": [
+    {
+      "id": "ICT_RISK",
+      "name": "ICT Risk Management",
+      "description": "Requirements for managing information and communication technology risks.",
+      "controls": [
+        {
+          "id": "ICT.1",
+          "name": "ICT Risk Management Framework",
+          "description": "Financial entities shall have a sound, comprehensive and well-documented ICT risk management framework.",
+          "requirements": [
+            {
+              "id": "ICT.1.1",
+              "description": "An ICT risk management framework is established and maintained as part of the overall risk management system.",
+              "guidance": "Request ICT risk management framework documentation and governance structure."
+            },
+            {
+              "id": "ICT.1.2",
+              "description": "The management body defines, approves, oversees and is accountable for ICT risk management.",
+              "guidance": "Review board-level ICT risk oversight and approval documentation."
+            },
+            {
+              "id": "ICT.1.3",
+              "description": "ICT risk management is integrated into the overall risk management framework.",
+              "guidance": "Examine integration of ICT risk with enterprise risk management."
+            }
+          ]
+        },
+        {
+          "id": "ICT.2",
+          "name": "ICT Systems and Tools",
+          "description": "ICT systems, protocols, and tools must be appropriate and resilient.",
+          "requirements": [
+            {
+              "id": "ICT.2.1",
+              "description": "ICT systems and tools are appropriate, reliable and have sufficient capacity.",
+              "guidance": "Review capacity planning and system reliability metrics."
+            },
+            {
+              "id": "ICT.2.2",
+              "description": "ICT systems are designed to be resilient and capable of handling peak demands.",
+              "guidance": "Examine system architecture for resilience and scalability."
+            },
+            {
+              "id": "ICT.2.3",
+              "description": "ICT systems are regularly updated and maintained.",
+              "guidance": "Review patch management and system maintenance procedures."
+            }
+          ]
+        },
+        {
+          "id": "ICT.3",
+          "name": "Identification",
+          "description": "All sources of ICT risk must be identified.",
+          "requirements": [
+            {
+              "id": "ICT.3.1",
+              "description": "All business functions supported by ICT are identified and documented.",
+              "guidance": "Request business function to ICT system mapping."
+            },
+            {
+              "id": "ICT.3.2",
+              "description": "All ICT assets supporting critical functions are inventoried and classified.",
+              "guidance": "Review ICT asset inventory and classification scheme."
+            },
+            {
+              "id": "ICT.3.3",
+              "description": "Dependencies on third-party ICT service providers are identified.",
+              "guidance": "Examine third-party dependency mapping and criticality assessment."
+            }
+          ]
+        },
+        {
+          "id": "ICT.4",
+          "name": "Protection and Prevention",
+          "description": "Appropriate protection measures must be implemented.",
+          "requirements": [
+            {
+              "id": "ICT.4.1",
+              "description": "Security policies and procedures are established and implemented.",
+              "guidance": "Request information security policies and procedures."
+            },
+            {
+              "id": "ICT.4.2",
+              "description": "Strong authentication mechanisms are implemented.",
+              "guidance": "Review authentication methods and MFA implementation."
+            },
+            {
+              "id": "ICT.4.3",
+              "description": "Access rights are managed based on least privilege principles.",
+              "guidance": "Examine access management procedures and reviews."
+            },
+            {
+              "id": "ICT.4.4",
+              "description": "Data is protected through encryption and data loss prevention.",
+              "guidance": "Review encryption standards and DLP implementation."
+            }
+          ]
+        },
+        {
+          "id": "ICT.5",
+          "name": "Detection",
+          "description": "Anomalous activities and ICT-related incidents must be detected.",
+          "requirements": [
+            {
+              "id": "ICT.5.1",
+              "description": "Mechanisms are in place to detect anomalous activities and ICT incidents.",
+              "guidance": "Review detection capabilities and monitoring tools."
+            },
+            {
+              "id": "ICT.5.2",
+              "description": "Network and system activities are logged and monitored.",
+              "guidance": "Examine logging scope and monitoring procedures."
+            },
+            {
+              "id": "ICT.5.3",
+              "description": "Threat intelligence is collected and analyzed.",
+              "guidance": "Review threat intelligence sources and integration."
+            }
+          ]
+        },
+        {
+          "id": "ICT.6",
+          "name": "Response and Recovery",
+          "description": "Effective response and recovery capabilities must exist.",
+          "requirements": [
+            {
+              "id": "ICT.6.1",
+              "description": "ICT business continuity policies are established and tested.",
+              "guidance": "Request ICT continuity policy and test results."
+            },
+            {
+              "id": "ICT.6.2",
+              "description": "Recovery procedures are documented and regularly tested.",
+              "guidance": "Review recovery procedures and test documentation."
+            },
+            {
+              "id": "ICT.6.3",
+              "description": "Crisis communication procedures are established.",
+              "guidance": "Examine crisis communication plans and contacts."
+            }
+          ]
+        },
+        {
+          "id": "ICT.7",
+          "name": "Learning and Evolving",
+          "description": "Continuous improvement based on incidents and tests.",
+          "requirements": [
+            {
+              "id": "ICT.7.1",
+              "description": "Lessons learned from incidents and tests are incorporated into procedures.",
+              "guidance": "Review post-incident reviews and improvement tracking."
+            },
+            {
+              "id": "ICT.7.2",
+              "description": "ICT risk management framework is regularly reviewed and updated.",
+              "guidance": "Examine framework review schedule and updates."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ICT_INCIDENT",
+      "name": "ICT-Related Incident Management",
+      "description": "Requirements for detecting, managing, and reporting ICT-related incidents.",
+      "controls": [
+        {
+          "id": "INC.1",
+          "name": "Incident Management Process",
+          "description": "Effective incident management process must be established.",
+          "requirements": [
+            {
+              "id": "INC.1.1",
+              "description": "An ICT incident management process is established with clear roles and responsibilities.",
+              "guidance": "Request incident management process documentation."
+            },
+            {
+              "id": "INC.1.2",
+              "description": "Incidents are classified according to severity and impact criteria.",
+              "guidance": "Review incident classification criteria and thresholds."
+            },
+            {
+              "id": "INC.1.3",
+              "description": "Root cause analysis is performed for significant incidents.",
+              "guidance": "Examine root cause analysis procedures and reports."
+            }
+          ]
+        },
+        {
+          "id": "INC.2",
+          "name": "Incident Reporting",
+          "description": "Major ICT incidents must be reported to authorities.",
+          "requirements": [
+            {
+              "id": "INC.2.1",
+              "description": "Major ICT-related incidents are reported to competent authorities within 24 hours.",
+              "guidance": "Review incident reporting procedures and timelines."
+            },
+            {
+              "id": "INC.2.2",
+              "description": "Intermediate and final incident reports are submitted as required.",
+              "guidance": "Examine incident reporting templates and submission records."
+            },
+            {
+              "id": "INC.2.3",
+              "description": "Significant cyber threats are reported on a voluntary basis.",
+              "guidance": "Review threat reporting procedures and history."
+            }
+          ]
+        },
+        {
+          "id": "INC.3",
+          "name": "Client and Counterparty Notification",
+          "description": "Affected parties must be notified of incidents.",
+          "requirements": [
+            {
+              "id": "INC.3.1",
+              "description": "Clients are notified of major ICT incidents that may affect their interests.",
+              "guidance": "Review client notification procedures and templates."
+            },
+            {
+              "id": "INC.3.2",
+              "description": "Notification includes measures being taken to mitigate impact.",
+              "guidance": "Examine notification content requirements and templates."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TESTING",
+      "name": "Digital Operational Resilience Testing",
+      "description": "Requirements for testing ICT systems and controls.",
+      "controls": [
+        {
+          "id": "TEST.1",
+          "name": "Testing Program",
+          "description": "A comprehensive testing program must be established.",
+          "requirements": [
+            {
+              "id": "TEST.1.1",
+              "description": "A risk-based digital operational resilience testing program is established.",
+              "guidance": "Request testing program documentation and schedule."
+            },
+            {
+              "id": "TEST.1.2",
+              "description": "Testing covers all critical ICT systems and applications.",
+              "guidance": "Review testing scope and coverage."
+            },
+            {
+              "id": "TEST.1.3",
+              "description": "Tests are performed by independent parties (internal or external).",
+              "guidance": "Examine tester independence and qualifications."
+            }
+          ]
+        },
+        {
+          "id": "TEST.2",
+          "name": "Testing Types",
+          "description": "Various types of testing must be performed.",
+          "requirements": [
+            {
+              "id": "TEST.2.1",
+              "description": "Vulnerability assessments and scans are performed regularly.",
+              "guidance": "Review vulnerability scanning procedures and results."
+            },
+            {
+              "id": "TEST.2.2",
+              "description": "Penetration testing is performed at least annually.",
+              "guidance": "Request penetration test reports and remediation."
+            },
+            {
+              "id": "TEST.2.3",
+              "description": "Source code reviews are performed where applicable.",
+              "guidance": "Examine code review procedures and findings."
+            },
+            {
+              "id": "TEST.2.4",
+              "description": "Scenario-based testing simulates disruptive events.",
+              "guidance": "Review scenario testing plans and results."
+            }
+          ]
+        },
+        {
+          "id": "TEST.3",
+          "name": "Threat-Led Penetration Testing (TLPT)",
+          "description": "Advanced testing for systemically important entities.",
+          "requirements": [
+            {
+              "id": "TEST.3.1",
+              "description": "Threat-led penetration testing is performed at least every 3 years (where required).",
+              "guidance": "Review TLPT requirements applicability and results."
+            },
+            {
+              "id": "TEST.3.2",
+              "description": "TLPT covers critical functions and is performed by qualified testers.",
+              "guidance": "Examine TLPT scope and tester qualifications."
+            },
+            {
+              "id": "TEST.3.3",
+              "description": "Third-party ICT service providers participate in TLPT as required.",
+              "guidance": "Review third-party involvement in TLPT."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TPP_RISK",
+      "name": "ICT Third-Party Risk Management",
+      "description": "Requirements for managing risks from third-party ICT service providers.",
+      "controls": [
+        {
+          "id": "TPP.1",
+          "name": "Third-Party Strategy",
+          "description": "A strategy for third-party risk must be established.",
+          "requirements": [
+            {
+              "id": "TPP.1.1",
+              "description": "A strategy for ICT third-party risk is established and regularly reviewed.",
+              "guidance": "Request ICT third-party risk strategy documentation."
+            },
+            {
+              "id": "TPP.1.2",
+              "description": "Concentration risk from third-party providers is assessed.",
+              "guidance": "Review concentration risk assessments and mitigation."
+            },
+            {
+              "id": "TPP.1.3",
+              "description": "Exit strategies exist for critical third-party providers.",
+              "guidance": "Examine exit plans and transition procedures."
+            }
+          ]
+        },
+        {
+          "id": "TPP.2",
+          "name": "Register of Information",
+          "description": "A register of third-party arrangements must be maintained.",
+          "requirements": [
+            {
+              "id": "TPP.2.1",
+              "description": "A register of all ICT third-party service arrangements is maintained.",
+              "guidance": "Request third-party register and review completeness."
+            },
+            {
+              "id": "TPP.2.2",
+              "description": "The register distinguishes between supporting critical or important functions.",
+              "guidance": "Review criticality classification in the register."
+            },
+            {
+              "id": "TPP.2.3",
+              "description": "The register is reported to competent authorities as required.",
+              "guidance": "Examine reporting procedures and submissions."
+            }
+          ]
+        },
+        {
+          "id": "TPP.3",
+          "name": "Contractual Arrangements",
+          "description": "Contracts must include required provisions.",
+          "requirements": [
+            {
+              "id": "TPP.3.1",
+              "description": "Contracts include clear service level descriptions and performance targets.",
+              "guidance": "Review contract templates and SLA provisions."
+            },
+            {
+              "id": "TPP.3.2",
+              "description": "Contracts include provisions for data protection and security.",
+              "guidance": "Examine security requirements in contracts."
+            },
+            {
+              "id": "TPP.3.3",
+              "description": "Contracts allow for audit rights and access to information.",
+              "guidance": "Review audit rights provisions in contracts."
+            },
+            {
+              "id": "TPP.3.4",
+              "description": "Contracts include termination rights and transition arrangements.",
+              "guidance": "Examine termination and transition clauses."
+            },
+            {
+              "id": "TPP.3.5",
+              "description": "Contracts address subcontracting requirements.",
+              "guidance": "Review subcontracting provisions and consent requirements."
+            }
+          ]
+        },
+        {
+          "id": "TPP.4",
+          "name": "Oversight and Monitoring",
+          "description": "Third-party providers must be monitored continuously.",
+          "requirements": [
+            {
+              "id": "TPP.4.1",
+              "description": "Third-party ICT service providers are subject to ongoing monitoring.",
+              "guidance": "Review third-party monitoring procedures."
+            },
+            {
+              "id": "TPP.4.2",
+              "description": "Performance against SLAs is measured and reported.",
+              "guidance": "Examine SLA monitoring and reporting."
+            },
+            {
+              "id": "TPP.4.3",
+              "description": "Security assessments of third parties are performed periodically.",
+              "guidance": "Request third-party security assessment schedule and results."
+            }
+          ]
+        },
+        {
+          "id": "TPP.5",
+          "name": "Critical ICT Third-Party Providers",
+          "description": "Enhanced requirements for critical providers.",
+          "requirements": [
+            {
+              "id": "TPP.5.1",
+              "description": "Critical ICT third-party service providers are identified.",
+              "guidance": "Review criteria and list of critical providers."
+            },
+            {
+              "id": "TPP.5.2",
+              "description": "Enhanced due diligence is performed for critical providers.",
+              "guidance": "Examine enhanced assessment procedures."
+            },
+            {
+              "id": "TPP.5.3",
+              "description": "Critical providers are subject to oversight framework requirements.",
+              "guidance": "Review oversight framework applicability."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "INFO_SHARING",
+      "name": "Information Sharing",
+      "description": "Requirements for sharing cyber threat information.",
+      "controls": [
+        {
+          "id": "SHARE.1",
+          "name": "Information Sharing Arrangements",
+          "description": "Participation in threat information sharing.",
+          "requirements": [
+            {
+              "id": "SHARE.1.1",
+              "description": "Financial entities may participate in cyber threat information sharing arrangements.",
+              "guidance": "Review participation in ISACs or other sharing arrangements."
+            },
+            {
+              "id": "SHARE.1.2",
+              "description": "Shared information is protected appropriately.",
+              "guidance": "Examine information handling procedures for shared threat data."
+            },
+            {
+              "id": "SHARE.1.3",
+              "description": "Competent authorities are notified of participation in sharing arrangements.",
+              "guidance": "Review notification of sharing participation."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

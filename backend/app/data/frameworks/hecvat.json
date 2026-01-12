@@ -1,0 +1,689 @@
+{
+  "id": "hecvat",
+  "name": "HECVAT (Higher Education Community Vendor Assessment Toolkit)",
+  "version": "3.06",
+  "description": "The Higher Education Community Vendor Assessment Toolkit (HECVAT) is a questionnaire framework designed for assessing vendors in higher education environments. It addresses unique requirements for protecting student data, research information, and compliance with regulations like FERPA.",
+  "organization": "EDUCAUSE/Internet2",
+  "categories": [
+    {
+      "id": "COMP",
+      "name": "Company Information",
+      "description": "General company and product information.",
+      "controls": [
+        {
+          "id": "COMP.01",
+          "name": "Company Overview",
+          "description": "Basic company information and structure.",
+          "requirements": [
+            {
+              "id": "COMP.01.1",
+              "description": "Company legal name, headquarters location, and ownership structure are documented.",
+              "guidance": "Request company registration documents and organizational chart."
+            },
+            {
+              "id": "COMP.01.2",
+              "description": "Key contacts for security, privacy, and support are identified.",
+              "guidance": "Review contact list and escalation procedures."
+            }
+          ]
+        },
+        {
+          "id": "COMP.02",
+          "name": "Service Description",
+          "description": "Description of the product or service being assessed.",
+          "requirements": [
+            {
+              "id": "COMP.02.1",
+              "description": "A clear description of the product/service and its functionality is provided.",
+              "guidance": "Review product documentation and use cases."
+            },
+            {
+              "id": "COMP.02.2",
+              "description": "The deployment model (SaaS, on-premise, hybrid) is clearly defined.",
+              "guidance": "Examine deployment architecture and options."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DOC",
+      "name": "Documentation",
+      "description": "Security and compliance documentation.",
+      "controls": [
+        {
+          "id": "DOC.01",
+          "name": "Security Documentation",
+          "description": "Availability of security-related documentation.",
+          "requirements": [
+            {
+              "id": "DOC.01.1",
+              "description": "Security whitepapers or technical documentation are available.",
+              "guidance": "Request security architecture documentation."
+            },
+            {
+              "id": "DOC.01.2",
+              "description": "SOC 2 Type II or equivalent audit reports are available.",
+              "guidance": "Review latest audit reports and findings."
+            },
+            {
+              "id": "DOC.01.3",
+              "description": "Penetration test summaries are available upon request.",
+              "guidance": "Request executive summary of recent penetration tests."
+            }
+          ]
+        },
+        {
+          "id": "DOC.02",
+          "name": "Certifications and Attestations",
+          "description": "Third-party certifications and compliance attestations.",
+          "requirements": [
+            {
+              "id": "DOC.02.1",
+              "description": "Relevant certifications (ISO 27001, SOC 2, etc.) are maintained.",
+              "guidance": "Review current certification status and expiration dates."
+            },
+            {
+              "id": "DOC.02.2",
+              "description": "FedRAMP authorization is achieved if processing federal data.",
+              "guidance": "Examine FedRAMP status if applicable."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IT_ACC",
+      "name": "IT Accessibility",
+      "description": "Accessibility compliance and support.",
+      "controls": [
+        {
+          "id": "ACC.01",
+          "name": "Accessibility Compliance",
+          "description": "Compliance with accessibility standards.",
+          "requirements": [
+            {
+              "id": "ACC.01.1",
+              "description": "Product conforms to WCAG 2.1 Level AA standards.",
+              "guidance": "Request VPAT (Voluntary Product Accessibility Template) documentation."
+            },
+            {
+              "id": "ACC.01.2",
+              "description": "Accessibility testing is performed regularly.",
+              "guidance": "Review accessibility testing procedures and results."
+            },
+            {
+              "id": "ACC.01.3",
+              "description": "A process exists to address accessibility issues.",
+              "guidance": "Examine accessibility issue reporting and remediation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "USEC",
+      "name": "User Security",
+      "description": "User authentication and access controls.",
+      "controls": [
+        {
+          "id": "USEC.01",
+          "name": "Authentication",
+          "description": "User authentication mechanisms.",
+          "requirements": [
+            {
+              "id": "USEC.01.1",
+              "description": "The application supports single sign-on (SSO) via SAML 2.0 or OIDC.",
+              "guidance": "Review SSO integration capabilities and documentation."
+            },
+            {
+              "id": "USEC.01.2",
+              "description": "Multi-factor authentication is supported for all users.",
+              "guidance": "Examine MFA options and configuration."
+            },
+            {
+              "id": "USEC.01.3",
+              "description": "Password policies meet industry standards (complexity, length, expiration).",
+              "guidance": "Review password policy configuration options."
+            }
+          ]
+        },
+        {
+          "id": "USEC.02",
+          "name": "Authorization",
+          "description": "Access control and authorization mechanisms.",
+          "requirements": [
+            {
+              "id": "USEC.02.1",
+              "description": "Role-based access control (RBAC) is implemented.",
+              "guidance": "Review role definitions and permission structures."
+            },
+            {
+              "id": "USEC.02.2",
+              "description": "Administrative access is segregated from end-user access.",
+              "guidance": "Examine administrative access controls and separation."
+            },
+            {
+              "id": "USEC.02.3",
+              "description": "Access can be provisioned and deprovisioned via API or SCIM.",
+              "guidance": "Review automated provisioning capabilities."
+            }
+          ]
+        },
+        {
+          "id": "USEC.03",
+          "name": "Session Management",
+          "description": "User session security controls.",
+          "requirements": [
+            {
+              "id": "USEC.03.1",
+              "description": "Sessions time out after a configurable period of inactivity.",
+              "guidance": "Review session timeout settings and configuration options."
+            },
+            {
+              "id": "USEC.03.2",
+              "description": "Concurrent session limits can be enforced.",
+              "guidance": "Examine concurrent session controls."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DSEC",
+      "name": "Data Security",
+      "description": "Protection of data at rest and in transit.",
+      "controls": [
+        {
+          "id": "DSEC.01",
+          "name": "Data Encryption",
+          "description": "Encryption of data at rest and in transit.",
+          "requirements": [
+            {
+              "id": "DSEC.01.1",
+              "description": "Data is encrypted at rest using AES-256 or equivalent.",
+              "guidance": "Review encryption standards and key management."
+            },
+            {
+              "id": "DSEC.01.2",
+              "description": "Data is encrypted in transit using TLS 1.2 or higher.",
+              "guidance": "Examine TLS configuration and certificate management."
+            },
+            {
+              "id": "DSEC.01.3",
+              "description": "Customer can manage their own encryption keys (BYOK) if required.",
+              "guidance": "Review BYOK capabilities and implementation."
+            }
+          ]
+        },
+        {
+          "id": "DSEC.02",
+          "name": "Data Classification and Handling",
+          "description": "Classification and handling of sensitive data.",
+          "requirements": [
+            {
+              "id": "DSEC.02.1",
+              "description": "Data classification is performed to identify sensitive information.",
+              "guidance": "Review data classification scheme and implementation."
+            },
+            {
+              "id": "DSEC.02.2",
+              "description": "FERPA-protected student data is handled according to requirements.",
+              "guidance": "Examine FERPA compliance documentation and controls."
+            },
+            {
+              "id": "DSEC.02.3",
+              "description": "Research data can be segregated and protected as required.",
+              "guidance": "Review research data handling capabilities."
+            }
+          ]
+        },
+        {
+          "id": "DSEC.03",
+          "name": "Data Retention and Deletion",
+          "description": "Data lifecycle management.",
+          "requirements": [
+            {
+              "id": "DSEC.03.1",
+              "description": "Data retention periods are documented and configurable.",
+              "guidance": "Request data retention policy and configuration options."
+            },
+            {
+              "id": "DSEC.03.2",
+              "description": "Secure data deletion is performed upon request or contract termination.",
+              "guidance": "Examine data deletion procedures and verification."
+            },
+            {
+              "id": "DSEC.03.3",
+              "description": "Customer data can be exported in a standard format.",
+              "guidance": "Review data export capabilities and formats."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "APPSEC",
+      "name": "Application Security",
+      "description": "Security of application development and deployment.",
+      "controls": [
+        {
+          "id": "APPSEC.01",
+          "name": "Secure Development",
+          "description": "Security in the software development lifecycle.",
+          "requirements": [
+            {
+              "id": "APPSEC.01.1",
+              "description": "A secure software development lifecycle (SSDLC) is followed.",
+              "guidance": "Request SDLC documentation and security integration."
+            },
+            {
+              "id": "APPSEC.01.2",
+              "description": "Code is reviewed for security vulnerabilities.",
+              "guidance": "Review code review procedures and security checklists."
+            },
+            {
+              "id": "APPSEC.01.3",
+              "description": "OWASP Top 10 vulnerabilities are tested for and mitigated.",
+              "guidance": "Examine OWASP compliance testing and results."
+            }
+          ]
+        },
+        {
+          "id": "APPSEC.02",
+          "name": "Security Testing",
+          "description": "Application security testing.",
+          "requirements": [
+            {
+              "id": "APPSEC.02.1",
+              "description": "Vulnerability scanning is performed regularly.",
+              "guidance": "Review vulnerability scanning procedures and tools."
+            },
+            {
+              "id": "APPSEC.02.2",
+              "description": "Penetration testing is performed at least annually.",
+              "guidance": "Request penetration test reports and remediation."
+            },
+            {
+              "id": "APPSEC.02.3",
+              "description": "Vulnerabilities are remediated within defined SLAs.",
+              "guidance": "Examine vulnerability remediation SLAs and compliance."
+            }
+          ]
+        },
+        {
+          "id": "APPSEC.03",
+          "name": "Change Management",
+          "description": "Control of application changes.",
+          "requirements": [
+            {
+              "id": "APPSEC.03.1",
+              "description": "Changes are tested in non-production before deployment.",
+              "guidance": "Review testing and deployment procedures."
+            },
+            {
+              "id": "APPSEC.03.2",
+              "description": "Customers are notified of significant changes in advance.",
+              "guidance": "Examine change notification procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "INFRA",
+      "name": "Infrastructure Security",
+      "description": "Security of hosting infrastructure.",
+      "controls": [
+        {
+          "id": "INFRA.01",
+          "name": "Hosting Environment",
+          "description": "Security of the hosting environment.",
+          "requirements": [
+            {
+              "id": "INFRA.01.1",
+              "description": "Infrastructure is hosted in SOC 2 compliant data centers.",
+              "guidance": "Review data center certifications and locations."
+            },
+            {
+              "id": "INFRA.01.2",
+              "description": "Data residency options are available (US-only, specific regions).",
+              "guidance": "Examine data residency options and configuration."
+            },
+            {
+              "id": "INFRA.01.3",
+              "description": "Multi-tenant environments provide logical separation between customers.",
+              "guidance": "Review tenant isolation architecture."
+            }
+          ]
+        },
+        {
+          "id": "INFRA.02",
+          "name": "Network Security",
+          "description": "Network protection and segmentation.",
+          "requirements": [
+            {
+              "id": "INFRA.02.1",
+              "description": "Firewalls and network segmentation protect the environment.",
+              "guidance": "Review network architecture and security controls."
+            },
+            {
+              "id": "INFRA.02.2",
+              "description": "Intrusion detection/prevention systems are implemented.",
+              "guidance": "Examine IDS/IPS deployment and monitoring."
+            },
+            {
+              "id": "INFRA.02.3",
+              "description": "DDoS protection is implemented.",
+              "guidance": "Review DDoS mitigation capabilities."
+            }
+          ]
+        },
+        {
+          "id": "INFRA.03",
+          "name": "System Security",
+          "description": "Security of systems and endpoints.",
+          "requirements": [
+            {
+              "id": "INFRA.03.1",
+              "description": "Systems are hardened according to industry standards.",
+              "guidance": "Request hardening standards and compliance."
+            },
+            {
+              "id": "INFRA.03.2",
+              "description": "Endpoint protection is deployed on all systems.",
+              "guidance": "Review endpoint protection deployment."
+            },
+            {
+              "id": "INFRA.03.3",
+              "description": "Patches are applied within defined timeframes.",
+              "guidance": "Examine patch management policy and compliance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "AVAIL",
+      "name": "Availability",
+      "description": "Service availability and continuity.",
+      "controls": [
+        {
+          "id": "AVAIL.01",
+          "name": "Service Level",
+          "description": "Service availability commitments.",
+          "requirements": [
+            {
+              "id": "AVAIL.01.1",
+              "description": "Uptime SLA of 99.9% or better is provided.",
+              "guidance": "Review SLA documentation and historical performance."
+            },
+            {
+              "id": "AVAIL.01.2",
+              "description": "A public status page shows real-time and historical availability.",
+              "guidance": "Examine status page and incident history."
+            },
+            {
+              "id": "AVAIL.01.3",
+              "description": "Planned maintenance is communicated in advance.",
+              "guidance": "Review maintenance notification procedures."
+            }
+          ]
+        },
+        {
+          "id": "AVAIL.02",
+          "name": "Backup and Recovery",
+          "description": "Data backup and disaster recovery.",
+          "requirements": [
+            {
+              "id": "AVAIL.02.1",
+              "description": "Data is backed up regularly with defined RPO.",
+              "guidance": "Request backup frequency and RPO documentation."
+            },
+            {
+              "id": "AVAIL.02.2",
+              "description": "Disaster recovery plans exist with defined RTO.",
+              "guidance": "Review DR plan and RTO commitments."
+            },
+            {
+              "id": "AVAIL.02.3",
+              "description": "DR testing is performed at least annually.",
+              "guidance": "Examine DR test results and findings."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PRIV",
+      "name": "Privacy",
+      "description": "Data privacy and regulatory compliance.",
+      "controls": [
+        {
+          "id": "PRIV.01",
+          "name": "Privacy Program",
+          "description": "Privacy program and policies.",
+          "requirements": [
+            {
+              "id": "PRIV.01.1",
+              "description": "A privacy policy is published and maintained.",
+              "guidance": "Request current privacy policy and review scope."
+            },
+            {
+              "id": "PRIV.01.2",
+              "description": "A Data Protection Officer or equivalent role exists.",
+              "guidance": "Identify privacy leadership and contact information."
+            },
+            {
+              "id": "PRIV.01.3",
+              "description": "Privacy impact assessments are performed for new processing.",
+              "guidance": "Review PIA process and recent assessments."
+            }
+          ]
+        },
+        {
+          "id": "PRIV.02",
+          "name": "Regulatory Compliance",
+          "description": "Compliance with privacy regulations.",
+          "requirements": [
+            {
+              "id": "PRIV.02.1",
+              "description": "FERPA compliance is maintained for student data.",
+              "guidance": "Review FERPA compliance documentation and training."
+            },
+            {
+              "id": "PRIV.02.2",
+              "description": "GDPR compliance is maintained for EU data subjects.",
+              "guidance": "Examine GDPR compliance measures and DPA."
+            },
+            {
+              "id": "PRIV.02.3",
+              "description": "CCPA/CPRA compliance is maintained for California residents.",
+              "guidance": "Review state privacy law compliance."
+            },
+            {
+              "id": "PRIV.02.4",
+              "description": "HIPAA compliance is maintained if handling health data.",
+              "guidance": "Examine HIPAA compliance if applicable."
+            }
+          ]
+        },
+        {
+          "id": "PRIV.03",
+          "name": "Data Subject Rights",
+          "description": "Support for individual privacy rights.",
+          "requirements": [
+            {
+              "id": "PRIV.03.1",
+              "description": "Data subject access requests can be fulfilled.",
+              "guidance": "Review DSAR process and response times."
+            },
+            {
+              "id": "PRIV.03.2",
+              "description": "Data deletion requests can be fulfilled.",
+              "guidance": "Examine data deletion procedures."
+            },
+            {
+              "id": "PRIV.03.3",
+              "description": "Data portability is supported.",
+              "guidance": "Review data export capabilities."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IR",
+      "name": "Incident Response",
+      "description": "Security incident detection and response.",
+      "controls": [
+        {
+          "id": "IR.01",
+          "name": "Incident Management",
+          "description": "Incident detection and response capabilities.",
+          "requirements": [
+            {
+              "id": "IR.01.1",
+              "description": "An incident response plan is documented and tested.",
+              "guidance": "Request incident response plan documentation."
+            },
+            {
+              "id": "IR.01.2",
+              "description": "Security events are monitored 24/7.",
+              "guidance": "Review SOC coverage and monitoring procedures."
+            },
+            {
+              "id": "IR.01.3",
+              "description": "Incident response exercises are conducted regularly.",
+              "guidance": "Examine tabletop exercise history and results."
+            }
+          ]
+        },
+        {
+          "id": "IR.02",
+          "name": "Breach Notification",
+          "description": "Notification of security incidents.",
+          "requirements": [
+            {
+              "id": "IR.02.1",
+              "description": "Customers are notified of security incidents within 72 hours or sooner.",
+              "guidance": "Review notification SLAs and procedures."
+            },
+            {
+              "id": "IR.02.2",
+              "description": "Notification includes nature of breach and data affected.",
+              "guidance": "Examine notification templates and content."
+            },
+            {
+              "id": "IR.02.3",
+              "description": "Support is provided for institution's own breach notification obligations.",
+              "guidance": "Review breach support procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HR",
+      "name": "Human Resources Security",
+      "description": "Personnel security controls.",
+      "controls": [
+        {
+          "id": "HR.01",
+          "name": "Personnel Security",
+          "description": "Background checks and screening.",
+          "requirements": [
+            {
+              "id": "HR.01.1",
+              "description": "Background checks are performed on employees with data access.",
+              "guidance": "Review background check policy and coverage."
+            },
+            {
+              "id": "HR.01.2",
+              "description": "Employees sign confidentiality agreements.",
+              "guidance": "Examine NDA and confidentiality requirements."
+            },
+            {
+              "id": "HR.01.3",
+              "description": "Access is revoked promptly upon termination.",
+              "guidance": "Review offboarding procedures and timeliness."
+            }
+          ]
+        },
+        {
+          "id": "HR.02",
+          "name": "Security Awareness",
+          "description": "Security training and awareness.",
+          "requirements": [
+            {
+              "id": "HR.02.1",
+              "description": "Security awareness training is provided to all employees.",
+              "guidance": "Request training curriculum and completion records."
+            },
+            {
+              "id": "HR.02.2",
+              "description": "Role-specific security training is provided as needed.",
+              "guidance": "Review specialized training programs."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CONTRACT",
+      "name": "Contractual",
+      "description": "Contractual and legal requirements.",
+      "controls": [
+        {
+          "id": "CONTRACT.01",
+          "name": "Contract Terms",
+          "description": "Required contractual provisions.",
+          "requirements": [
+            {
+              "id": "CONTRACT.01.1",
+              "description": "Data processing addendum (DPA) is available.",
+              "guidance": "Request DPA and review terms."
+            },
+            {
+              "id": "CONTRACT.01.2",
+              "description": "Audit rights are included in the contract.",
+              "guidance": "Examine audit rights provisions."
+            },
+            {
+              "id": "CONTRACT.01.3",
+              "description": "Data return/deletion upon termination is guaranteed.",
+              "guidance": "Review termination and data handling clauses."
+            },
+            {
+              "id": "CONTRACT.01.4",
+              "description": "Limitation of liability terms are reasonable.",
+              "guidance": "Examine liability provisions and caps."
+            }
+          ]
+        },
+        {
+          "id": "CONTRACT.02",
+          "name": "Subcontractors",
+          "description": "Management of subcontractors.",
+          "requirements": [
+            {
+              "id": "CONTRACT.02.1",
+              "description": "Subcontractors/subprocessors are disclosed.",
+              "guidance": "Request list of subprocessors."
+            },
+            {
+              "id": "CONTRACT.02.2",
+              "description": "Notification is provided before adding new subprocessors.",
+              "guidance": "Review subprocessor change notification process."
+            },
+            {
+              "id": "CONTRACT.02.3",
+              "description": "Subcontractors are bound to equivalent security obligations.",
+              "guidance": "Examine flow-down requirements in subcontracts."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

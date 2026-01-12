@@ -1,0 +1,1021 @@
+{
+  "id": "sig_2026",
+  "name": "SIG 2026 (Standardized Information Gathering)",
+  "version": "2026",
+  "description": "The Shared Assessments SIG questionnaire is the industry gold standard for third-party risk assessment, covering 21 risk domains with comprehensive controls for evaluating vendor security posture. Updated for 2026 with enhanced AI/ML, cloud security, and supply chain risk domains.",
+  "organization": "Shared Assessments",
+  "categories": [
+    {
+      "id": "A",
+      "name": "Enterprise Risk Management",
+      "description": "Controls related to organizational risk management strategy, governance, and oversight.",
+      "controls": [
+        {
+          "id": "A.1",
+          "name": "Risk Management Program",
+          "description": "Organization maintains a formal enterprise risk management program.",
+          "requirements": [
+            {
+              "id": "A.1.1",
+              "description": "A formal enterprise risk management program exists that identifies, assesses, and manages risks across the organization.",
+              "guidance": "Request risk management policy and program documentation. Verify executive sponsorship and board oversight."
+            },
+            {
+              "id": "A.1.2",
+              "description": "Risk assessments are performed at least annually and when significant changes occur.",
+              "guidance": "Review risk assessment schedule and recent assessment reports."
+            },
+            {
+              "id": "A.1.3",
+              "description": "Risk tolerance levels are defined and approved by executive management.",
+              "guidance": "Examine risk appetite statements and tolerance thresholds."
+            }
+          ]
+        },
+        {
+          "id": "A.2",
+          "name": "Third-Party Risk Management",
+          "description": "Organization has processes to identify, assess, and manage risks from third parties.",
+          "requirements": [
+            {
+              "id": "A.2.1",
+              "description": "A third-party risk management program exists with defined policies and procedures.",
+              "guidance": "Request TPRM policy and vendor management procedures."
+            },
+            {
+              "id": "A.2.2",
+              "description": "Vendors are categorized by risk level based on data access and criticality.",
+              "guidance": "Review vendor tiering methodology and classification criteria."
+            },
+            {
+              "id": "A.2.3",
+              "description": "Due diligence is performed on vendors prior to engagement and periodically thereafter.",
+              "guidance": "Examine vendor onboarding checklists and reassessment schedules."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Security Policy",
+      "description": "Information security policies and their management.",
+      "controls": [
+        {
+          "id": "B.1",
+          "name": "Information Security Policy",
+          "description": "Organization maintains comprehensive information security policies.",
+          "requirements": [
+            {
+              "id": "B.1.1",
+              "description": "An information security policy approved by management is published and communicated to employees.",
+              "guidance": "Request current information security policy. Verify approval date and communication methods."
+            },
+            {
+              "id": "B.1.2",
+              "description": "Policies are reviewed and updated at least annually or when significant changes occur.",
+              "guidance": "Review policy revision history and change management records."
+            },
+            {
+              "id": "B.1.3",
+              "description": "Policy exceptions require documented approval and are tracked.",
+              "guidance": "Examine exception request process and tracking mechanisms."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Organizational Security",
+      "description": "Security organization structure, roles, and responsibilities.",
+      "controls": [
+        {
+          "id": "C.1",
+          "name": "Security Organization",
+          "description": "Clear organizational structure for information security management.",
+          "requirements": [
+            {
+              "id": "C.1.1",
+              "description": "A CISO or equivalent role exists with responsibility for information security.",
+              "guidance": "Identify the security leadership structure and reporting lines."
+            },
+            {
+              "id": "C.1.2",
+              "description": "Security roles and responsibilities are clearly defined and documented.",
+              "guidance": "Review job descriptions and RACI matrices for security functions."
+            },
+            {
+              "id": "C.1.3",
+              "description": "Adequate resources are allocated to support the security program.",
+              "guidance": "Examine security team size, budget allocation, and tool investments."
+            }
+          ]
+        },
+        {
+          "id": "C.2",
+          "name": "Segregation of Duties",
+          "description": "Conflicting duties and areas of responsibility are segregated.",
+          "requirements": [
+            {
+              "id": "C.2.1",
+              "description": "Duties are segregated to reduce opportunities for unauthorized modification or misuse.",
+              "guidance": "Review access control matrices and approval workflows."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Asset Management",
+      "description": "Identification and classification of information assets.",
+      "controls": [
+        {
+          "id": "D.1",
+          "name": "Asset Inventory",
+          "description": "Organization maintains an inventory of information assets.",
+          "requirements": [
+            {
+              "id": "D.1.1",
+              "description": "A complete inventory of information assets is maintained and regularly updated.",
+              "guidance": "Request asset inventory reports and update frequency."
+            },
+            {
+              "id": "D.1.2",
+              "description": "Asset owners are assigned and accountable for asset protection.",
+              "guidance": "Review asset ownership assignments and accountability structures."
+            }
+          ]
+        },
+        {
+          "id": "D.2",
+          "name": "Data Classification",
+          "description": "Information is classified according to sensitivity and criticality.",
+          "requirements": [
+            {
+              "id": "D.2.1",
+              "description": "A data classification scheme exists with defined handling requirements.",
+              "guidance": "Request data classification policy and handling guidelines."
+            },
+            {
+              "id": "D.2.2",
+              "description": "Data is labeled according to its classification level.",
+              "guidance": "Examine data labeling practices and enforcement mechanisms."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Human Resources Security",
+      "description": "Security controls related to personnel.",
+      "controls": [
+        {
+          "id": "E.1",
+          "name": "Background Verification",
+          "description": "Background checks are performed on personnel.",
+          "requirements": [
+            {
+              "id": "E.1.1",
+              "description": "Background checks are performed on all employees prior to employment.",
+              "guidance": "Review background check policy and screening procedures."
+            },
+            {
+              "id": "E.1.2",
+              "description": "Periodic re-verification is performed for personnel with elevated access.",
+              "guidance": "Examine re-screening schedules for sensitive positions."
+            }
+          ]
+        },
+        {
+          "id": "E.2",
+          "name": "Security Awareness Training",
+          "description": "Personnel receive security awareness training.",
+          "requirements": [
+            {
+              "id": "E.2.1",
+              "description": "Security awareness training is provided to all employees upon hire and annually.",
+              "guidance": "Request training curriculum and completion records."
+            },
+            {
+              "id": "E.2.2",
+              "description": "Role-based security training is provided for personnel with specialized functions.",
+              "guidance": "Review specialized training programs for developers, admins, etc."
+            },
+            {
+              "id": "E.2.3",
+              "description": "Phishing simulations or tests are conducted regularly.",
+              "guidance": "Examine phishing test results and remediation actions."
+            }
+          ]
+        },
+        {
+          "id": "E.3",
+          "name": "Termination Process",
+          "description": "Secure offboarding procedures exist.",
+          "requirements": [
+            {
+              "id": "E.3.1",
+              "description": "Access is revoked promptly upon termination or role change.",
+              "guidance": "Review termination procedures and access revocation timelines."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Physical Security",
+      "description": "Physical and environmental security controls.",
+      "controls": [
+        {
+          "id": "F.1",
+          "name": "Physical Access Control",
+          "description": "Physical access to facilities is controlled.",
+          "requirements": [
+            {
+              "id": "F.1.1",
+              "description": "Physical access to sensitive areas requires authentication (badge, biometric, etc.).",
+              "guidance": "Review physical access control systems and entry logs."
+            },
+            {
+              "id": "F.1.2",
+              "description": "Visitor access is controlled and logged.",
+              "guidance": "Examine visitor management procedures and logs."
+            }
+          ]
+        },
+        {
+          "id": "F.2",
+          "name": "Data Center Security",
+          "description": "Data center facilities have appropriate security controls.",
+          "requirements": [
+            {
+              "id": "F.2.1",
+              "description": "Data centers have multiple layers of physical security.",
+              "guidance": "Review data center security documentation or SOC reports."
+            },
+            {
+              "id": "F.2.2",
+              "description": "Environmental controls (HVAC, fire suppression) are in place.",
+              "guidance": "Examine environmental monitoring and protection systems."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "name": "IT Operations Management",
+      "description": "Operational procedures and responsibilities.",
+      "controls": [
+        {
+          "id": "G.1",
+          "name": "Change Management",
+          "description": "Changes to systems are controlled.",
+          "requirements": [
+            {
+              "id": "G.1.1",
+              "description": "A formal change management process exists for all system changes.",
+              "guidance": "Request change management policy and review change tickets."
+            },
+            {
+              "id": "G.1.2",
+              "description": "Changes are tested in non-production before deployment.",
+              "guidance": "Examine testing procedures and approval workflows."
+            },
+            {
+              "id": "G.1.3",
+              "description": "Emergency changes follow an expedited but documented process.",
+              "guidance": "Review emergency change procedures and recent examples."
+            }
+          ]
+        },
+        {
+          "id": "G.2",
+          "name": "Capacity Management",
+          "description": "System capacity is monitored and managed.",
+          "requirements": [
+            {
+              "id": "G.2.1",
+              "description": "System capacity is monitored and future needs are projected.",
+              "guidance": "Review capacity monitoring tools and planning documents."
+            }
+          ]
+        },
+        {
+          "id": "G.3",
+          "name": "Backup and Recovery",
+          "description": "Data backup and recovery procedures.",
+          "requirements": [
+            {
+              "id": "G.3.1",
+              "description": "Critical data is backed up regularly according to defined schedules.",
+              "guidance": "Request backup policy and schedule documentation."
+            },
+            {
+              "id": "G.3.2",
+              "description": "Backup restoration is tested periodically.",
+              "guidance": "Review backup restoration test results and frequency."
+            },
+            {
+              "id": "G.3.3",
+              "description": "Backups are stored securely, including offsite or cloud storage.",
+              "guidance": "Examine backup storage locations and encryption."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Access Control",
+      "description": "Logical access control to systems and data.",
+      "controls": [
+        {
+          "id": "H.1",
+          "name": "Access Control Policy",
+          "description": "Access to systems is controlled based on business needs.",
+          "requirements": [
+            {
+              "id": "H.1.1",
+              "description": "Access is granted based on the principle of least privilege.",
+              "guidance": "Review access provisioning procedures and role definitions."
+            },
+            {
+              "id": "H.1.2",
+              "description": "Access rights are reviewed periodically (at least quarterly for privileged access).",
+              "guidance": "Examine access review procedures and completion records."
+            }
+          ]
+        },
+        {
+          "id": "H.2",
+          "name": "User Authentication",
+          "description": "Strong authentication mechanisms are implemented.",
+          "requirements": [
+            {
+              "id": "H.2.1",
+              "description": "Multi-factor authentication is required for remote access and administrative functions.",
+              "guidance": "Review MFA implementation and coverage."
+            },
+            {
+              "id": "H.2.2",
+              "description": "Password policies enforce complexity, length, and rotation requirements.",
+              "guidance": "Request password policy and technical enforcement settings."
+            },
+            {
+              "id": "H.2.3",
+              "description": "Account lockout is enforced after failed authentication attempts.",
+              "guidance": "Examine lockout thresholds and duration settings."
+            }
+          ]
+        },
+        {
+          "id": "H.3",
+          "name": "Privileged Access Management",
+          "description": "Elevated access is tightly controlled.",
+          "requirements": [
+            {
+              "id": "H.3.1",
+              "description": "Administrative access requires additional approval and is logged.",
+              "guidance": "Review privileged access request and approval process."
+            },
+            {
+              "id": "H.3.2",
+              "description": "Privileged credentials are managed through a PAM solution or equivalent.",
+              "guidance": "Examine privileged access management tools and procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Application Security",
+      "description": "Security in application development and maintenance.",
+      "controls": [
+        {
+          "id": "I.1",
+          "name": "Secure Development",
+          "description": "Applications are developed securely.",
+          "requirements": [
+            {
+              "id": "I.1.1",
+              "description": "A secure software development lifecycle (SSDLC) is followed.",
+              "guidance": "Request SDLC documentation and security integration points."
+            },
+            {
+              "id": "I.1.2",
+              "description": "Developers receive secure coding training.",
+              "guidance": "Review developer training curriculum and completion."
+            },
+            {
+              "id": "I.1.3",
+              "description": "Code reviews include security considerations.",
+              "guidance": "Examine code review procedures and security checklists."
+            }
+          ]
+        },
+        {
+          "id": "I.2",
+          "name": "Application Testing",
+          "description": "Applications are tested for security vulnerabilities.",
+          "requirements": [
+            {
+              "id": "I.2.1",
+              "description": "Static application security testing (SAST) is performed.",
+              "guidance": "Review SAST tool configuration and scan results."
+            },
+            {
+              "id": "I.2.2",
+              "description": "Dynamic application security testing (DAST) is performed.",
+              "guidance": "Examine DAST procedures and findings."
+            },
+            {
+              "id": "I.2.3",
+              "description": "Penetration testing is performed at least annually.",
+              "guidance": "Request penetration test reports and remediation evidence."
+            }
+          ]
+        },
+        {
+          "id": "I.3",
+          "name": "Open Source Security",
+          "description": "Open source and third-party components are managed.",
+          "requirements": [
+            {
+              "id": "I.3.1",
+              "description": "Software composition analysis (SCA) is performed to identify vulnerabilities in dependencies.",
+              "guidance": "Review SCA tool implementation and findings."
+            },
+            {
+              "id": "I.3.2",
+              "description": "A software bill of materials (SBOM) is maintained.",
+              "guidance": "Request SBOM documentation and update procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "J",
+      "name": "Cybersecurity Incident Management",
+      "description": "Incident detection, response, and recovery.",
+      "controls": [
+        {
+          "id": "J.1",
+          "name": "Incident Response",
+          "description": "A formal incident response capability exists.",
+          "requirements": [
+            {
+              "id": "J.1.1",
+              "description": "An incident response plan is documented and approved.",
+              "guidance": "Request incident response plan and review approval."
+            },
+            {
+              "id": "J.1.2",
+              "description": "Incident response roles and responsibilities are defined.",
+              "guidance": "Review IRT structure and contact information."
+            },
+            {
+              "id": "J.1.3",
+              "description": "Incident response procedures are tested at least annually.",
+              "guidance": "Examine tabletop exercises and drill results."
+            }
+          ]
+        },
+        {
+          "id": "J.2",
+          "name": "Security Monitoring",
+          "description": "Security events are monitored and analyzed.",
+          "requirements": [
+            {
+              "id": "J.2.1",
+              "description": "Security information and event management (SIEM) is implemented.",
+              "guidance": "Review SIEM configuration and log sources."
+            },
+            {
+              "id": "J.2.2",
+              "description": "Security alerts are triaged and investigated 24/7.",
+              "guidance": "Examine SOC procedures and coverage model."
+            }
+          ]
+        },
+        {
+          "id": "J.3",
+          "name": "Incident Notification",
+          "description": "Affected parties are notified of security incidents.",
+          "requirements": [
+            {
+              "id": "J.3.1",
+              "description": "Customer notification procedures exist for security incidents.",
+              "guidance": "Review notification procedures and SLA commitments."
+            },
+            {
+              "id": "J.3.2",
+              "description": "Regulatory notification requirements are tracked and met.",
+              "guidance": "Examine regulatory notification tracking and compliance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "K",
+      "name": "Business Continuity",
+      "description": "Business continuity and disaster recovery planning.",
+      "controls": [
+        {
+          "id": "K.1",
+          "name": "BCP/DRP",
+          "description": "Business continuity and disaster recovery plans exist.",
+          "requirements": [
+            {
+              "id": "K.1.1",
+              "description": "Business impact analysis is performed to identify critical functions.",
+              "guidance": "Request BIA documentation and results."
+            },
+            {
+              "id": "K.1.2",
+              "description": "Recovery time objectives (RTO) and recovery point objectives (RPO) are defined.",
+              "guidance": "Review RTO/RPO definitions for critical systems."
+            },
+            {
+              "id": "K.1.3",
+              "description": "DR plans are tested at least annually.",
+              "guidance": "Examine DR test results and lessons learned."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "L",
+      "name": "Compliance",
+      "description": "Regulatory and contractual compliance.",
+      "controls": [
+        {
+          "id": "L.1",
+          "name": "Regulatory Compliance",
+          "description": "Applicable regulatory requirements are identified and met.",
+          "requirements": [
+            {
+              "id": "L.1.1",
+              "description": "Applicable laws and regulations are identified and tracked.",
+              "guidance": "Request regulatory inventory and compliance tracking."
+            },
+            {
+              "id": "L.1.2",
+              "description": "Compliance is validated through audits or assessments.",
+              "guidance": "Review compliance audit results and certifications."
+            }
+          ]
+        },
+        {
+          "id": "L.2",
+          "name": "Audit Support",
+          "description": "Audit requirements are supported.",
+          "requirements": [
+            {
+              "id": "L.2.1",
+              "description": "Audit logs are retained according to regulatory and business requirements.",
+              "guidance": "Examine log retention policies and implementation."
+            },
+            {
+              "id": "L.2.2",
+              "description": "Customers can request audit rights per contractual terms.",
+              "guidance": "Review audit rights provisions in contracts."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M",
+      "name": "Privacy",
+      "description": "Data privacy and protection.",
+      "controls": [
+        {
+          "id": "M.1",
+          "name": "Privacy Program",
+          "description": "A privacy program exists to protect personal information.",
+          "requirements": [
+            {
+              "id": "M.1.1",
+              "description": "A privacy policy exists and is communicated to data subjects.",
+              "guidance": "Request privacy policy and notice documentation."
+            },
+            {
+              "id": "M.1.2",
+              "description": "Privacy impact assessments are performed for new processing activities.",
+              "guidance": "Review PIA process and recent assessments."
+            },
+            {
+              "id": "M.1.3",
+              "description": "Data subject rights (access, deletion, portability) can be fulfilled.",
+              "guidance": "Examine data subject request procedures and fulfillment."
+            }
+          ]
+        },
+        {
+          "id": "M.2",
+          "name": "Data Protection",
+          "description": "Personal data is protected appropriately.",
+          "requirements": [
+            {
+              "id": "M.2.1",
+              "description": "Personal data is encrypted at rest and in transit.",
+              "guidance": "Review encryption standards for personal data."
+            },
+            {
+              "id": "M.2.2",
+              "description": "Data minimization principles are applied.",
+              "guidance": "Examine data collection practices and retention limits."
+            },
+            {
+              "id": "M.2.3",
+              "description": "Cross-border data transfers comply with applicable requirements.",
+              "guidance": "Review data transfer mechanisms (SCCs, adequacy, etc.)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "N",
+      "name": "Network Security",
+      "description": "Network protection and segmentation.",
+      "controls": [
+        {
+          "id": "N.1",
+          "name": "Network Protection",
+          "description": "Networks are protected from unauthorized access.",
+          "requirements": [
+            {
+              "id": "N.1.1",
+              "description": "Firewalls protect network boundaries.",
+              "guidance": "Review firewall architecture and rule sets."
+            },
+            {
+              "id": "N.1.2",
+              "description": "Network segmentation separates sensitive systems.",
+              "guidance": "Examine network diagrams and segmentation strategy."
+            },
+            {
+              "id": "N.1.3",
+              "description": "Intrusion detection/prevention systems are implemented.",
+              "guidance": "Review IDS/IPS deployment and monitoring."
+            }
+          ]
+        },
+        {
+          "id": "N.2",
+          "name": "Remote Access",
+          "description": "Remote access is secured.",
+          "requirements": [
+            {
+              "id": "N.2.1",
+              "description": "VPN or zero-trust network access is required for remote connections.",
+              "guidance": "Review remote access architecture and requirements."
+            },
+            {
+              "id": "N.2.2",
+              "description": "Remote access sessions are logged and monitored.",
+              "guidance": "Examine remote access logging and review procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "O",
+      "name": "Cloud Security",
+      "description": "Security controls for cloud computing environments.",
+      "controls": [
+        {
+          "id": "O.1",
+          "name": "Cloud Governance",
+          "description": "Cloud usage is governed and controlled.",
+          "requirements": [
+            {
+              "id": "O.1.1",
+              "description": "Cloud service providers are assessed for security prior to use.",
+              "guidance": "Review CSP assessment process and vendor reviews."
+            },
+            {
+              "id": "O.1.2",
+              "description": "Cloud security responsibilities are clearly defined (shared responsibility model).",
+              "guidance": "Examine shared responsibility documentation."
+            }
+          ]
+        },
+        {
+          "id": "O.2",
+          "name": "Cloud Configuration",
+          "description": "Cloud resources are securely configured.",
+          "requirements": [
+            {
+              "id": "O.2.1",
+              "description": "Cloud security posture management (CSPM) tools monitor configuration.",
+              "guidance": "Review CSPM implementation and findings."
+            },
+            {
+              "id": "O.2.2",
+              "description": "Infrastructure as code is used with security scanning.",
+              "guidance": "Examine IaC practices and security scanning integration."
+            },
+            {
+              "id": "O.2.3",
+              "description": "Cloud access is controlled through identity federation where possible.",
+              "guidance": "Review identity federation and access management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P",
+      "name": "Endpoint Security",
+      "description": "Protection of endpoint devices.",
+      "controls": [
+        {
+          "id": "P.1",
+          "name": "Endpoint Protection",
+          "description": "Endpoints are protected from malware and threats.",
+          "requirements": [
+            {
+              "id": "P.1.1",
+              "description": "EDR/XDR solutions are deployed on all endpoints.",
+              "guidance": "Review endpoint protection deployment and coverage."
+            },
+            {
+              "id": "P.1.2",
+              "description": "Endpoints are hardened according to security baselines.",
+              "guidance": "Examine hardening standards and compliance."
+            },
+            {
+              "id": "P.1.3",
+              "description": "Full disk encryption is enabled on all endpoints.",
+              "guidance": "Review encryption deployment and management."
+            }
+          ]
+        },
+        {
+          "id": "P.2",
+          "name": "Mobile Device Management",
+          "description": "Mobile devices are managed securely.",
+          "requirements": [
+            {
+              "id": "P.2.1",
+              "description": "Mobile device management (MDM) is implemented for corporate devices.",
+              "guidance": "Review MDM solution and enrollment."
+            },
+            {
+              "id": "P.2.2",
+              "description": "BYOD policies define security requirements for personal devices.",
+              "guidance": "Examine BYOD policy and controls."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Q",
+      "name": "Cryptography",
+      "description": "Cryptographic controls and key management.",
+      "controls": [
+        {
+          "id": "Q.1",
+          "name": "Encryption Standards",
+          "description": "Strong cryptography is used appropriately.",
+          "requirements": [
+            {
+              "id": "Q.1.1",
+              "description": "Industry-standard encryption algorithms are used (AES-256, RSA-2048+, etc.).",
+              "guidance": "Review encryption standards and algorithm inventory."
+            },
+            {
+              "id": "Q.1.2",
+              "description": "TLS 1.2 or higher is required for data in transit.",
+              "guidance": "Examine TLS configuration and certificate management."
+            }
+          ]
+        },
+        {
+          "id": "Q.2",
+          "name": "Key Management",
+          "description": "Cryptographic keys are managed securely.",
+          "requirements": [
+            {
+              "id": "Q.2.1",
+              "description": "Key management procedures are documented and followed.",
+              "guidance": "Request key management procedures and lifecycle."
+            },
+            {
+              "id": "Q.2.2",
+              "description": "Keys are stored in hardware security modules (HSMs) or equivalent.",
+              "guidance": "Review key storage mechanisms and protection."
+            },
+            {
+              "id": "Q.2.3",
+              "description": "Key rotation is performed according to defined schedules.",
+              "guidance": "Examine key rotation procedures and evidence."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R",
+      "name": "Vulnerability Management",
+      "description": "Identification and remediation of vulnerabilities.",
+      "controls": [
+        {
+          "id": "R.1",
+          "name": "Vulnerability Scanning",
+          "description": "Systems are scanned for vulnerabilities.",
+          "requirements": [
+            {
+              "id": "R.1.1",
+              "description": "Vulnerability scans are performed at least monthly on all systems.",
+              "guidance": "Review vulnerability scanning schedule and coverage."
+            },
+            {
+              "id": "R.1.2",
+              "description": "Critical vulnerabilities are remediated within defined SLAs.",
+              "guidance": "Examine remediation SLAs and compliance metrics."
+            }
+          ]
+        },
+        {
+          "id": "R.2",
+          "name": "Patch Management",
+          "description": "Systems are patched promptly.",
+          "requirements": [
+            {
+              "id": "R.2.1",
+              "description": "Critical patches are applied within 14 days of release.",
+              "guidance": "Review patch management policy and compliance."
+            },
+            {
+              "id": "R.2.2",
+              "description": "Patching is validated through scanning or verification.",
+              "guidance": "Examine patch verification procedures."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S",
+      "name": "Supply Chain Security",
+      "description": "Security of the supply chain and software supply chain.",
+      "controls": [
+        {
+          "id": "S.1",
+          "name": "Software Supply Chain",
+          "description": "Software supply chain risks are managed.",
+          "requirements": [
+            {
+              "id": "S.1.1",
+              "description": "Software provenance is verified for critical components.",
+              "guidance": "Review software verification procedures."
+            },
+            {
+              "id": "S.1.2",
+              "description": "CI/CD pipelines are secured with access controls and signing.",
+              "guidance": "Examine pipeline security controls and artifact signing."
+            },
+            {
+              "id": "S.1.3",
+              "description": "Container images are scanned and signed before deployment.",
+              "guidance": "Review container security practices."
+            }
+          ]
+        },
+        {
+          "id": "S.2",
+          "name": "Fourth-Party Risk",
+          "description": "Risks from vendors' vendors are considered.",
+          "requirements": [
+            {
+              "id": "S.2.1",
+              "description": "Critical subcontractors are identified and assessed.",
+              "guidance": "Request fourth-party inventory and assessment approach."
+            },
+            {
+              "id": "S.2.2",
+              "description": "Contractual flow-down requirements exist for security.",
+              "guidance": "Review contract terms for subcontractor requirements."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "T",
+      "name": "AI and Machine Learning Security",
+      "description": "Security controls specific to AI/ML systems (2026 addition).",
+      "controls": [
+        {
+          "id": "T.1",
+          "name": "AI Governance",
+          "description": "AI systems are governed appropriately.",
+          "requirements": [
+            {
+              "id": "T.1.1",
+              "description": "AI/ML usage is inventoried and risk-assessed.",
+              "guidance": "Request AI system inventory and risk assessments."
+            },
+            {
+              "id": "T.1.2",
+              "description": "Human oversight exists for critical AI decisions.",
+              "guidance": "Review human-in-the-loop requirements and implementation."
+            },
+            {
+              "id": "T.1.3",
+              "description": "AI model decisions are explainable where required.",
+              "guidance": "Examine explainability capabilities and documentation."
+            }
+          ]
+        },
+        {
+          "id": "T.2",
+          "name": "AI Security",
+          "description": "AI systems are secured against specific threats.",
+          "requirements": [
+            {
+              "id": "T.2.1",
+              "description": "Training data is validated for quality and bias.",
+              "guidance": "Review data validation and bias testing procedures."
+            },
+            {
+              "id": "T.2.2",
+              "description": "Model integrity is protected against tampering.",
+              "guidance": "Examine model protection and versioning controls."
+            },
+            {
+              "id": "T.2.3",
+              "description": "Prompt injection and adversarial attacks are mitigated.",
+              "guidance": "Review input validation and attack mitigation for LLMs."
+            },
+            {
+              "id": "T.2.4",
+              "description": "AI outputs are monitored for harmful or unexpected content.",
+              "guidance": "Examine output monitoring and filtering capabilities."
+            }
+          ]
+        },
+        {
+          "id": "T.3",
+          "name": "AI Privacy",
+          "description": "Privacy is protected in AI systems.",
+          "requirements": [
+            {
+              "id": "T.3.1",
+              "description": "Personal data used for training complies with privacy requirements.",
+              "guidance": "Review training data sources and consent mechanisms."
+            },
+            {
+              "id": "T.3.2",
+              "description": "Model outputs do not leak training data (membership inference protection).",
+              "guidance": "Examine privacy-preserving techniques and testing."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "U",
+      "name": "Resiliency",
+      "description": "Operational resilience and recovery capabilities.",
+      "controls": [
+        {
+          "id": "U.1",
+          "name": "Operational Resilience",
+          "description": "Operations can withstand and recover from disruptions.",
+          "requirements": [
+            {
+              "id": "U.1.1",
+              "description": "Critical services are designed for high availability.",
+              "guidance": "Review architecture for redundancy and failover."
+            },
+            {
+              "id": "U.1.2",
+              "description": "Resilience testing (chaos engineering) is performed.",
+              "guidance": "Examine resilience testing practices and results."
+            },
+            {
+              "id": "U.1.3",
+              "description": "Dependencies on third parties are identified and alternatives exist.",
+              "guidance": "Review dependency mapping and contingency plans."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
