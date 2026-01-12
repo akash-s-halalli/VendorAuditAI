@@ -70,6 +70,13 @@ export interface Vendor {
   tags: string[];
   createdAt: string;
   updatedAt: string;
+  // Backend snake_case aliases
+  last_assessed?: string;
+  next_assessment_due?: string;
+  criticality_score?: number;
+  data_classification?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CreateVendorRequest {
@@ -110,6 +117,14 @@ export interface Document {
   opinionType?: string;
   createdAt: string;
   processedAt?: string;
+  // Backend snake_case aliases
+  vendor_id?: string;
+  document_type?: DocumentType;
+  mime_type?: string;
+  file_size?: number;
+  page_count?: number;
+  created_at?: string;
+  processed_at?: string;
 }
 
 // Analysis

@@ -398,8 +398,8 @@ export function VendorDetail() {
                   <label className="text-sm font-medium text-muted-foreground">Last Assessed</label>
                   <p className="mt-1 flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {vendor.lastAssessed && !isNaN(new Date(vendor.lastAssessed).getTime())
-                      ? new Date(vendor.lastAssessed).toLocaleDateString()
+                    {(vendor.last_assessed || vendor.lastAssessed) && !isNaN(new Date(vendor.last_assessed || vendor.lastAssessed || '').getTime())
+                      ? new Date(vendor.last_assessed || vendor.lastAssessed || '').toLocaleDateString()
                       : 'Never'}
                   </p>
                 </div>

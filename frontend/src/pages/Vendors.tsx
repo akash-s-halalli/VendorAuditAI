@@ -508,7 +508,7 @@ export function Vendors() {
                   </p>
                 )}
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>Last assessed: {vendor.lastAssessed ? new Date(vendor.lastAssessed).toLocaleDateString() : 'Never'}</span>
+                  <span>Last assessed: {(vendor.last_assessed || vendor.lastAssessed) ? new Date(vendor.last_assessed || vendor.lastAssessed || '').toLocaleDateString() : 'Never'}</span>
                 </div>
               </CardContent>
             </Card>

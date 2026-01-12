@@ -201,7 +201,7 @@ export function Analysis() {
                 </option>
                 {documents.map((doc) => (
                   <option key={doc.id} value={doc.id}>
-                    {doc.originalFilename} ({doc.docType?.toUpperCase() || 'DOC'})
+                    {doc.filename || doc.originalFilename} ({(doc.document_type || doc.docType)?.toUpperCase() || 'DOC'})
                   </option>
                 ))}
               </select>
@@ -267,11 +267,11 @@ export function Analysis() {
             <div className="mt-4 p-3 bg-secondary/50 rounded-md">
               <div className="flex items-center gap-4 text-sm flex-wrap">
                 <span>
-                  <strong>Type:</strong> {selectedDocument.docType?.toUpperCase() || 'Document'}
+                  <strong>Type:</strong> {(selectedDocument.document_type || selectedDocument.docType)?.toUpperCase() || 'Document'}
                 </span>
-                {selectedDocument.pageCount !== undefined && selectedDocument.pageCount !== null && (
+                {(selectedDocument.page_count || selectedDocument.pageCount) !== undefined && (selectedDocument.page_count || selectedDocument.pageCount) !== null && (
                   <span>
-                    <strong>Pages:</strong> {selectedDocument.pageCount}
+                    <strong>Pages:</strong> {selectedDocument.page_count || selectedDocument.pageCount}
                   </span>
                 )}
                 <span>
