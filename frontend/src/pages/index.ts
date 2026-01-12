@@ -3,6 +3,8 @@ export { Login } from './Login';
 export { Register } from './Register';
 export { Dashboard } from './Dashboard';
 export { Agents } from './Agents';
+export { Risk } from './Risk';
+export { Analytics } from './Analytics';
 export { Vendors } from './Vendors';
 export { VendorDetail } from './VendorDetail';
 export { Documents } from './Documents';

@@ -11,6 +11,8 @@ import {
   ClipboardList,
   Bell,
   Cpu,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
@@ -24,6 +26,8 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Agents', href: '/agents', icon: Cpu },
+  { name: 'Risk', href: '/risk', icon: TrendingUp },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Vendors', href: '/vendors', icon: Building2 },
   { name: 'Documents', href: '/documents', icon: FileText },
   { name: 'Analysis', href: '/analysis', icon: Shield },
