@@ -281,7 +281,7 @@ export function Landing() {
       </section>
 
       {/* Demo Section */}
-      <section id="demo" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="demo" className="py-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
@@ -292,33 +292,37 @@ export function Landing() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-8 lg:p-12 border">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="glass-panel rounded-2xl p-8 lg:p-12 relative overflow-hidden">
+            {/* Ambient Background */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/10 blur-[100px] rounded-full pointer-events-none" />
+
+            <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
               <div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">
+                <h3 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <Zap className="h-6 w-6 text-primary" />
                   Live Demo Access
                 </h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-8 text-lg">
                   Explore the full platform with sample vendor data. Upload your own documents,
                   run AI analysis, and query your portfolio.
                 </p>
 
-                <div className="bg-background rounded-lg p-6 mb-6 border">
-                  <div className="text-sm text-muted-foreground mb-2">Demo Credentials</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Email:</span>
-                      <code className="bg-muted px-2 py-1 rounded text-sm">demo@vendorauditai.com</code>
+                <div className="bg-black/40 rounded-xl p-6 mb-8 border border-white/10 font-mono text-sm">
+                  <div className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">Demo Credentials</div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between group">
+                      <span className="text-gray-400">Email:</span>
+                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">demo@vendorauditai.com</code>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Password:</span>
-                      <code className="bg-muted px-2 py-1 rounded text-sm">DemoPass123</code>
+                    <div className="flex items-center justify-between group">
+                      <span className="text-gray-400">Password:</span>
+                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">DemoPass123</code>
                     </div>
                   </div>
                 </div>
 
                 <Link to="/login">
-                  <Button size="lg" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto neon-border">
                     Access Live Demo
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -326,47 +330,47 @@ export function Landing() {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-background rounded-lg p-6 border">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="glass-card hover:bg-white/5 rounded-xl p-6 group transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:border-primary/50 transition-colors">
                       <Building2 className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <div className="font-semibold">Vendor Management</div>
-                      <div className="text-sm text-muted-foreground">Add and track vendors</div>
+                      <div className="font-semibold text-white">Vendor Management</div>
+                      <div className="text-xs text-primary/80 font-mono">Add and track vendors</div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground pl-14">
                     Create vendor profiles, assign risk tiers, and monitor compliance status across your portfolio.
                   </div>
                 </div>
 
-                <div className="bg-background rounded-lg p-6 border">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <FileSearch className="h-5 w-5 text-primary" />
+                <div className="glass-card hover:bg-white/5 rounded-xl p-6 group transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20 group-hover:border-secondary/50 transition-colors">
+                      <FileSearch className="h-5 w-5 text-secondary" />
                     </div>
                     <div>
-                      <div className="font-semibold">Document Analysis</div>
-                      <div className="text-sm text-muted-foreground">AI-powered review</div>
+                      <div className="font-semibold text-white">Document Analysis</div>
+                      <div className="text-xs text-secondary/80 font-mono">AI-powered review</div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground pl-14">
                     Upload SOC 2, SIG, HECVAT reports and get instant AI analysis with findings and recommendations.
                   </div>
                 </div>
 
-                <div className="bg-background rounded-lg p-6 border">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <BarChart3 className="h-5 w-5 text-primary" />
+                <div className="glass-card hover:bg-white/5 rounded-xl p-6 group transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20 group-hover:border-green-500/50 transition-colors">
+                      <BarChart3 className="h-5 w-5 text-green-500" />
                     </div>
                     <div>
-                      <div className="font-semibold">Risk Dashboard</div>
-                      <div className="text-sm text-muted-foreground">Real-time visibility</div>
+                      <div className="font-semibold text-white">Risk Dashboard</div>
+                      <div className="text-xs text-green-400/80 font-mono">Real-time visibility</div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground pl-14">
                     Monitor vendor risk scores, track findings by severity, and prioritize remediation efforts.
                   </div>
                 </div>
@@ -377,23 +381,28 @@ export function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-primary/5 z-0" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-primary/20 blur-[100px] rounded-full pointer-events-none opacity-30" />
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white neon-text mb-6">
             Ready to Transform Your Vendor Risk Program?
           </h2>
-          <p className="mt-6 text-lg opacity-90">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
             Join security teams who've cut vendor assessment time by 90% while improving coverage.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/register">
-              <Button size="lg" variant="secondary" className="text-base px-8">
+              <Button size="lg" className="text-base px-8 h-12 shadow-[0_0_20px_rgba(0,242,255,0.3)] hover:shadow-[0_0_30px_rgba(0,242,255,0.5)] transition-all duration-300">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href="mailto:contact@vendorauditai.com">
-              <Button size="lg" variant="outline" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button size="lg" variant="outline" className="text-base px-8 h-12 border-primary/30 text-primary hover:bg-primary/10">
                 Contact Sales
               </Button>
             </a>
