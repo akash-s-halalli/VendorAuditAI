@@ -6,13 +6,15 @@ interface CyberCardProps {
     className?: string;
     variant?: 'default' | 'danger' | 'warning' | 'success';
     hoverEffect?: boolean;
+    onClick?: () => void;
 }
 
 export function CyberCard({
     children,
     className,
     variant = 'default',
-    hoverEffect = true
+    hoverEffect = true,
+    onClick
 }: CyberCardProps) {
     const divRef = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -55,9 +57,11 @@ export function CyberCard({
             onMouseMove={handleMouseMove}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
             className={cn(
                 "relative rounded-xl border border-white/5 bg-black/20 backdrop-blur-sm overflow-hidden group transition-all duration-300",
                 borderColor,
+                onClick && "cursor-pointer",
                 className
             )}
         >

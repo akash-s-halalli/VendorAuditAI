@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Building2, FileText, AlertTriangle, CheckCircle, Clock, Activity, Shield, Cpu, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui';
 import { CyberCard } from '@/components/ui/CyberCard';
@@ -16,6 +17,8 @@ interface DashboardStats {
 }
 
 export function Dashboard() {
+  const navigate = useNavigate();
+
   const { data: stats, isLoading, isError, error } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
@@ -30,6 +33,25 @@ export function Dashboard() {
     { severity: 'Medium', count: stats?.mediumFindings || 0, color: 'bg-yellow-500', text: 'text-yellow-500', glow: 'shadow-[0_0_10px_rgba(234,179,8,0.5)]' },
     { severity: 'Low', count: stats?.lowFindings || 0, color: 'bg-green-500', text: 'text-green-500', glow: 'shadow-[0_0_10px_rgba(34,197,94,0.5)]' },
   ];
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'upload':
+        navigate('/documents');
+        break;
+      case 'register':
+        navigate('/vendors');
+        break;
+      case 'query':
+        navigate('/query');
+        break;
+      case 'agents':
+        navigate('/agents');
+        break;
+      default:
+        break;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -111,7 +133,10 @@ export function Dashboard() {
         </CyberCard>
 
         {/* 2. Total Vendors (Wide Rect) */}
-        <CyberCard className="col-span-1 lg:col-span-2 p-6 flex items-center justify-between">
+        <CyberCard
+          className="col-span-1 lg:col-span-2 p-6 flex items-center justify-between cursor-pointer hover:border-primary/50 transition-all"
+          onClick={() => navigate('/vendors')}
+        >
           <div>
             <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">Monitored Vendors</p>
             <div className="text-4xl font-bold text-white font-mono flex items-baseline gap-2">
@@ -125,21 +150,32 @@ export function Dashboard() {
         </CyberCard>
 
         {/* 3. Pending Analysis (Small Square) */}
-        <CyberCard variant="warning" className="p-6 flex flex-col justify-center gap-2">
+        <CyberCard
+          variant="warning"
+          className="p-6 flex flex-col justify-center gap-2 cursor-pointer hover:border-yellow-500/50 transition-all"
+          onClick={() => navigate('/documents')}
+        >
           <Clock className="h-8 w-8 text-yellow-500 mb-2" />
           <div className="text-3xl font-bold text-white font-mono">{stats?.pendingAnalysis || 0}</div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest">Pending Review</p>
         </CyberCard>
 
         {/* 4. Completed Docs (Small Square) */}
-        <CyberCard variant="success" className="p-6 flex flex-col justify-center gap-2">
+        <CyberCard
+          variant="success"
+          className="p-6 flex flex-col justify-center gap-2 cursor-pointer hover:border-green-500/50 transition-all"
+          onClick={() => navigate('/analysis')}
+        >
           <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
           <div className="text-3xl font-bold text-white font-mono">{stats?.completedAnalysis || 0}</div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest">Analyzed</p>
         </CyberCard>
 
         {/* 5. Findings Distribution (Tall Rect) */}
-        <CyberCard className="col-span-1 lg:col-span-1 row-span-2 p-6">
+        <CyberCard
+          className="col-span-1 lg:col-span-1 row-span-2 p-6 cursor-pointer hover:border-primary/50 transition-all"
+          onClick={() => navigate('/analysis')}
+        >
           <h3 className="text-white font-semibold mb-6 flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary" />
             Risk Distribution
@@ -169,7 +205,10 @@ export function Dashboard() {
             <p className="text-sm text-muted-foreground mb-4">
               Active agent operations and real-time threat scanning.
             </p>
-            <button className="text-xs font-mono text-primary border border-primary/30 rounded px-3 py-1.5 w-fit hover:bg-primary/10 transition-colors uppercase">
+            <button
+              onClick={() => handleQuickAction('agents')}
+              className="text-xs font-mono text-primary border border-primary/30 rounded px-3 py-1.5 w-fit hover:bg-primary/10 transition-colors uppercase"
+            >
               Manage Network
             </button>
           </div>
@@ -198,7 +237,11 @@ export function Dashboard() {
           { label: 'Register Vendor', icon: Building2, cmd: 'register' },
           { label: 'Execute AI Query', icon: Zap, cmd: 'query' }
         ].map((action, i) => (
-          <button key={i} className="glass-card group flex items-center justify-between p-5 rounded-xl hover:border-primary/50 transition-all duration-300">
+          <button
+            key={i}
+            onClick={() => handleQuickAction(action.cmd)}
+            className="glass-card group flex items-center justify-between p-5 rounded-xl hover:border-primary/50 transition-all duration-300"
+          >
             <span className="text-sm font-semibold text-muted-foreground group-hover:text-white transition-colors">{action.label}</span>
             <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <action.icon className="h-4 w-4 text-white/50 group-hover:text-primary transition-colors" />
