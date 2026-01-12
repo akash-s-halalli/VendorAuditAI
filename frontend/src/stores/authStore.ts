@@ -42,7 +42,16 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await apiClient.post('/auth/login', { email, password });
+          // Use form data format for OAuth2PasswordRequestForm
+          const formData = new URLSearchParams();
+          formData.append('username', email);
+          formData.append('password', password);
+
+          const response = await apiClient.post('/auth/login-mfa', formData, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          });
           const data = response.data;
 
           // Check if MFA is required
