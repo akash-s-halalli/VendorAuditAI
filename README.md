@@ -24,7 +24,7 @@
 
 <br/>
 
-[**Launch Demo**](https://vendor-audit-ai.netlify.app) | [**API Docs**](https://vendorauditai-production.up.railway.app/docs) | [**Contact Sales**](mailto:contact@vendorauditai.com)
+[**Launch Demo**](https://vendor-audit-ai.netlify.app) | [**API Docs**](https://vendorauditai-production.up.railway.app/docs) | [**Platform Overview**](docs/PLATFORM_OVERVIEW.md) | [**Contact Sales**](mailto:contact@vendorauditai.com)
 
 <br/>
 
@@ -381,6 +381,48 @@ OPENAI_API_KEY=sk-...
 - [ ] Mobile Application (iOS/Android)
 - [ ] GraphQL API
 - [ ] On-Premise Deployment Option
+
+<br/>
+
+---
+
+<br/>
+
+## Competitive Advantage
+
+<br/>
+
+<div align="center">
+
+**Why VendorAuditAI Wins**
+
+</div>
+
+<br/>
+
+```
+DOCUMENT ANALYSIS SPEED COMPARISON
+
+VendorAuditAI     [==================] 15 minutes
+                  AI reads entire document, extracts controls
+
+Legacy GRC        [================================================================] 6-8 hours
+                  Manual analyst review required
+```
+
+<br/>
+
+| Capability | VendorAuditAI | OneTrust | Vanta | SecurityScorecard |
+|:-----------|:-------------:|:--------:|:-----:|:-----------------:|
+| **AI Document Analysis** | Yes | Limited | No | No |
+| **Natural Language Query** | Yes | No | No | No |
+| **Time to First Assessment** | 15 min | 60+ days | 7 days | N/A |
+| **Starting Price** | $$ | $$$$$ | $$$ | $$$$ |
+| **Multi-Framework Mapping** | 9 frameworks | 9+ | 3 | External only |
+
+<br/>
+
+[**View Full Competitive Analysis**](COMPETITIVE_ANALYSIS.md) | [**Platform Deep Dive**](docs/PLATFORM_OVERVIEW.md)
 
 <br/>
 
