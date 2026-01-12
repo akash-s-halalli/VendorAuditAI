@@ -6,7 +6,7 @@
 
 <br/>
 
-## v1.0.0 | Enterprise Security Release
+## v0.2.0 | Production Release
 
 <br/>
 
@@ -15,7 +15,7 @@
 <br/>
 <br/>
 
-[![Version](https://img.shields.io/badge/VERSION-1.0.0-0066FF?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/VERSION-0.2.0-0066FF?style=for-the-badge)](CHANGELOG.md)
 [![Build](https://img.shields.io/badge/BUILD-PASSING-00C853?style=for-the-badge)](/)
 [![Tests](https://img.shields.io/badge/TESTS-123-00C853?style=for-the-badge)](/)
 [![License](https://img.shields.io/badge/LICENSE-ENTERPRISE-FF6B00?style=for-the-badge)](/)
@@ -255,8 +255,8 @@ SSO/SAML 2.0 | MFA (TOTP) | JWT + OAuth2 | RBAC | Audit Logging | Rate Limiting 
 
 | Credential | Value |
 |:----------:|:-----:|
-| Email | `demo@vendorauditai.com` |
-| Password | `DemoPass123` |
+| Email | `newdemo@vendorauditai.com` |
+| Password | `Demo12345` |
 
 <br/>
 
@@ -291,17 +291,17 @@ npm run dev
 
 <br/>
 
-### v1.0.0 - Enterprise Security (January 2026)
+### v0.2.0 - Production Release (January 2026)
 
-- [x] SSO/SAML 2.0 - Azure AD, Okta, Google, OneLogin
-- [x] Multi-Factor Authentication - TOTP with backup codes
-- [x] System-Wide Audit Logging - SOC 2 compliant
-- [x] API Rate Limiting - Brute force protection
-- [x] Dashboard Performance - 3x faster with parallel queries
+- [x] CORS configuration fixed for cross-origin requests
+- [x] Document processing pipeline working
+- [x] AI-powered Query feature with citations
+- [x] LLM integration (Anthropic Claude / Google Gemini)
+- [x] Database refresh fixes for async operations
 
 <br/>
 
-### v0.9.0 - AI & Compliance
+### v0.1.0 - Initial Release
 
 - [x] Document analysis engine
 - [x] Multi-framework compliance mapping (9 frameworks)
