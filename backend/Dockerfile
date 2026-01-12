@@ -26,5 +26,9 @@ ENV PORT=8000
 # Expose port
 EXPOSE $PORT
 
-# Run the application using shell form to expand $PORT
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Create startup script that runs migrations then starts server
+RUN echo '#!/bin/bash\nalembic upgrade head\nuvicorn app.main:app --host 0.0.0.0 --port $PORT' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Run migrations and then the application
+CMD ["/bin/bash", "/app/start.sh"]

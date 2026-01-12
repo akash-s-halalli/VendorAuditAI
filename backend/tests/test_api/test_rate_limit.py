@@ -228,10 +228,10 @@ class TestExportRateLimiting:
 
     def test_export_endpoints_have_rate_limit_decorator(self):
         """Test that export endpoints have rate limit decorators applied."""
-        from app.api.v1.endpoints.export import export_findings_csv, export_findings_pdf
+        from app.api.v1.endpoints.export import export_findings_csv_legacy, export_findings_pdf
 
         # Check that the functions are callable (decorators applied)
-        assert callable(export_findings_csv)
+        assert callable(export_findings_csv_legacy)
         assert callable(export_findings_pdf)
 
 

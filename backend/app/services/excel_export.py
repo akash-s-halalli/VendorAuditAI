@@ -101,8 +101,9 @@ async def get_findings_with_filters(
     """Fetch findings with extended filters for export."""
     query = (
         select(Finding)
-        .options(selectinload(Finding.document))
-        .where(Finding.organization_id == org_id)
+        .join(Document, Finding.document_id == Document.id)
+        .join(Vendor, Document.vendor_id == Vendor.id)
+        .where(Vendor.organization_id == org_id)
     )
 
     if filters:
@@ -115,7 +116,7 @@ async def get_findings_with_filters(
         if filters.document_id:
             query = query.where(Finding.document_id == filters.document_id)
         if filters.vendor_id:
-            query = query.join(Document).where(Document.vendor_id == filters.vendor_id)
+            query = query.where(Vendor.id == filters.vendor_id)
         if filters.created_from:
             query = query.where(
                 func.date(Finding.created_at) >= filters.created_from
@@ -136,12 +137,13 @@ async def get_remediation_tasks_for_export(
     """Fetch remediation tasks with filters for export."""
     query = (
         select(RemediationTask)
+        .join(Vendor, RemediationTask.vendor_id == Vendor.id)
         .options(
             selectinload(RemediationTask.finding),
             selectinload(RemediationTask.vendor),
             selectinload(RemediationTask.assignee),
         )
-        .where(RemediationTask.organization_id == org_id)
+        .where(Vendor.organization_id == org_id)
     )
 
     if filters:
@@ -174,17 +176,28 @@ async def get_remediation_tasks_for_export(
 
 async def get_vendor_documents(
     db: AsyncSession,
-    org_id: str,
     vendor_id: str,
 ) -> list[Document]:
     """Fetch documents for a vendor."""
     query = (
         select(Document)
-        .where(
-            Document.organization_id == org_id,
-            Document.vendor_id == vendor_id,
-        )
+        .where(Document.vendor_id == vendor_id)
         .order_by(Document.created_at.desc())
+    )
+    result = await db.execute(query)
+    return list(result.scalars().all())
+
+
+async def get_vendor_findings(
+    db: AsyncSession,
+    vendor_id: str,
+) -> list[Finding]:
+    """Fetch findings for a vendor through their documents."""
+    query = (
+        select(Finding)
+        .join(Document, Finding.document_id == Document.id)
+        .where(Document.vendor_id == vendor_id)
+        .order_by(Finding.created_at.desc())
     )
     result = await db.execute(query)
     return list(result.scalars().all())
@@ -192,7 +205,6 @@ async def get_vendor_documents(
 
 async def get_vendor_remediation_tasks(
     db: AsyncSession,
-    org_id: str,
     vendor_id: str,
 ) -> list[RemediationTask]:
     """Fetch remediation tasks for a vendor."""
@@ -202,10 +214,7 @@ async def get_vendor_remediation_tasks(
             selectinload(RemediationTask.finding),
             selectinload(RemediationTask.assignee),
         )
-        .where(
-            RemediationTask.organization_id == org_id,
-            RemediationTask.vendor_id == vendor_id,
-        )
+        .where(RemediationTask.vendor_id == vendor_id)
         .order_by(RemediationTask.due_date.asc().nullslast())
     )
     result = await db.execute(query)
@@ -321,10 +330,11 @@ class VendorExcelExporter:
             ws.cell(row=row_idx, column=4, value=vendor.website or "")
 
             # Tier cell with color
-            tier_cell = ws.cell(row=row_idx, column=5, value=vendor.tier.upper())
-            ExcelStyler.apply_priority_color(tier_cell, vendor.tier)
+            tier_cell = ws.cell(row=row_idx, column=5, value=vendor.tier.upper() if vendor.tier else "")
+            if vendor.tier:
+                ExcelStyler.apply_priority_color(tier_cell, vendor.tier)
 
-            ws.cell(row=row_idx, column=6, value=vendor.status)
+            ws.cell(row=row_idx, column=6, value=vendor.status or "")
             ws.cell(row=row_idx, column=7, value=vendor.category or "")
             ws.cell(row=row_idx, column=8, value=vendor.criticality_score)
             ws.cell(row=row_idx, column=9, value=vendor.data_classification or "")
@@ -427,15 +437,17 @@ class FindingExcelExporter:
 
             # Severity cell with color
             severity_cell = ws.cell(
-                row=row_idx, column=4, value=finding.severity.upper()
+                row=row_idx, column=4, value=finding.severity.upper() if finding.severity else ""
             )
-            ExcelStyler.apply_severity_color(severity_cell, finding.severity)
+            if finding.severity:
+                ExcelStyler.apply_severity_color(severity_cell, finding.severity)
 
             # Status cell with color
-            status_cell = ws.cell(row=row_idx, column=5, value=finding.status.upper())
-            ExcelStyler.apply_status_color(status_cell, finding.status)
+            status_cell = ws.cell(row=row_idx, column=5, value=finding.status.upper() if finding.status else "")
+            if finding.status:
+                ExcelStyler.apply_status_color(status_cell, finding.status)
 
-            ws.cell(row=row_idx, column=6, value=finding.framework)
+            ws.cell(row=row_idx, column=6, value=finding.framework or "")
             ws.cell(row=row_idx, column=7, value=finding.framework_control or "")
             ws.cell(row=row_idx, column=8, value=finding.evidence or "")
             ws.cell(row=row_idx, column=9, value=finding.remediation or "")
@@ -530,19 +542,20 @@ class RemediationExcelExporter:
             ws.cell(row=row_idx, column=1, value=task.id)
             ws.cell(row=row_idx, column=2, value=task.title)
             ws.cell(row=row_idx, column=3, value=task.description or "")
-            ws.cell(row=row_idx, column=4, value=task.status.upper())
+            ws.cell(row=row_idx, column=4, value=task.status.upper() if task.status else "")
 
             # Priority cell with color
             priority_cell = ws.cell(
-                row=row_idx, column=5, value=task.priority.upper()
+                row=row_idx, column=5, value=task.priority.upper() if task.priority else ""
             )
-            ExcelStyler.apply_priority_color(priority_cell, task.priority)
+            if task.priority:
+                ExcelStyler.apply_priority_color(priority_cell, task.priority)
 
             ws.cell(row=row_idx, column=6, value=task.vendor.name if task.vendor else "")
             ws.cell(
                 row=row_idx, column=7, value=task.assignee.email if task.assignee else ""
             )
-            ws.cell(row=row_idx, column=8, value=task.finding_id)
+            ws.cell(row=row_idx, column=8, value=task.finding_id or "")
             ws.cell(
                 row=row_idx, column=9, value=task.finding.title if task.finding else ""
             )
@@ -600,20 +613,62 @@ class RemediationExcelExporter:
 
 
 class ComplianceReportExporter:
-    """Generates comprehensive compliance reports in Excel format."""
+    """Generates comprehensive compliance reports in Excel format with database access."""
 
     def __init__(
         self,
-        vendor: Vendor,
-        findings: list[Finding],
-        remediation_tasks: list[RemediationTask],
+        vendor_id: str,
+        db: AsyncSession,
         frameworks: list[str] | None = None,
+        include_findings: bool = True,
+        include_remediation: bool = True,
+        include_summary: bool = True,
     ):
         """Initialize the compliance report exporter."""
-        self.vendor = vendor
-        self.findings = findings
-        self.remediation_tasks = remediation_tasks
-        self.frameworks = frameworks or []
+        self.vendor_id = vendor_id
+        self.db = db
+        self.frameworks = frameworks
+        self.include_findings = include_findings
+        self.include_remediation = include_remediation
+        self.include_summary = include_summary
+        self.vendor: Vendor | None = None
+        self.findings: list[Finding] = []
+        self.remediation_tasks: list[RemediationTask] = []
+
+    async def _load_data(self) -> None:
+        """Load vendor data from database."""
+        # Load vendor
+        query = select(Vendor).where(Vendor.id == self.vendor_id)
+        result = await self.db.execute(query)
+        self.vendor = result.scalar_one_or_none()
+
+        if not self.vendor:
+            return
+
+        # Load findings
+        findings_query = (
+            select(Finding)
+            .join(Document, Finding.document_id == Document.id)
+            .where(Document.vendor_id == self.vendor_id)
+        )
+        if self.frameworks:
+            findings_query = findings_query.where(Finding.framework.in_(self.frameworks))
+        findings_query = findings_query.order_by(Finding.created_at.desc())
+        result = await self.db.execute(findings_query)
+        self.findings = list(result.scalars().all())
+
+        # Load remediation tasks
+        tasks_query = (
+            select(RemediationTask)
+            .options(
+                selectinload(RemediationTask.finding),
+                selectinload(RemediationTask.assignee),
+            )
+            .where(RemediationTask.vendor_id == self.vendor_id)
+            .order_by(RemediationTask.due_date.asc().nullslast())
+        )
+        result = await self.db.execute(tasks_query)
+        self.remediation_tasks = list(result.scalars().all())
 
     def _add_summary_sheet(self, wb: Workbook) -> None:
         """Add executive summary sheet."""
@@ -627,11 +682,11 @@ class ComplianceReportExporter:
 
         # Vendor info
         ws.cell(row=3, column=1, value="Vendor:").font = Font(bold=True)
-        ws.cell(row=3, column=2, value=self.vendor.name)
+        ws.cell(row=3, column=2, value=self.vendor.name if self.vendor else "Unknown")
         ws.cell(row=4, column=1, value="Tier:").font = Font(bold=True)
-        ws.cell(row=4, column=2, value=self.vendor.tier.upper())
+        ws.cell(row=4, column=2, value=self.vendor.tier.upper() if self.vendor and self.vendor.tier else "N/A")
         ws.cell(row=5, column=1, value="Status:").font = Font(bold=True)
-        ws.cell(row=5, column=2, value=self.vendor.status.upper())
+        ws.cell(row=5, column=2, value=self.vendor.status.upper() if self.vendor and self.vendor.status else "N/A")
         ws.cell(row=6, column=1, value="Report Date:").font = Font(bold=True)
         ws.cell(row=6, column=2, value=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"))
 
@@ -641,7 +696,7 @@ class ComplianceReportExporter:
         # Count by severity
         severity_counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
         for finding in self.findings:
-            sev = finding.severity.lower()
+            sev = finding.severity.lower() if finding.severity else "info"
             if sev in severity_counts:
                 severity_counts[sev] += 1
 
@@ -719,14 +774,16 @@ class ComplianceReportExporter:
             ws.cell(row=row_idx, column=1, value=finding.title)
 
             severity_cell = ws.cell(
-                row=row_idx, column=2, value=finding.severity.upper()
+                row=row_idx, column=2, value=finding.severity.upper() if finding.severity else ""
             )
-            ExcelStyler.apply_severity_color(severity_cell, finding.severity)
+            if finding.severity:
+                ExcelStyler.apply_severity_color(severity_cell, finding.severity)
 
-            status_cell = ws.cell(row=row_idx, column=3, value=finding.status.upper())
-            ExcelStyler.apply_status_color(status_cell, finding.status)
+            status_cell = ws.cell(row=row_idx, column=3, value=finding.status.upper() if finding.status else "")
+            if finding.status:
+                ExcelStyler.apply_status_color(status_cell, finding.status)
 
-            ws.cell(row=row_idx, column=4, value=finding.framework)
+            ws.cell(row=row_idx, column=4, value=finding.framework or "")
             ws.cell(row=row_idx, column=5, value=finding.framework_control or "")
             ws.cell(row=row_idx, column=6, value=finding.description)
             ws.cell(row=row_idx, column=7, value=finding.remediation or "")
@@ -774,12 +831,13 @@ class ComplianceReportExporter:
         # Write data
         for row_idx, task in enumerate(self.remediation_tasks, 2):
             ws.cell(row=row_idx, column=1, value=task.title)
-            ws.cell(row=row_idx, column=2, value=task.status.upper())
+            ws.cell(row=row_idx, column=2, value=task.status.upper() if task.status else "")
 
             priority_cell = ws.cell(
-                row=row_idx, column=3, value=task.priority.upper()
+                row=row_idx, column=3, value=task.priority.upper() if task.priority else ""
             )
-            ExcelStyler.apply_priority_color(priority_cell, task.priority)
+            if task.priority:
+                ExcelStyler.apply_priority_color(priority_cell, task.priority)
 
             ws.cell(
                 row=row_idx, column=4, value=task.assignee.email if task.assignee else ""
@@ -810,16 +868,22 @@ class ComplianceReportExporter:
         ExcelStyler.auto_size_columns(ws)
         ExcelStyler.freeze_header_row(ws)
 
-    def generate(self) -> bytes:
+    async def generate(self) -> bytes:
         """Generate comprehensive compliance report."""
+        # Load data from database
+        await self._load_data()
+
         wb = Workbook()
         # Remove default sheet
         wb.remove(wb.active)
 
-        # Add sheets
-        self._add_summary_sheet(wb)
-        self._add_findings_sheet(wb)
-        self._add_remediation_sheet(wb)
+        # Add sheets based on configuration
+        if self.include_summary:
+            self._add_summary_sheet(wb)
+        if self.include_findings:
+            self._add_findings_sheet(wb)
+        if self.include_remediation:
+            self._add_remediation_sheet(wb)
 
         # Save to bytes
         output = io.BytesIO()
@@ -828,20 +892,39 @@ class ComplianceReportExporter:
 
 
 class VendorReportExporter:
-    """Generates comprehensive vendor report in Excel format."""
+    """Generates comprehensive vendor report in Excel format with database access."""
 
     def __init__(
         self,
-        vendor: Vendor,
-        documents: list[Document],
-        findings: list[Finding],
-        remediation_tasks: list[RemediationTask],
+        vendor_id: str,
+        db: AsyncSession,
     ):
         """Initialize the vendor report exporter."""
-        self.vendor = vendor
-        self.documents = documents
-        self.findings = findings
-        self.remediation_tasks = remediation_tasks
+        self.vendor_id = vendor_id
+        self.db = db
+        self.vendor: Vendor | None = None
+        self.documents: list[Document] = []
+        self.findings: list[Finding] = []
+        self.remediation_tasks: list[RemediationTask] = []
+
+    async def _load_data(self) -> None:
+        """Load vendor data from database."""
+        # Load vendor
+        query = select(Vendor).where(Vendor.id == self.vendor_id)
+        result = await self.db.execute(query)
+        self.vendor = result.scalar_one_or_none()
+
+        if not self.vendor:
+            return
+
+        # Load documents
+        self.documents = await get_vendor_documents(self.db, self.vendor_id)
+
+        # Load findings
+        self.findings = await get_vendor_findings(self.db, self.vendor_id)
+
+        # Load remediation tasks
+        self.remediation_tasks = await get_vendor_remediation_tasks(self.db, self.vendor_id)
 
     def _add_overview_sheet(self, wb: Workbook) -> None:
         """Add vendor overview sheet."""
@@ -849,9 +932,13 @@ class VendorReportExporter:
 
         # Title
         ws.merge_cells("A1:D1")
-        title_cell = ws.cell(row=1, column=1, value=f"Vendor Report: {self.vendor.name}")
+        title_cell = ws.cell(row=1, column=1, value=f"Vendor Report: {self.vendor.name if self.vendor else 'Unknown'}")
         title_cell.font = Font(bold=True, size=18, color="1A365D")
         title_cell.alignment = Alignment(horizontal="center")
+
+        if not self.vendor:
+            ws.cell(row=3, column=1, value="Vendor not found")
+            return
 
         # Basic info
         info_data = [
@@ -859,8 +946,8 @@ class VendorReportExporter:
             ("Name:", self.vendor.name),
             ("Description:", self.vendor.description or "N/A"),
             ("Website:", self.vendor.website or "N/A"),
-            ("Tier:", self.vendor.tier.upper()),
-            ("Status:", self.vendor.status.upper()),
+            ("Tier:", self.vendor.tier.upper() if self.vendor.tier else "N/A"),
+            ("Status:", self.vendor.status.upper() if self.vendor.status else "N/A"),
             ("Category:", self.vendor.category or "N/A"),
             ("Criticality Score:", str(self.vendor.criticality_score or "N/A")),
             ("Data Classification:", self.vendor.data_classification or "N/A"),
@@ -906,11 +993,11 @@ class VendorReportExporter:
             ("Total Findings:", len(self.findings)),
             (
                 "Critical Findings:",
-                sum(1 for f in self.findings if f.severity.lower() == "critical"),
+                sum(1 for f in self.findings if f.severity and f.severity.lower() == "critical"),
             ),
             (
                 "High Findings:",
-                sum(1 for f in self.findings if f.severity.lower() == "high"),
+                sum(1 for f in self.findings if f.severity and f.severity.lower() == "high"),
             ),
             ("Total Remediation Tasks:", len(self.remediation_tasks)),
             (
@@ -991,14 +1078,16 @@ class VendorReportExporter:
             ws.cell(row=row_idx, column=1, value=finding.title)
 
             severity_cell = ws.cell(
-                row=row_idx, column=2, value=finding.severity.upper()
+                row=row_idx, column=2, value=finding.severity.upper() if finding.severity else ""
             )
-            ExcelStyler.apply_severity_color(severity_cell, finding.severity)
+            if finding.severity:
+                ExcelStyler.apply_severity_color(severity_cell, finding.severity)
 
-            status_cell = ws.cell(row=row_idx, column=3, value=finding.status.upper())
-            ExcelStyler.apply_status_color(status_cell, finding.status)
+            status_cell = ws.cell(row=row_idx, column=3, value=finding.status.upper() if finding.status else "")
+            if finding.status:
+                ExcelStyler.apply_status_color(status_cell, finding.status)
 
-            ws.cell(row=row_idx, column=4, value=finding.framework)
+            ws.cell(row=row_idx, column=4, value=finding.framework or "")
             ws.cell(row=row_idx, column=5, value=finding.framework_control or "")
             ws.cell(row=row_idx, column=6, value=finding.description)
             ws.cell(row=row_idx, column=7, value=finding.remediation or "")
@@ -1041,12 +1130,13 @@ class VendorReportExporter:
 
         for row_idx, task in enumerate(self.remediation_tasks, 2):
             ws.cell(row=row_idx, column=1, value=task.title)
-            ws.cell(row=row_idx, column=2, value=task.status.upper())
+            ws.cell(row=row_idx, column=2, value=task.status.upper() if task.status else "")
 
             priority_cell = ws.cell(
-                row=row_idx, column=3, value=task.priority.upper()
+                row=row_idx, column=3, value=task.priority.upper() if task.priority else ""
             )
-            ExcelStyler.apply_priority_color(priority_cell, task.priority)
+            if task.priority:
+                ExcelStyler.apply_priority_color(priority_cell, task.priority)
 
             ws.cell(
                 row=row_idx, column=4, value=task.assignee.email if task.assignee else ""
@@ -1076,8 +1166,11 @@ class VendorReportExporter:
         ExcelStyler.auto_size_columns(ws)
         ExcelStyler.freeze_header_row(ws)
 
-    def generate(self) -> bytes:
+    async def generate(self) -> bytes:
         """Generate comprehensive vendor report."""
+        # Load data from database
+        await self._load_data()
+
         wb = Workbook()
         # Remove default sheet
         wb.remove(wb.active)
