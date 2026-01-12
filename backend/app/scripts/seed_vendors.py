@@ -40,9 +40,9 @@ RISK_TO_TIER = {
 
 async def get_demo_organization(db: AsyncSession) -> Organization | None:
     """Find the demo organization by looking for demo user."""
-    # Look for demo user
+    # Look for primary demo user
     result = await db.execute(
-        select(User).where(User.email == "demo@vendorauditai.com")
+        select(User).where(User.email == "newdemo@vendorauditai.com")
     )
     demo_user = result.scalar_one_or_none()
 
@@ -50,18 +50,6 @@ async def get_demo_organization(db: AsyncSession) -> Organization | None:
         # Get their organization
         result = await db.execute(
             select(Organization).where(Organization.id == demo_user.organization_id)
-        )
-        return result.scalar_one_or_none()
-
-    # Also try newdemo user
-    result = await db.execute(
-        select(User).where(User.email == "newdemo@vendorauditai.com")
-    )
-    newdemo_user = result.scalar_one_or_none()
-
-    if newdemo_user:
-        result = await db.execute(
-            select(Organization).where(Organization.id == newdemo_user.organization_id)
         )
         return result.scalar_one_or_none()
 
@@ -143,7 +131,7 @@ async def main():
 
         if not org:
             print("[!] ERROR: Demo organization not found!")
-            print("[!] Please ensure demo@vendorauditai.com or newdemo@vendorauditai.com exists")
+            print("[!] Please ensure newdemo@vendorauditai.com exists")
             return
 
         print(f"[+] Found organization: {org.name} (ID: {org.id})")

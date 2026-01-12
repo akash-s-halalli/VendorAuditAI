@@ -172,21 +172,14 @@ railway up --detach
 
 ---
 
-## Test Credentials (Local Development)
+## Demo Credentials (Production)
 
-These accounts were created during local testing:
+| Field | Value |
+|-------|-------|
+| **Email** | `newdemo@vendorauditai.com` |
+| **Password** | `Demo12345` |
 
-**User 1:**
-- Email: test@example.com
-- Password: TestPass1
-- Organization: Test Org
-
-**User 2:**
-- Email: newuser@demo.com
-- Password: Demo1234
-- Organization: Demo Company
-
-Note: These are for local SQLite database only. Production will need new registrations.
+This is the only demo account. Use it to explore all platform features.
 
 ---
 

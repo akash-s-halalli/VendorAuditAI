@@ -333,11 +333,11 @@ export function Landing() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between group">
                       <span className="text-gray-400">Email:</span>
-                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">demo@vendorauditai.com</code>
+                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">newdemo@vendorauditai.com</code>
                     </div>
                     <div className="flex items-center justify-between group">
                       <span className="text-gray-400">Password:</span>
-                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">DemoPass123</code>
+                      <code className="bg-primary/10 text-primary px-3 py-1 rounded border border-primary/20">Demo12345</code>
                     </div>
                   </div>
                 </div>
