@@ -90,12 +90,12 @@ export function Sidebar() {
       <div className="border-t border-white/10 p-4 bg-black/20 backdrop-blur-sm z-10">
         <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-white/5 border border-white/5">
           <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-secondary text-white text-sm font-bold shadow-lg">
-            {user?.fullName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+            {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
             <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-black" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate">{user?.fullName || user?.email}</p>
-            <p className="text-xs text-primary/80 capitalize">{user?.role || 'Security Officer'}</p>
+            <p className="text-sm font-bold text-white truncate">{user?.user_metadata?.full_name || user?.email}</p>
+            <p className="text-xs text-primary/80 capitalize">{user?.app_metadata?.roles?.[0] || 'Security Officer'}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">

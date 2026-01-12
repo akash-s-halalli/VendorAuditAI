@@ -17,9 +17,9 @@ import {
 import { Button } from '@/components/ui';
 
 const stats = [
-  { value: '97%', label: 'Accuracy Rate', description: 'Validated against auditors' },
-  { value: '15min', label: 'Assessment Time', description: 'Down from 6-8 hours' },
-  { value: '6+', label: 'Frameworks', description: 'NIST, ISO, SOC 2, CIS' },
+  { value: '97%', label: 'Time Savings', description: '15 min vs 6-8 hours' },
+  { value: '12', label: 'Frameworks', description: 'SOC 2, NIST, ISO, SIG, DORA' },
+  { value: '25', label: 'Vendor Categories', description: 'DoorDash-style TPRM taxonomy' },
   { value: '90%', label: 'Cost Reduction', description: 'vs. legacy GRC tools' },
 ];
 

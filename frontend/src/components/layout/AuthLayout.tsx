@@ -20,11 +20,11 @@ export function AuthLayout() {
           </p>
           <div className="mt-8 grid grid-cols-2 gap-4">
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold">80%</div>
+              <div className="text-3xl font-bold">97%</div>
               <div className="text-sm opacity-80">Time Savings</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold">6+</div>
+              <div className="text-3xl font-bold">12</div>
               <div className="text-sm opacity-80">Frameworks</div>
             </div>
           </div>
