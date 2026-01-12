@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import async_session_maker, init_db
+from app.db.session import async_session_factory, init_db
 from app.models.organization import Organization
 from app.models.user import User
 from app.models.vendor import Vendor
@@ -136,7 +136,7 @@ async def main():
     print("[*] Initializing database connection...")
     await init_db()
 
-    async with async_session_maker() as db:
+    async with async_session_factory() as db:
         # Find demo organization
         print("[*] Looking for demo organization...")
         org = await get_demo_organization(db)
