@@ -13,8 +13,9 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg" alt="Claude"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/Version-0.5.0-00D4AA.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/Version-0.6.0-00D4AA.svg" alt="Version"/>
   <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
+  <img src="https://img.shields.io/badge/AI_Agents-4_Active-CC785C.svg" alt="AI Agents"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
 </p>
 
@@ -116,6 +117,7 @@
 | Multi-Framework Mapping | 12 compliance frameworks, 2500+ controls | One document mapped to SOC 2, NIST, ISO, SIG, DORA |
 | Gap Detection | AI control analysis + framework comparison | Automatic identification of missing or weak controls |
 | Vendor Management | Full CRUD, 25 categories, auto-classification | Complete vendor lifecycle management |
+| **AI Agent Network** | 4 autonomous agents with task execution | Continuous threat detection, risk scoring, vulnerability scanning |
 | Remediation Workflow | Task management, SLA tracking, status workflows | Never miss a remediation deadline |
 | Continuous Monitoring | Scheduled assessments, alerts, notification channels | Proactive vendor risk management |
 | Export & Reporting | CSV, PDF export with findings | Audit-ready compliance documentation |
@@ -269,6 +271,37 @@ curl -X POST "https://vendorauditai-production.up.railway.app/api/v1/categorizat
   "data_types": ["credit_cards", "bank_accounts", "ssn", "transaction_data"],
   "assessment_priority": "immediate"
 }
+```
+
+---
+
+## AI Agent Network
+
+VendorAuditAI features four autonomous AI agents that continuously monitor and assess your vendor security ecosystem.
+
+| Agent | Role | Capabilities |
+|:------|:-----|:-------------|
+| **Sentinel Prime** | Threat Detection | Scans documents for security risks, anomalies, and emerging threats. Monitors critical/high findings. |
+| **Vector Analyst** | Risk Assessment | Calculates vendor risk scores based on findings, compliance status, and historical data. |
+| **Watchdog Zero** | Vulnerability Scanner | Identifies security gaps, missing controls, expired certifications, and documentation deficiencies. |
+| **Audit Core** | Compliance Verification | Maps vendor documents to regulatory frameworks and calculates compliance coverage. |
+
+### Agent API
+
+```bash
+# List all agents
+curl -X GET "https://vendorauditai-production.up.railway.app/api/v1/agents" \
+  -H "Authorization: Bearer $TOKEN"
+
+# Run a task on an agent
+curl -X POST "https://vendorauditai-production.up.railway.app/api/v1/agents/{agent_id}/tasks" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"task_type": "scan", "input_data": {}}'
+
+# View agent logs
+curl -X GET "https://vendorauditai-production.up.railway.app/api/v1/agents/{agent_id}/logs" \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
@@ -433,11 +466,15 @@ OPENAI_API_KEY=sk-...
 |:---------|:------:|:---------|:------------|
 | **Auth** | POST | `/api/v1/auth/login` | User authentication |
 | **Auth** | POST | `/api/v1/auth/register` | User registration |
+| **Agents** | GET | `/api/v1/agents` | List AI agents |
+| **Agents** | POST | `/api/v1/agents/{id}/tasks` | Run agent task |
+| **Agents** | GET | `/api/v1/agents/{id}/logs` | View agent logs |
 | **Documents** | POST | `/api/v1/documents/upload` | Upload vendor document |
 | **Documents** | GET | `/api/v1/documents` | List all documents |
 | **Query** | POST | `/api/v1/query` | Natural language Q&A |
 | **Analysis** | POST | `/api/v1/analysis/documents/{id}/analyze` | Run AI analysis |
 | **Vendors** | GET | `/api/v1/vendors` | List vendors |
+| **Vendors** | GET | `/api/v1/vendors/{id}` | Get vendor details |
 | **Vendors** | POST | `/api/v1/vendors` | Create vendor |
 | **Frameworks** | GET | `/api/v1/frameworks` | List compliance frameworks |
 | **Frameworks** | GET | `/api/v1/frameworks/search` | Search controls |
@@ -523,8 +560,9 @@ VendorAuditAI/
 - [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks, basic vendor categorization
 - [x] **v0.4.0** - DoorDash-style 25-category TPRM taxonomy with auto-classification
 - [x] **v0.5.0** - Full CRUD operations, remediation workflows, monitoring dashboards, 90+ API endpoints
-- [ ] **v0.6.0** - Vendor risk scoring algorithm, analytics dashboard
-- [ ] **v0.7.0** - Excel/CSV export, Jira/ServiceNow integration
+- [x] **v0.6.0** - AI Agent Network (Sentinel Prime, Vector Analyst, Watchdog Zero, Audit Core), Vendor Detail pages, JWT auth
+- [ ] **v0.7.0** - Vendor risk scoring algorithm, analytics dashboard
+- [ ] **v0.8.0** - Excel/CSV export, Jira/ServiceNow integration
 - [ ] **v1.0.0** - Custom framework builder, mobile app, GraphQL API
 
 ---
