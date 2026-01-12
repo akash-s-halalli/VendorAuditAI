@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Bell,
   Calendar,
@@ -13,91 +14,80 @@ import {
   Mail,
   Slack,
   Webhook,
+  Plus,
+  Loader2,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Button,
+  Input,
+  Label,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui';
+import apiClient, { getApiErrorMessage } from '@/lib/api';
 
 type ScheduleFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly';
 type ScheduleStatus = 'active' | 'paused' | 'disabled';
 type AlertSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
-type AlertStatus = 'new' | 'acknowledged' | 'resolved' | 'dismissed';
+type AlertStatus = 'new' | 'acknowledged' | 'in_progress' | 'resolved' | 'dismissed';
+type ChannelType = 'email' | 'slack' | 'webhook' | 'teams';
 
 interface MonitoringSchedule {
   id: string;
   name: string;
+  description?: string;
   frequency: ScheduleFrequency;
   status: ScheduleStatus;
-  vendor?: string;
+  vendor_id?: string;
   framework?: string;
-  nextRun?: string;
-  lastRun?: string;
+  next_run_at?: string;
+  last_run_at?: string;
+  created_at: string;
 }
 
 interface Alert {
   id: string;
   title: string;
+  message?: string;
   severity: AlertSeverity;
   status: AlertStatus;
-  vendor?: string;
-  createdAt: string;
+  vendor_id?: string;
+  created_at: string;
+  acknowledged_at?: string;
+  resolved_at?: string;
 }
 
-// Mock data
-const mockSchedules: MonitoringSchedule[] = [
-  {
-    id: '1',
-    name: 'Weekly SOC 2 Compliance Check',
-    frequency: 'weekly',
-    status: 'active',
-    framework: 'SOC 2',
-    nextRun: '2026-01-17T09:00:00Z',
-    lastRun: '2026-01-10T09:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'Monthly CAIQ Assessment',
-    frequency: 'monthly',
-    status: 'active',
-    vendor: 'CloudVendor Inc',
-    framework: 'CAIQ',
-    nextRun: '2026-02-01T09:00:00Z',
-    lastRun: '2026-01-01T09:00:00Z',
-  },
-  {
-    id: '3',
-    name: 'Quarterly AI Risk Review',
-    frequency: 'quarterly',
-    status: 'paused',
-    framework: 'AI Risk',
-    nextRun: '2026-04-01T09:00:00Z',
-    lastRun: '2025-10-01T09:00:00Z',
-  },
-];
+interface NotificationChannel {
+  id: string;
+  name: string;
+  channel_type: ChannelType;
+  is_active: boolean;
+  last_used_at?: string;
+  created_at: string;
+}
 
-const mockAlerts: Alert[] = [
-  {
-    id: '1',
-    title: 'Critical finding detected in CloudVendor SOC 2 report',
-    severity: 'critical',
-    status: 'new',
-    vendor: 'CloudVendor Inc',
-    createdAt: '2026-01-10T14:30:00Z',
-  },
-  {
-    id: '2',
-    title: 'SLA breach: Remediation task overdue',
-    severity: 'high',
-    status: 'acknowledged',
-    createdAt: '2026-01-09T10:00:00Z',
-  },
-  {
-    id: '3',
-    title: 'New vendor document uploaded for review',
-    severity: 'info',
-    status: 'new',
-    vendor: 'DataCorp',
-    createdAt: '2026-01-10T11:15:00Z',
-  },
-];
+interface DashboardStats {
+  active_schedules: number;
+  total_alerts: number;
+  open_alerts: number;
+  critical_alerts: number;
+  recent_runs: number;
+  alerts_by_severity: Record<string, number>;
+  alerts_by_status: Record<string, number>;
+}
+
+interface AlertListResponse {
+  data: Alert[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 const frequencyLabels: Record<ScheduleFrequency, string> = {
   daily: 'Daily',
@@ -118,19 +108,197 @@ const severityColors: Record<AlertSeverity, string> = {
 const alertStatusIcons: Record<AlertStatus, React.ElementType> = {
   new: AlertCircle,
   acknowledged: Clock,
+  in_progress: Play,
   resolved: CheckCircle,
   dismissed: XCircle,
 };
 
-export function Monitoring() {
-  const [activeTab, setActiveTab] = useState<'schedules' | 'alerts' | 'channels'>('schedules');
+const channelIcons: Record<ChannelType, React.ElementType> = {
+  email: Mail,
+  slack: Slack,
+  webhook: Webhook,
+  teams: Slack, // Using Slack icon as placeholder for Teams
+};
 
-  const stats = {
-    activeSchedules: mockSchedules.filter((s) => s.status === 'active').length,
-    pendingAlerts: mockAlerts.filter((a) => a.status === 'new').length,
-    assessmentsThisMonth: 12,
-    alertsResolved: 8,
+export function Monitoring() {
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<'schedules' | 'alerts' | 'channels'>('schedules');
+  const [showCreateScheduleModal, setShowCreateScheduleModal] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
+  const [showAlertDetailModal, setShowAlertDetailModal] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  // Form state for new schedule
+  const [newSchedule, setNewSchedule] = useState({
+    name: '',
+    description: '',
+    frequency: 'weekly' as ScheduleFrequency,
+    framework: '',
+    include_all_vendors: true,
+    notify_on_completion: true,
+    notify_on_findings: true,
+  });
+
+  // Form state for new channel
+  const [newChannel, setNewChannel] = useState({
+    name: '',
+    channel_type: 'email' as ChannelType,
+    config: {} as Record<string, string>,
+  });
+
+  // Fetch dashboard stats
+  const { data: stats, isLoading: statsLoading } = useQuery<DashboardStats>({
+    queryKey: ['monitoring-dashboard'],
+    queryFn: async () => {
+      const response = await apiClient.get('/monitoring/dashboard');
+      return response.data;
+    },
+  });
+
+  // Fetch schedules
+  const { data: schedules, isLoading: schedulesLoading } = useQuery<MonitoringSchedule[]>({
+    queryKey: ['monitoring-schedules'],
+    queryFn: async () => {
+      const response = await apiClient.get('/monitoring/schedules');
+      return response.data;
+    },
+  });
+
+  // Fetch alerts
+  const { data: alertsResponse, isLoading: alertsLoading } = useQuery<AlertListResponse>({
+    queryKey: ['monitoring-alerts'],
+    queryFn: async () => {
+      const response = await apiClient.get('/monitoring/alerts?limit=50');
+      return response.data;
+    },
+  });
+
+  // Fetch channels
+  const { data: channels, isLoading: channelsLoading } = useQuery<NotificationChannel[]>({
+    queryKey: ['monitoring-channels'],
+    queryFn: async () => {
+      const response = await apiClient.get('/monitoring/channels');
+      return response.data;
+    },
+  });
+
+  // Create schedule mutation
+  const createScheduleMutation = useMutation({
+    mutationFn: async (scheduleData: typeof newSchedule) => {
+      const response = await apiClient.post('/monitoring/schedules', scheduleData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['monitoring-schedules'] });
+      queryClient.invalidateQueries({ queryKey: ['monitoring-dashboard'] });
+      setShowCreateScheduleModal(false);
+      setNewSchedule({
+        name: '',
+        description: '',
+        frequency: 'weekly',
+        framework: '',
+        include_all_vendors: true,
+        notify_on_completion: true,
+        notify_on_findings: true,
+      });
+      setCreateError(null);
+    },
+    onError: (error) => {
+      setCreateError(getApiErrorMessage(error));
+    },
+  });
+
+  // Create channel mutation
+  const createChannelMutation = useMutation({
+    mutationFn: async (channelData: typeof newChannel) => {
+      const response = await apiClient.post('/monitoring/channels', channelData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['monitoring-channels'] });
+      setShowCreateChannelModal(false);
+      setNewChannel({ name: '', channel_type: 'email', config: {} });
+      setCreateError(null);
+    },
+    onError: (error) => {
+      setCreateError(getApiErrorMessage(error));
+    },
+  });
+
+  // Test channel mutation
+  const testChannelMutation = useMutation({
+    mutationFn: async (channelId: string) => {
+      const response = await apiClient.post(`/monitoring/channels/${channelId}/test`, {
+        message: 'Test notification from VendorAuditAI',
+      });
+      return response.data;
+    },
+  });
+
+  // Acknowledge alert mutation
+  const acknowledgeAlertMutation = useMutation({
+    mutationFn: async (alertId: string) => {
+      const response = await apiClient.post(`/monitoring/alerts/${alertId}/acknowledge`, {});
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['monitoring-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['monitoring-dashboard'] });
+      setShowAlertDetailModal(false);
+    },
+  });
+
+  // Resolve alert mutation
+  const resolveAlertMutation = useMutation({
+    mutationFn: async ({ alertId, notes }: { alertId: string; notes?: string }) => {
+      const response = await apiClient.post(`/monitoring/alerts/${alertId}/resolve`, {
+        resolution_notes: notes,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['monitoring-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['monitoring-dashboard'] });
+      setShowAlertDetailModal(false);
+    },
+  });
+
+  const handleCreateSchedule = () => {
+    if (!newSchedule.name.trim()) {
+      setCreateError('Schedule name is required');
+      return;
+    }
+    setCreateError(null);
+    createScheduleMutation.mutate(newSchedule);
   };
+
+  const handleCreateChannel = () => {
+    if (!newChannel.name.trim()) {
+      setCreateError('Channel name is required');
+      return;
+    }
+    setCreateError(null);
+    createChannelMutation.mutate(newChannel);
+  };
+
+  const handleAlertClick = (alert: Alert) => {
+    setSelectedAlert(alert);
+    setShowAlertDetailModal(true);
+  };
+
+  const dashboardStats = stats || {
+    active_schedules: 0,
+    total_alerts: 0,
+    open_alerts: 0,
+    critical_alerts: 0,
+    recent_runs: 0,
+    alerts_by_severity: {},
+    alerts_by_status: {},
+  };
+
+  const alerts = alertsResponse?.data || [];
+  const isLoading = statsLoading || schedulesLoading || alertsLoading || channelsLoading;
 
   return (
     <div className="space-y-6">
@@ -142,31 +310,231 @@ export function Monitoring() {
         </p>
       </div>
 
+      {/* Create Schedule Modal */}
+      <Dialog open={showCreateScheduleModal} onOpenChange={setShowCreateScheduleModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Create Monitoring Schedule</DialogTitle>
+            <DialogDescription>
+              Schedule automated security assessments for your vendors.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-name">Schedule Name *</Label>
+              <Input
+                id="schedule-name"
+                placeholder="e.g., Weekly SOC 2 Compliance Check"
+                value={newSchedule.name}
+                onChange={(e) => setNewSchedule({ ...newSchedule, name: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-description">Description</Label>
+              <Input
+                id="schedule-description"
+                placeholder="Brief description of the schedule"
+                value={newSchedule.description}
+                onChange={(e) => setNewSchedule({ ...newSchedule, description: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-frequency">Frequency</Label>
+              <select
+                id="schedule-frequency"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={newSchedule.frequency}
+                onChange={(e) => setNewSchedule({ ...newSchedule, frequency: e.target.value as ScheduleFrequency })}
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-framework">Framework</Label>
+              <Input
+                id="schedule-framework"
+                placeholder="e.g., SOC 2, ISO 27001"
+                value={newSchedule.framework}
+                onChange={(e) => setNewSchedule({ ...newSchedule, framework: e.target.value })}
+              />
+            </div>
+            {createError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {createError}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateScheduleModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateSchedule} disabled={createScheduleMutation.isPending}>
+              {createScheduleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Channel Modal */}
+      <Dialog open={showCreateChannelModal} onOpenChange={setShowCreateChannelModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add Notification Channel</DialogTitle>
+            <DialogDescription>
+              Configure a new channel to receive alerts and notifications.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="channel-name">Channel Name *</Label>
+              <Input
+                id="channel-name"
+                placeholder="e.g., Security Team Email"
+                value={newChannel.name}
+                onChange={(e) => setNewChannel({ ...newChannel, name: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="channel-type">Channel Type</Label>
+              <select
+                id="channel-type"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={newChannel.channel_type}
+                onChange={(e) => setNewChannel({ ...newChannel, channel_type: e.target.value as ChannelType })}
+              >
+                <option value="email">Email</option>
+                <option value="slack">Slack</option>
+                <option value="webhook">Webhook</option>
+                <option value="teams">Microsoft Teams</option>
+              </select>
+            </div>
+            {createError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {createError}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateChannelModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateChannel} disabled={createChannelMutation.isPending}>
+              {createChannelMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Add Channel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Alert Detail Modal */}
+      <Dialog open={showAlertDetailModal} onOpenChange={setShowAlertDetailModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{selectedAlert?.title}</DialogTitle>
+            <DialogDescription>
+              View and manage this alert
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAlert && (
+            <div className="space-y-4 py-4">
+              <div className="flex items-center gap-2">
+                <span className={cn('rounded border px-2 py-0.5 text-xs font-medium capitalize', severityColors[selectedAlert.severity])}>
+                  {selectedAlert.severity}
+                </span>
+                <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium capitalize">
+                  {selectedAlert.status}
+                </span>
+              </div>
+              {selectedAlert.message && (
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground">Message</h4>
+                  <p className="mt-1 text-sm">{selectedAlert.message}</p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Created:</span>
+                  <span className="ml-2">{new Date(selectedAlert.created_at).toLocaleString()}</span>
+                </div>
+                {selectedAlert.acknowledged_at && (
+                  <div>
+                    <span className="text-muted-foreground">Acknowledged:</span>
+                    <span className="ml-2">{new Date(selectedAlert.acknowledged_at).toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-medium mb-2">Actions</h4>
+                <div className="flex gap-2">
+                  {selectedAlert.status === 'new' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => acknowledgeAlertMutation.mutate(selectedAlert.id)}
+                      disabled={acknowledgeAlertMutation.isPending}
+                    >
+                      {acknowledgeAlertMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Acknowledge
+                    </Button>
+                  )}
+                  {(selectedAlert.status === 'new' || selectedAlert.status === 'acknowledged') && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => resolveAlertMutation.mutate({ alertId: selectedAlert.id })}
+                      disabled={resolveAlertMutation.isPending}
+                    >
+                      {resolveAlertMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Resolve
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAlertDetailModal(false)}>
+              <X className="h-4 w-4 mr-2" />
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard
           title="Active Schedules"
-          value={stats.activeSchedules}
+          value={dashboardStats.active_schedules}
           icon={Calendar}
           className="border-l-4 border-l-blue-500"
+          isLoading={isLoading}
         />
         <StatCard
-          title="Pending Alerts"
-          value={stats.pendingAlerts}
+          title="Open Alerts"
+          value={dashboardStats.open_alerts}
           icon={Bell}
           className="border-l-4 border-l-red-500"
+          isLoading={isLoading}
         />
         <StatCard
-          title="Assessments This Month"
-          value={stats.assessmentsThisMonth}
+          title="Recent Runs"
+          value={dashboardStats.recent_runs}
           icon={CheckCircle}
           className="border-l-4 border-l-green-500"
+          isLoading={isLoading}
         />
         <StatCard
-          title="Alerts Resolved"
-          value={stats.alertsResolved}
-          icon={CheckCircle}
+          title="Critical Alerts"
+          value={dashboardStats.critical_alerts}
+          icon={AlertCircle}
           className="border-l-4 border-l-purple-500"
+          isLoading={isLoading}
         />
       </div>
 
@@ -185,7 +553,7 @@ export function Monitoring() {
               )}
             >
               {tab === 'schedules' && 'Schedules'}
-              {tab === 'alerts' && `Alerts (${stats.pendingAlerts})`}
+              {tab === 'alerts' && `Alerts (${dashboardStats.open_alerts})`}
               {tab === 'channels' && 'Notification Channels'}
             </button>
           ))}
@@ -193,61 +561,148 @@ export function Monitoring() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'schedules' && <SchedulesTab schedules={mockSchedules} />}
-      {activeTab === 'alerts' && <AlertsTab alerts={mockAlerts} />}
-      {activeTab === 'channels' && <ChannelsTab />}
+      {activeTab === 'schedules' && (
+        <SchedulesTab
+          schedules={schedules || []}
+          isLoading={schedulesLoading}
+          onAddSchedule={() => setShowCreateScheduleModal(true)}
+        />
+      )}
+      {activeTab === 'alerts' && (
+        <AlertsTab
+          alerts={alerts}
+          isLoading={alertsLoading}
+          onAlertClick={handleAlertClick}
+        />
+      )}
+      {activeTab === 'channels' && (
+        <ChannelsTab
+          channels={channels || []}
+          isLoading={channelsLoading}
+          onAddChannel={() => setShowCreateChannelModal(true)}
+          onTestChannel={(id) => testChannelMutation.mutate(id)}
+          testingChannelId={testChannelMutation.isPending ? testChannelMutation.variables : undefined}
+        />
+      )}
     </div>
   );
 }
 
-function SchedulesTab({ schedules }: { schedules: MonitoringSchedule[] }) {
+function SchedulesTab({
+  schedules,
+  isLoading,
+  onAddSchedule,
+}: {
+  schedules: MonitoringSchedule[];
+  isLoading: boolean;
+  onAddSchedule: () => void;
+}) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (schedules.length === 0) {
+    return (
+      <div className="rounded-lg border bg-card p-8 text-center">
+        <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">No schedules yet</h3>
+        <p className="text-muted-foreground mb-4">
+          Create your first monitoring schedule to automate security assessments.
+        </p>
+        <Button onClick={onAddSchedule}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Schedule
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg border bg-card">
-      <div className="divide-y">
-        {schedules.map((schedule) => (
-          <div
-            key={schedule.id}
-            className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer"
-          >
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={onAddSchedule}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Schedule
+        </Button>
+      </div>
+      <div className="rounded-lg border bg-card">
+        <div className="divide-y">
+          {schedules.map((schedule) => (
             <div
-              className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-lg',
-                schedule.status === 'active' ? 'bg-green-100' : 'bg-gray-100'
-              )}
+              key={schedule.id}
+              className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer"
             >
-              {schedule.status === 'active' ? (
-                <Play className="h-5 w-5 text-green-600" />
-              ) : (
-                <Pause className="h-5 w-5 text-gray-500" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-foreground">{schedule.name}</h3>
-              <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {frequencyLabels[schedule.frequency]}
-                </span>
-                {schedule.framework && <span>Framework: {schedule.framework}</span>}
-                {schedule.vendor && <span>Vendor: {schedule.vendor}</span>}
+              <div
+                className={cn(
+                  'flex h-10 w-10 items-center justify-center rounded-lg',
+                  schedule.status === 'active' ? 'bg-green-100' : 'bg-gray-100'
+                )}
+              >
+                {schedule.status === 'active' ? (
+                  <Play className="h-5 w-5 text-green-600" />
+                ) : (
+                  <Pause className="h-5 w-5 text-gray-500" />
+                )}
               </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-foreground">{schedule.name}</h3>
+                <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {frequencyLabels[schedule.frequency]}
+                  </span>
+                  {schedule.framework && <span>Framework: {schedule.framework}</span>}
+                </div>
+              </div>
+              <div className="text-right text-sm">
+                {schedule.next_run_at && (
+                  <p className="text-muted-foreground">
+                    Next: {new Date(schedule.next_run_at).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
             </div>
-            <div className="text-right text-sm">
-              {schedule.nextRun && (
-                <p className="text-muted-foreground">
-                  Next: {new Date(schedule.nextRun).toLocaleDateString()}
-                </p>
-              )}
-            </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function AlertsTab({ alerts }: { alerts: Alert[] }) {
+function AlertsTab({
+  alerts,
+  isLoading,
+  onAlertClick,
+}: {
+  alerts: Alert[];
+  isLoading: boolean;
+  onAlertClick: (alert: Alert) => void;
+}) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (alerts.length === 0) {
+    return (
+      <div className="rounded-lg border bg-card p-8 text-center">
+        <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">No alerts</h3>
+        <p className="text-muted-foreground">
+          You're all caught up. No alerts to display at this time.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-lg border bg-card">
       <div className="divide-y">
@@ -257,6 +712,7 @@ function AlertsTab({ alerts }: { alerts: Alert[] }) {
             <div
               key={alert.id}
               className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer"
+              onClick={() => onAlertClick(alert)}
             >
               <div
                 className={cn(
@@ -292,8 +748,7 @@ function AlertsTab({ alerts }: { alerts: Alert[] }) {
                   </span>
                 </div>
                 <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                  {alert.vendor && <span>{alert.vendor}</span>}
-                  <span>{new Date(alert.createdAt).toLocaleString()}</span>
+                  <span>{new Date(alert.created_at).toLocaleString()}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -309,47 +764,90 @@ function AlertsTab({ alerts }: { alerts: Alert[] }) {
   );
 }
 
-function ChannelsTab() {
-  const channels = [
-    { name: 'Security Team Email', type: 'email', icon: Mail, active: true },
-    { name: '#security-alerts', type: 'slack', icon: Slack, active: true },
-    { name: 'SIEM Webhook', type: 'webhook', icon: Webhook, active: false },
-  ];
+function ChannelsTab({
+  channels,
+  isLoading,
+  onAddChannel,
+  onTestChannel,
+  testingChannelId,
+}: {
+  channels: NotificationChannel[];
+  isLoading: boolean;
+  onAddChannel: () => void;
+  onTestChannel: (channelId: string) => void;
+  testingChannelId?: string;
+}) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-          <Settings className="h-4 w-4" />
+        <Button onClick={onAddChannel}>
+          <Settings className="h-4 w-4 mr-2" />
           Add Channel
-        </button>
+        </Button>
       </div>
-      <div className="rounded-lg border bg-card">
-        <div className="divide-y">
-          {channels.map((channel, i) => (
-            <div key={i} className="flex items-center gap-4 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                <channel.icon className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-foreground">{channel.name}</h3>
-                <p className="text-sm text-muted-foreground capitalize">{channel.type}</p>
-              </div>
-              <div
-                className={cn(
-                  'rounded-full px-2 py-0.5 text-xs font-medium',
-                  channel.active
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-100 text-gray-700'
-                )}
-              >
-                {channel.active ? 'Active' : 'Inactive'}
-              </div>
-              <button className="text-sm text-primary hover:underline">Test</button>
-            </div>
-          ))}
+
+      {channels.length === 0 ? (
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <Mail className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium mb-2">No notification channels</h3>
+          <p className="text-muted-foreground mb-4">
+            Add a notification channel to receive alerts about your vendor security assessments.
+          </p>
+          <Button onClick={onAddChannel}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Channel
+          </Button>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-lg border bg-card">
+          <div className="divide-y">
+            {channels.map((channel) => {
+              const ChannelIcon = channelIcons[channel.channel_type] || Webhook;
+              return (
+                <div key={channel.id} className="flex items-center gap-4 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <ChannelIcon className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-foreground">{channel.name}</h3>
+                    <p className="text-sm text-muted-foreground capitalize">{channel.channel_type}</p>
+                  </div>
+                  <div
+                    className={cn(
+                      'rounded-full px-2 py-0.5 text-xs font-medium',
+                      channel.is_active
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-700'
+                    )}
+                  >
+                    {channel.is_active ? 'Active' : 'Inactive'}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onTestChannel(channel.id)}
+                    disabled={testingChannelId === channel.id}
+                  >
+                    {testingChannelId === channel.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Test'
+                    )}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -359,18 +857,24 @@ function StatCard({
   value,
   icon: Icon,
   className,
+  isLoading,
 }: {
   title: string;
   value: number;
   icon: React.ElementType;
   className?: string;
+  isLoading?: boolean;
 }) {
   return (
     <div className={cn('rounded-lg border bg-card p-4', className)}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="mt-1 text-2xl font-bold">{value}</p>
+          {isLoading ? (
+            <div className="mt-1 h-8 w-12 animate-pulse rounded bg-muted"></div>
+          ) : (
+            <p className="mt-1 text-2xl font-bold">{value}</p>
+          )}
         </div>
         <Icon className="h-8 w-8 text-muted-foreground/50" />
       </div>
