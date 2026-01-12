@@ -47,6 +47,7 @@ async def analyze_document(
             chunk_limit=analysis_request.chunk_limit,
         )
         await db.commit()
+        await db.refresh(analysis_run)
         return AnalysisRunResponse.model_validate(analysis_run)
     except ValueError as e:
         await db.rollback()
@@ -196,4 +197,5 @@ async def update_finding(
             detail="Finding not found",
         )
     await db.commit()
+    await db.refresh(finding)
     return FindingResponse.model_validate(finding)

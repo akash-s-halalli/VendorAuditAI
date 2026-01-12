@@ -107,6 +107,7 @@ async def create_vendor(
             details=f"Created vendor: {vendor.name}",
         )
         await db.commit()
+        await db.refresh(vendor)
 
         return VendorResponse.model_validate(vendor)
     except ValueError as e:
@@ -194,6 +195,7 @@ async def update_vendor(
             details=f"Updated vendor: {vendor.name}",
         )
         await db.commit()
+        await db.refresh(vendor)
 
         return VendorResponse.model_validate(vendor)
     except ValueError as e:

@@ -409,6 +409,7 @@ async def configure_sso(
             details=f"SSO configured with provider: {config_data.provider.value}",
         )
         await db.commit()
+        await db.refresh(sso_config)
 
         return SSOConfigResponse.model_validate(sso_config)
 
@@ -481,6 +482,7 @@ async def update_sso_config(
             details="SSO configuration updated",
         )
         await db.commit()
+        await db.refresh(sso_config)
 
         return SSOConfigResponse.model_validate(sso_config)
 

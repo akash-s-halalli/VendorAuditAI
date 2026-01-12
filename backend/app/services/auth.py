@@ -168,6 +168,8 @@ async def register_user(
 
     # Commit the transaction
     await db.commit()
+    await db.refresh(user)
+    await db.refresh(organization)
 
     return RegisterResponse(
         user=UserResponse.model_validate(user),

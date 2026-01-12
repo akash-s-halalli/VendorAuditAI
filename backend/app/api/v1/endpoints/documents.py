@@ -118,6 +118,7 @@ async def upload_document(
             document_data=document_data,
         )
         await db.commit()
+        await db.refresh(document)
         return DocumentResponse.model_validate(document)
     except ValueError as e:
         await db.rollback()
@@ -204,6 +205,7 @@ async def update_document(
             detail="Document not found",
         )
     await db.commit()
+    await db.refresh(document)
     return DocumentResponse.model_validate(document)
 
 
@@ -265,6 +267,7 @@ async def process_document(
     try:
         processed = await processing_service.process_document(db, document)
         await db.commit()
+        await db.refresh(processed)
         return DocumentResponse.model_validate(processed)
     except ValueError as e:
         await db.rollback()
