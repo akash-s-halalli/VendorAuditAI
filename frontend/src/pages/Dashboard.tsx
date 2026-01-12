@@ -83,7 +83,7 @@ export function Dashboard() {
       </div>
 
       {/* Bento Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(180px,auto)]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
 
         {/* 1. Main Stats - Critical Findings (Large Square) */}
         <CyberCard variant="danger" className="col-span-1 lg:col-span-2 row-span-2 p-6 flex flex-col justify-between group">
@@ -192,15 +192,17 @@ export function Dashboard() {
       </div>
 
       {/* Quick Actions Footer */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           { label: 'Upload New Report', icon: FileText, cmd: 'upload' },
           { label: 'Register Vendor', icon: Building2, cmd: 'register' },
           { label: 'Execute AI Query', icon: Zap, cmd: 'query' }
         ].map((action, i) => (
-          <button key={i} className="group flex items-center justify-between p-4 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/30 transition-all">
-            <span className="text-sm font-medium text-muted-foreground group-hover:text-white transition-colors">{action.label}</span>
-            <action.icon className="h-4 w-4 text-white/50 group-hover:text-primary transition-colors" />
+          <button key={i} className="glass-card group flex items-center justify-between p-5 rounded-xl hover:border-primary/50 transition-all duration-300">
+            <span className="text-sm font-semibold text-muted-foreground group-hover:text-white transition-colors">{action.label}</span>
+            <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <action.icon className="h-4 w-4 text-white/50 group-hover:text-primary transition-colors" />
+            </div>
           </button>
         ))}
       </div>

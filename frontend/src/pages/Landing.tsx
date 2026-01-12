@@ -88,25 +88,29 @@ export function Landing() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <Shield className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">VendorAuditAI</span>
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center gap-2 group cursor-pointer">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all duration-300" />
+                <Shield className="relative h-8 w-8 text-primary" />
+              </div>
+              <span className="text-xl font-bold tracking-tight">VendorAuditAI</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#problem" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Problem</a>
-              <a href="#solution" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Solution</a>
-              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Demo</a>
+              <a href="#problem" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Problem</a>
+              <a href="#solution" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Solution</a>
+              <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</a>
+              <a href="#demo" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Demo</a>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link to="/login">
-                <Button variant="ghost" size="sm">Sign In</Button>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Sign In</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm">Get Started</Button>
+                <Button size="sm" className="neon-border shadow-lg shadow-primary/20">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -114,43 +118,52 @@ export function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
-            <Zap className="h-4 w-4" />
+      <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Background Glow */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wider mb-8 animate-fade-in-up">
+            <Zap className="h-3 w-3" />
             AI-Powered Third-Party Risk Management
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground max-w-4xl mx-auto">
-            Vendor Security Assessments in{' '}
-            <span className="text-primary">Minutes, Not Hours</span>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter text-white max-w-5xl mx-auto mb-8 animate-fade-in-up delay-100">
+            Vendor Assessments in{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent relative inline-block">
+              Minutes
+              <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary opacity-50" viewBox="0 0 100 10" preserveAspectRatio="none">
+                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+              </svg>
+            </span>
+            , Not Hours
           </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-in-up delay-200">
             Transform SOC 2, SIG, HECVAT, and security report reviews from 6-8 hours to under 15 minutes.
-            AI-powered analysis with auditor-grade accuracy.
+            AI-powered analysis with <span className="text-white font-medium">auditor-grade accuracy</span>.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up delay-300">
             <Link to="/register">
-              <Button size="lg" className="text-base px-8">
+              <Button size="lg" className="h-14 px-10 text-lg neon-border shadow-[0_0_30px_rgba(0,242,255,0.2)] hover:shadow-[0_0_50px_rgba(0,242,255,0.4)] transition-all duration-300">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href="#demo">
-              <Button variant="outline" size="lg" className="text-base px-8">
+              <Button variant="outline" size="lg" className="h-14 px-10 text-lg border-white/10 hover:bg-white/5 backdrop-blur-sm">
                 Watch Demo
               </Button>
             </a>
           </div>
 
           {/* Stats */}
-          <div className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <div className="mt-24 grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto animate-fade-in-up delay-300">
             {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-primary">{stat.value}</div>
-                <div className="text-sm font-medium text-foreground mt-1">{stat.label}</div>
+              <div key={stat.label} className="glass-card p-6 rounded-2xl group hover:bg-white/5 transition-colors">
+                <div className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 font-mono tracking-tight mb-2 group-hover:text-primary transition-colors">{stat.value}</div>
+                <div className="text-sm font-semibold text-white/90 uppercase tracking-wide mb-1">{stat.label}</div>
                 <div className="text-xs text-muted-foreground">{stat.description}</div>
               </div>
             ))}
@@ -159,25 +172,25 @@ export function Landing() {
       </section>
 
       {/* Problem Section */}
-      <section id="problem" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section id="problem" className="py-24 px-4 sm:px-6 lg:px-8 bg-black/40 border-y border-white/5 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
               The Third-Party Risk Crisis
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Security teams are overwhelmed. Legacy GRC tools cost $100K-$500K/year and still require massive manual effort.
+            <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Security teams are overwhelmed. Legacy GRC tools cost <span className="text-white">$100K-$500K/year</span> and still require massive manual effort.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {problems.map((problem) => (
-              <div key={problem.title} className="bg-background rounded-xl p-8 shadow-sm border">
-                <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-destructive/10 text-destructive mb-6">
-                  <problem.icon className="h-6 w-6" />
+              <div key={problem.title} className="glass-card p-8 rounded-2xl hover:bg-white/5 transition-all duration-300 group">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-destructive/10 text-destructive mb-8 group-hover:scale-110 transition-transform duration-300">
+                  <problem.icon className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">{problem.title}</h3>
-                <p className="text-muted-foreground">{problem.description}</p>
+                <h3 className="text-xl font-bold text-white mb-4">{problem.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{problem.description}</p>
               </div>
             ))}
           </div>
@@ -238,14 +251,22 @@ export function Landing() {
             </div>
 
             {/* Comparison Table */}
-            <div className="bg-muted/30 rounded-2xl p-8 border">
-              <h3 className="text-xl font-bold text-foreground mb-6">Legacy GRC vs VendorAuditAI</h3>
-              <div className="space-y-4">
+            <div className="glass-panel rounded-2xl p-8 lg:p-10">
+              <h3 className="text-xl font-bold text-white mb-8 flex items-center gap-3">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Legacy GRC vs VendorAuditAI
+              </h3>
+              <div className="space-y-1">
+                <div className="grid grid-cols-3 gap-4 pb-4 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <div>Feature</div>
+                  <div>Legacy Tools</div>
+                  <div className="text-primary">VendorAuditAI</div>
+                </div>
                 {comparisonData.map((row) => (
-                  <div key={row.feature} className="grid grid-cols-3 gap-4 py-3 border-b border-border last:border-0">
-                    <div className="text-sm font-medium text-foreground">{row.feature}</div>
-                    <div className="text-sm text-muted-foreground">{row.legacy}</div>
-                    <div className="text-sm font-semibold text-primary">{row.vendorAudit}</div>
+                  <div key={row.feature} className="grid grid-cols-3 gap-4 py-4 px-4 rounded-lg hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 items-center">
+                    <div className="text-sm font-medium text-white">{row.feature}</div>
+                    <div className="text-sm text-muted-foreground font-mono">{row.legacy}</div>
+                    <div className="text-sm font-bold text-primary font-mono bg-primary/10 inline-block px-2 py-1 rounded w-fit">{row.vendorAudit}</div>
                   </div>
                 ))}
               </div>
@@ -255,10 +276,10 @@ export function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
               Enterprise-Grade Capabilities
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -268,12 +289,12 @@ export function Landing() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <div key={feature.title} className="bg-background rounded-xl p-8 shadow-sm border hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary/10 text-primary mb-6">
+              <div key={feature.title} className="glass-card p-8 rounded-2xl hover:border-primary/30 transition-all duration-300 group h-full">
+                <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform">
                   <feature.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -411,21 +432,21 @@ export function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-black/20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <Shield className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">VendorAuditAI</span>
+              <span className="text-lg font-bold tracking-tight text-white">VendorAuditAI</span>
             </div>
-            <div className="flex items-center gap-8 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="hover:text-foreground transition-colors">Security</a>
-              <a href="mailto:contact@vendorauditai.com" className="hover:text-foreground transition-colors">Contact</a>
+            <div className="flex items-center gap-8 text-sm font-medium text-muted-foreground">
+              <a href="#" className="hover:text-primary transition-colors">Privacy</a>
+              <a href="#" className="hover:text-primary transition-colors">Terms</a>
+              <a href="#" className="hover:text-primary transition-colors">Security</a>
+              <a href="mailto:contact@vendorauditai.com" className="hover:text-primary transition-colors">Contact</a>
             </div>
-            <div className="text-sm text-muted-foreground">
-              2025 VendorAuditAI. All rights reserved.
+            <div className="text-sm text-muted-foreground opacity-60">
+              © 2026 VendorAuditAI. All rights reserved.
             </div>
           </div>
         </div>
