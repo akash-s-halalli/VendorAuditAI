@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   TrendingUp,
-  TrendingDown,
   AlertTriangle,
   RefreshCw,
   Building2,
@@ -23,19 +22,33 @@ import {
 import { CyberCard } from '@/components/ui/CyberCard';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 
-// Types for Risk API responses
+// Types for Risk API responses - matches backend schemas
+interface RiskFactor {
+  name: string;
+  description: string;
+  raw_value: number;
+  weighted_value: number;
+  weight: number;
+  max_possible: number;
+}
+
 interface VendorRisk {
   vendor_id: string;
   vendor_name: string;
   overall_score: number;
   risk_level: 'critical' | 'high' | 'medium' | 'low';
   risk_color: string;
-  factors?: Record<string, number>;
+  factors: RiskFactor[];
+  calculated_at: string;
   findings_critical: number;
   findings_high: number;
   findings_medium: number;
   findings_low: number;
   total_findings: number;
+  compliance_coverage: number;
+  vendor_tier: string;
+  data_classification: string | null;
+  document_age_days: number | null;
 }
 
 interface RiskVendorsResponse {
@@ -45,11 +58,7 @@ interface RiskVendorsResponse {
   high_risk_count: number;
 }
 
-interface VendorRiskDetail extends VendorRisk {
-  factors: Record<string, number>;
-  last_calculated?: string;
-  trend?: 'up' | 'down' | 'stable';
-}
+type VendorRiskDetail = VendorRisk;
 
 interface CalculateRiskRequest {
   vendor_ids?: string[];
@@ -508,8 +517,6 @@ export function Risk() {
                     )}`}
                   >
                     {vendorDetail.risk_level}
-                    {vendorDetail.trend === 'up' && <TrendingUp className="h-4 w-4 ml-1.5" />}
-                    {vendorDetail.trend === 'down' && <TrendingDown className="h-4 w-4 ml-1.5" />}
                   </span>
                 </div>
               </div>
@@ -548,36 +555,36 @@ export function Risk() {
               </div>
 
               {/* Risk Factors */}
-              {vendorDetail.factors && Object.keys(vendorDetail.factors).length > 0 && (
+              {vendorDetail.factors && vendorDetail.factors.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider">
                     Contributing Factors
                   </h4>
                   <div className="space-y-3">
-                    {Object.entries(vendorDetail.factors)
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([factor, value]) => (
-                        <div key={factor}>
+                    {[...vendorDetail.factors]
+                      .sort((a, b) => b.weighted_value - a.weighted_value)
+                      .map((factor) => (
+                        <div key={factor.name}>
                           <div className="flex justify-between text-sm mb-1">
                             <span className="text-muted-foreground capitalize">
-                              {factor.replace(/_/g, ' ')}
+                              {factor.name}
                             </span>
-                            <span className={`font-mono ${getScoreColor(value)}`}>
-                              {value.toFixed(1)}
+                            <span className={`font-mono ${getScoreColor(factor.weighted_value)}`}>
+                              {factor.weighted_value.toFixed(1)}
                             </span>
                           </div>
                           <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
                             <div
                               className={`h-full transition-all duration-300 ${
-                                value >= 80
+                                factor.weighted_value >= 80
                                   ? 'bg-red-500'
-                                  : value >= 60
+                                  : factor.weighted_value >= 60
                                   ? 'bg-orange-500'
-                                  : value >= 40
+                                  : factor.weighted_value >= 40
                                   ? 'bg-yellow-500'
                                   : 'bg-green-500'
                               }`}
-                              style={{ width: `${Math.min(value, 100)}%` }}
+                              style={{ width: `${Math.min(factor.weighted_value, 100)}%` }}
                             />
                           </div>
                         </div>
@@ -587,9 +594,9 @@ export function Risk() {
               )}
 
               {/* Last Calculated */}
-              {vendorDetail.last_calculated && (
+              {vendorDetail.calculated_at && (
                 <p className="text-xs text-muted-foreground text-center pt-2 border-t border-white/10">
-                  Last calculated: {new Date(vendorDetail.last_calculated).toLocaleString()}
+                  Last calculated: {new Date(vendorDetail.calculated_at).toLocaleString()}
                 </p>
               )}
             </div>

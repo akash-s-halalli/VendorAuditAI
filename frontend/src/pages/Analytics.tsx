@@ -21,45 +21,85 @@ import { cn } from '@/lib/utils';
 // Types
 // ============================================================================
 
+// Backend response types - matching actual API schemas
 interface DashboardStats {
   total_vendors: number;
   total_documents: number;
   total_findings: number;
-  open_remediation_tasks: number;
-  vendors_by_tier: Record<string, number>;
-  findings_by_severity: Record<string, number>;
+  total_remediation_tasks: number;
+  active_vendors: number;
+  pending_documents: number;
+  open_findings: number;
+  overdue_tasks: number;
+  critical_findings: number;
+  high_risk_vendors: number;
+  avg_compliance_score: number | null;
+  findings_this_month: number;
+  documents_this_month: number;
+}
+
+interface TierDistribution {
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
 }
 
 interface VendorDistribution {
-  category?: Record<string, number>;
-  tier?: Record<string, number>;
-  status?: Record<string, number>;
+  by_category: Array<{ name: string; count: number; percentage: number }>;
+  by_tier: TierDistribution;
+  by_status: Record<string, number>;
+  total_vendors: number;
+}
+
+interface SeverityBreakdown {
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
+  info: number;
 }
 
 interface FindingsSummary {
-  total: number;
-  by_severity: Record<string, number>;
-  by_category?: Record<string, number>;
+  total_findings: number;
+  by_severity: SeverityBreakdown;
+  by_status: Record<string, number>;
+  by_framework: Array<{ framework: string; count: number; critical: number; high: number }>;
+  trend_last_30_days: Array<{ date: string; count: number }>;
+  avg_resolution_time_days: number | null;
+}
+
+interface FrameworkCoverage {
+  framework: string;
+  vendors_assessed: number;
+  total_controls: number;
+  controls_covered: number;
+  coverage_percentage: number;
+  findings_count: number;
+  critical_gaps: number;
 }
 
 interface ComplianceOverview {
-  frameworks: Array<{
-    name: string;
-    coverage_percentage: number;
-    total_controls: number;
-    compliant_controls: number;
-  }>;
+  overall_coverage: number;
+  frameworks: FrameworkCoverage[];
+  vendors_with_findings: number;
+  vendors_fully_compliant: number;
+  avg_findings_per_vendor: number;
 }
 
 interface ActivityItem {
   id: string;
-  action: string;
-  description: string;
   timestamp: string;
-  actor?: string;
-  entity_type?: string;
-  entity_id?: string;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  resource_name: string | null;
+  user_id: string | null;
+  user_email: string | null;
+  details: string | null;
 }
+
+// ActivityTimeline is used internally by API but we transform to ActivityResponse
 
 interface ActivityResponse {
   data: ActivityItem[];
@@ -81,16 +121,16 @@ export function Analytics() {
     queryKey: ['analytics-dashboard'],
     queryFn: async () => {
       const response = await apiClient.get('/analytics/dashboard');
-      return response.data;
+      return response.data.data || response.data;
     },
   });
 
   // Fetch vendor distribution by tier
   const { data: vendorDistribution, isLoading: vendorLoading } = useQuery<VendorDistribution>({
-    queryKey: ['analytics-vendors-distribution', 'tier'],
+    queryKey: ['analytics-vendors-distribution'],
     queryFn: async () => {
-      const response = await apiClient.get('/analytics/vendors/distribution?group_by=tier');
-      return response.data;
+      const response = await apiClient.get('/analytics/vendors/distribution');
+      return response.data.data || response.data;
     },
   });
 
@@ -99,7 +139,7 @@ export function Analytics() {
     queryKey: ['analytics-findings-summary'],
     queryFn: async () => {
       const response = await apiClient.get('/analytics/findings/summary');
-      return response.data;
+      return response.data.data || response.data;
     },
   });
 
@@ -108,7 +148,7 @@ export function Analytics() {
     queryKey: ['analytics-compliance-overview'],
     queryFn: async () => {
       const response = await apiClient.get('/analytics/compliance/overview');
-      return response.data;
+      return response.data.data || response.data;
     },
   });
 
@@ -117,7 +157,12 @@ export function Analytics() {
     queryKey: ['analytics-activity'],
     queryFn: async () => {
       const response = await apiClient.get('/analytics/activity?limit=20');
-      return response.data;
+      const activityData = response.data.data || response.data;
+      // Transform nested response to flat format
+      return {
+        data: activityData.activities || activityData,
+        total: activityData.total_count || 0,
+      };
     },
   });
 
@@ -175,13 +220,15 @@ export function Analytics() {
     total_vendors: 0,
     total_documents: 0,
     total_findings: 0,
-    open_remediation_tasks: 0,
-    vendors_by_tier: {},
-    findings_by_severity: {},
+    total_remediation_tasks: 0,
+    open_findings: 0,
+    overdue_tasks: 0,
   };
 
-  const vendorsByTier = vendorDistribution?.tier || stats.vendors_by_tier || {};
-  const findingsBySeverity = findingsSummary?.by_severity || stats.findings_by_severity || {};
+  // Extract vendor distribution by tier from backend response
+  // Cast structured objects to Record for chart compatibility
+  const vendorsByTier = (vendorDistribution?.by_tier || {}) as Record<string, number>;
+  const findingsBySeverity = (findingsSummary?.by_severity || {}) as Record<string, number>;
   const frameworks = complianceOverview?.frameworks || [];
   const activities = activityResponse?.data || [];
 
@@ -249,7 +296,7 @@ export function Analytics() {
         />
         <KPICard
           title="Open Tasks"
-          value={stats.open_remediation_tasks}
+          value={stats.total_remediation_tasks || stats.overdue_tasks || 0}
           icon={ClipboardList}
           variant="danger"
           subtitle="Pending remediation"
@@ -416,11 +463,11 @@ export function Analytics() {
 
                 return (
                   <div
-                    key={framework.name}
+                    key={framework.framework}
                     className="p-4 rounded-lg bg-white/5 border border-white/10 hover:border-primary/30 transition-colors"
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-white font-medium">{framework.name}</span>
+                      <span className="text-white font-medium">{framework.framework}</span>
                       <span className={cn('font-mono text-lg font-bold', coverageColor)}>
                         {coverage.toFixed(0)}%
                       </span>
@@ -433,7 +480,7 @@ export function Analytics() {
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        {framework.compliant_controls} / {framework.total_controls} controls
+                        {framework.controls_covered} / {framework.total_controls} controls
                       </span>
                       <TrendingUp className="h-3 w-3" />
                     </div>
@@ -476,17 +523,17 @@ export function Analytics() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white font-medium truncate">{activity.action}</p>
                     <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                      {activity.description}
+                      {activity.details || activity.resource_name || `${activity.resource_type} ${activity.resource_id || ''}`}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <Clock className="h-3 w-3 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground font-mono">
                         {formatRelativeTime(activity.timestamp)}
                       </span>
-                      {activity.actor && (
+                      {activity.user_email && (
                         <>
                           <span className="text-white/10">|</span>
-                          <span className="text-xs text-primary/80">{activity.actor}</span>
+                          <span className="text-xs text-primary/80">{activity.user_email}</span>
                         </>
                       )}
                     </div>
