@@ -1,308 +1,288 @@
-<div align="center">
+<p align="center">
+  <img src="https://img.shields.io/badge/VENDORAUDITAI-000000?style=for-the-badge&logoColor=white" alt="VendorAuditAI" height="80"/>
+</p>
 
-<br/>
+<h1 align="center">VendorAuditAI</h1>
 
-<img src="https://img.shields.io/badge/VENDORAUDITAI-000000?style=for-the-badge&logoColor=white" alt="VendorAuditAI" height="60"/>
+<h3 align="center">AI-Powered Third-Party Risk Management Platform</h3>
 
-<br/>
-<br/>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB.svg" alt="Python"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.115-009688.svg" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/React-18-61DAFB.svg" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg" alt="Claude"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/Version-0.3.0-00D4AA.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
+</p>
 
-# The Future of Third-Party Risk Management
-
-<br/>
-
-**Enterprise AI Platform That Transforms Vendor Security Assessments**
-
-*From 8 Hours to 15 Minutes. From Chaos to Clarity.*
-
-<br/>
-
-[![Version](https://img.shields.io/badge/v0.3.0-PRODUCTION-00D4AA?style=for-the-badge)](CHANGELOG.md)
-[![Uptime](https://img.shields.io/badge/UPTIME-99.9%25-00D4AA?style=for-the-badge)]()
-[![Tests](https://img.shields.io/badge/129_TESTS-PASSING-00D4AA?style=for-the-badge)]()
-[![Security](https://img.shields.io/badge/SOC_2-COMPLIANT-00D4AA?style=for-the-badge)]()
-
-<br/>
-
-[**Launch Demo**](https://vendor-audit-ai.netlify.app) | [**API Docs**](https://vendorauditai-production.up.railway.app/docs) | [**Platform Overview**](docs/PLATFORM_OVERVIEW.md) | [**Contact Sales**](mailto:contact@vendorauditai.com)
-
-<br/>
+<p align="center">
+  <strong>Transform vendor security assessments from 8 hours to 15 minutes using AI-powered document analysis and multi-framework compliance mapping</strong>
+</p>
 
 ---
 
-<br/>
+## The Problem
 
-</div>
+<table>
+<tr>
+<td width="50%">
 
-## Why VendorAuditAI Exists
+### Third-Party Risk is Manual and Broken
 
-<br/>
+- **60% of data breaches** originate from third-party vendors (Ponemon Institute)
+- **$4.88M average cost** per data breach in 2024 (IBM)
+- **6-8 hours per vendor** to manually review a single SOC 2 report
+- **200+ page documents** with critical risks buried in dense text
+- **Spreadsheet chaos** - no centralized tracking or automation
+- **Missed SLAs** - remediation tasks lost in email threads
+- **Audit failures** - incomplete evidence and gaps in coverage
 
-Every enterprise today relies on dozens, sometimes hundreds, of third-party vendors. Each vendor is a potential gateway for data breaches, compliance failures, and operational risks.
+</td>
+<td width="50%">
 
-**The problem?** Evaluating vendor security is painfully manual.
+### What Security Teams Need
 
-| The Old Way | The VendorAuditAI Way |
-|:------------|:----------------------|
-| 6-8 hours reading a single SOC 2 report | 15 minutes with AI-powered analysis |
-| Spreadsheets and manual tracking | Automated workflows with SLA management |
-| Missed risks buried in 200-page documents | Instant gap detection across 9 frameworks |
-| $100K-$500K/year for legacy GRC tools | Modern, scalable, cost-effective |
+- **Instant document analysis** - AI reads and understands vendor reports
+- **Multi-framework mapping** - One document mapped to 12 compliance frameworks
+- **Natural language queries** - Ask questions, get cited answers
+- **Automated gap detection** - Find missing controls automatically
+- **Remediation workflows** - Track tasks with SLA management
+- **Continuous monitoring** - Scheduled assessments with alerts
+- **Audit-ready reports** - Complete evidence trail for compliance
 
-<br/>
-
-> **"60% of data breaches originate from third-party vendors."**
->
-> *- Ponemon Institute*
-
-<br/>
+</td>
+</tr>
+</table>
 
 ---
 
+## The Solution: VendorAuditAI
+
+<table>
+<tr>
+<td width="33%">
+
+| Metric | Value |
+|--------|-------|
+| **Assessment Time** | 15 minutes |
+| **Time Savings** | 97% reduction |
+| **Frameworks** | 12 supported |
+| **Document Types** | PDF, DOCX, OCR |
+
+</td>
+<td width="33%">
+
+| Metric | Value |
+|--------|-------|
+| **AI Engine** | Claude Opus 4.5 |
+| **Embeddings** | OpenAI |
+| **Architecture** | RAG Pipeline |
+| **Uptime SLA** | 99.9% |
+
+</td>
+<td width="33%">
+
+| Metric | Value |
+|--------|-------|
+| **API Endpoints** | 25+ |
+| **Test Coverage** | 129 tests |
+| **Auth** | SSO/SAML 2.0 |
+| **Encryption** | AES-256/TLS 1.3 |
+
+</td>
+</tr>
+</table>
+
 <br/>
 
-## How It Works
+| Capability | Technology | Outcome |
+|------------|------------|---------|
+| Document Intelligence | PDF parsing, OCR, semantic chunking | Extract text from any vendor document format |
+| AI-Powered Analysis | Claude Opus 4.5 + RAG architecture | Natural language Q&A with source citations |
+| Multi-Framework Mapping | 12 compliance frameworks, 2500+ controls | One document mapped to SOC 2, NIST, ISO, SIG, DORA |
+| Gap Detection | AI control analysis + framework comparison | Automatic identification of missing or weak controls |
+| Vendor Categorization | ML-based classification, 14 categories | Auto-assign risk levels and recommended frameworks |
+| Remediation Workflow | Task management, SLA tracking, escalation | Never miss a remediation deadline |
+| Continuous Monitoring | Scheduled assessments, alerting | Proactive vendor risk management |
 
-<br/>
+---
 
-<div align="center">
+## Architecture
 
 ```
- UPLOAD              ANALYZE              ACT
-   |                    |                  |
-   v                    v                  v
-+--------+         +---------+        +----------+
-|  SOC 2 |         |   AI    |        | Findings |
-| SIG    |  --->   | Engine  |  --->  | Reports  |
-| HECVAT |         | (Claude)|        | Actions  |
-| ISO    |         +---------+        +----------+
-+--------+              |
-                        v
-                 +-------------+
-                 | 9 Frameworks|
-                 | Gap Analysis|
-                 | Risk Score  |
-                 +-------------+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VENDORAUDITAI ARCHITECTURE                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                              ┌─────────────────┐
+                              │   USER/BROWSER  │
+                              └────────┬────────┘
+                                       │
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FRONTEND (Netlify)                              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │   React 18  │  │ TypeScript  │  │ TailwindCSS │  │  Shadcn/UI  │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │
+└─────────────────────────────────────┬───────────────────────────────────────┘
+                                      │ HTTPS/REST API
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              BACKEND (Railway)                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │   FastAPI   │  │ SQLAlchemy  │  │    Async    │  │  Pydantic   │        │
+│  │  Python 3.12│  │     2.0     │  │   Workers   │  │  Schemas    │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │
+└──────────┬──────────────────┬──────────────────┬────────────────────────────┘
+           │                  │                  │
+           ▼                  ▼                  ▼
+┌──────────────────┐ ┌──────────────────┐ ┌──────────────────────────────────┐
+│   PostgreSQL     │ │   Redis Cache    │ │         AI SERVICES              │
+│   ┌──────────┐   │ │   ┌──────────┐   │ │  ┌────────────┐ ┌────────────┐  │
+│   │ Documents│   │ │   │ Sessions │   │ │  │Claude Opus │ │  OpenAI    │  │
+│   │ Chunks   │   │ │   │ Rate Lim │   │ │  │   4.5      │ │ Embeddings │  │
+│   │ Findings │   │ │   └──────────┘   │ │  └────────────┘ └────────────┘  │
+│   │ Vendors  │   │ └──────────────────┘ │  ┌────────────┐                  │
+│   └──────────┘   │                      │  │  Gemini    │                  │
+└──────────────────┘                      │  │  2.0 Flash │                  │
+                                          │  └────────────┘                  │
+                                          └──────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DOCUMENT PROCESSING PIPELINE                       │
+│                                                                              │
+│   UPLOAD ──► PARSE ──► CHUNK ──► EMBED ──► INDEX ──► READY FOR QUERY       │
+│     │          │         │         │         │            │                 │
+│   PDF/DOCX   Extract   Semantic  Vector   PostgreSQL   Natural Language    │
+│   Validation  Text     Splitting  Store   + pgvector   Q&A with Citations  │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-</div>
-
-<br/>
-
-### Step 1: Upload
-Drop your vendor documents - SOC 2 Type II, SIG Lite, SIG Core, HECVAT, ISO 27001, penetration test reports, or any security questionnaire.
-
-### Step 2: Analyze
-Our AI engine powered by Claude Opus 4.5 reads, understands, and maps every control to your compliance requirements. Automatically.
-
-### Step 3: Act
-Get actionable findings, assign remediation tasks, track SLAs, and monitor continuously. All in one platform.
-
-<br/>
-
 ---
-
-<br/>
-
-## Platform Capabilities
-
-<br/>
-
-### Document Intelligence
-| Feature | Description |
-|:--------|:------------|
-| **Multi-Format Support** | PDF, DOCX, scanned documents with OCR |
-| **Smart Parsing** | Automatic section detection and control extraction |
-| **Chunk Indexing** | Semantic search across all uploaded documents |
-
-<br/>
-
-### AI-Powered Analysis
-| Feature | Description |
-|:--------|:------------|
-| **Natural Language Query** | Ask questions in plain English, get cited answers |
-| **Gap Detection** | Automatic identification of missing or weak controls |
-| **Risk Scoring** | AI-generated risk assessments per vendor |
-| **Multi-Framework Mapping** | One document, mapped to 9 compliance frameworks |
-
-<br/>
-
-### Workflow Automation
-| Feature | Description |
-|:--------|:------------|
-| **Remediation Tasks** | Create, assign, and track remediation items |
-| **SLA Management** | Set deadlines, escalate automatically |
-| **Continuous Monitoring** | Scheduled assessments with alerting |
-| **Audit Trail** | Complete history for compliance audits |
-
-<br/>
-
-### Enterprise Security
-| Feature | Description |
-|:--------|:------------|
-| **SSO/SAML 2.0** | Azure AD, Okta, Google Workspace, OneLogin |
-| **Multi-Factor Auth** | TOTP with backup recovery codes |
-| **Role-Based Access** | Admin, Analyst, Viewer permissions |
-| **API Rate Limiting** | DDoS and brute force protection |
-| **Encryption** | AES-256 at rest, TLS 1.3 in transit |
-
-<br/>
-
----
-
-<br/>
 
 ## Supported Compliance Frameworks
 
-<br/>
-
-<div align="center">
-
-| Framework | Controls | Best For |
-|:---------:|:--------:|:---------|
-| **SOC 2 TSC** | 64 | SaaS vendors, cloud services |
-| **SIG 2026** | 800+ | Industry gold standard, all vendors |
-| **NIST 800-53** | 1,000+ | Federal contractors, regulated industries |
-| **ISO 27001** | 114 | International compliance |
-| **CIS Controls** | 153 | Security baselines |
-| **DORA** | 100+ | EU financial entities (2025) |
-| **HECVAT** | 200+ | Higher education vendors |
-| **PCI-DSS** | 250+ | Payment processors |
-| **HIPAA** | 75 | Healthcare vendors |
-| **CAIQ** | 260+ | Cloud security (CSA) |
-| **NIST AI RMF** | 70+ | AI/ML vendors |
-| **Custom** | Unlimited | Your internal frameworks |
-
-</div>
-
-<br/>
+| Framework | Controls | Version | Best For |
+|:---------:|:--------:|:-------:|:---------|
+| **SOC 2 TSC** | 64 | 2017 | SaaS vendors, cloud services |
+| **SIG 2026** | 800+ | 2026 | Industry gold standard, all vendors |
+| **NIST CSF** | 108 | 2.0 | Critical infrastructure, risk management |
+| **ISO 27001** | 114 | 2022 | International compliance |
+| **CIS Controls** | 153 | 8.0 | Security baselines |
+| **DORA** | 100+ | 2025 | EU financial entities (mandatory) |
+| **HECVAT** | 200+ | 3.06 | Higher education vendors |
+| **CAIQ** | 260+ | 4.0 | Cloud security (CSA STAR) |
+| **NIST AI RMF** | 70+ | 1.0 | AI/ML vendors |
+| **AI Risk** | 50+ | 1.0 | AI vendor assessment |
 
 ---
 
-<br/>
+## Use Cases
 
-## Technology Architecture
+<table>
+<tr>
+<td width="50%">
 
-<br/>
+### SOC 2 Report Analysis
 
-```
-+------------------+     +------------------+     +------------------+
-|    FRONTEND      |     |     BACKEND      |     |   AI SERVICES    |
-+------------------+     +------------------+     +------------------+
-| React 18         |     | FastAPI          |     | Claude Opus 4.5  |
-| TypeScript 5     |<--->| Python 3.12      |<--->| Gemini 2.0 Flash |
-| TailwindCSS      |     | SQLAlchemy 2.0   |     | OpenAI Embeddings|
-| TanStack Query   |     | PostgreSQL       |     | RAG Architecture |
-| Shadcn/UI        |     | Redis Cache      |     |                  |
-+------------------+     +------------------+     +------------------+
-        |                        |                        |
-        +------------------------+------------------------+
-                                 |
-                    +------------------------+
-                    |    INFRASTRUCTURE      |
-                    +------------------------+
-                    | Railway (Backend)      |
-                    | Netlify (Frontend)     |
-                    | GitHub Actions (CI/CD) |
-                    | Docker Containers      |
-                    +------------------------+
-```
+**Scenario:** Security analyst receives 180-page SOC 2 Type II report from cloud vendor.
 
-<br/>
+**Before VendorAuditAI:**
+- 6-8 hours reading through dense audit language
+- Manual extraction of control gaps
+- Spreadsheet tracking of findings
+- Risk of missing critical issues
 
----
+**With VendorAuditAI:**
+- Upload PDF, processing complete in 2 minutes
+- Ask: "What encryption controls are documented?"
+- AI returns cited answer with page references
+- Automatic gap detection across 12 frameworks
+- Remediation tasks auto-created with SLAs
 
-<br/>
+</td>
+<td width="50%">
 
-## Live Demo
+### Multi-Vendor Assessment Program
 
-<br/>
+**Scenario:** Enterprise onboarding 50 new vendors for digital transformation initiative.
 
-<div align="center">
+**Before VendorAuditAI:**
+- 400+ hours of analyst time
+- Inconsistent assessment criteria
+- No standardized risk scoring
+- Audit findings for incomplete coverage
 
-### [https://vendor-audit-ai.netlify.app](https://vendor-audit-ai.netlify.app)
+**With VendorAuditAI:**
+- Batch upload all vendor documents
+- Auto-categorization by vendor type
+- Standardized risk scoring algorithm
+- Framework mapping for each vendor tier
+- Executive dashboard with risk heatmap
+- Complete audit trail for compliance
 
-<br/>
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-| | |
-|:--|:--|
-| **Email** | `newdemo@vendorauditai.com` |
-| **Password** | `Demo12345` |
+### Continuous Vendor Monitoring
 
-<br/>
+**Scenario:** Existing vendor's SOC 2 report expires, new assessment needed.
 
-*Full access to all features. Sample documents pre-loaded.*
+**Before VendorAuditAI:**
+- Manual calendar tracking
+- Email reminders often missed
+- No comparison to previous assessment
+- Reactive instead of proactive
 
-</div>
+**With VendorAuditAI:**
+- Automated expiration alerts
+- Request new documentation workflow
+- AI comparison to previous assessment
+- Track remediation progress over time
+- Trend analysis and risk scoring
 
-<br/>
+</td>
+<td width="50%">
 
----
+### Regulatory Compliance (DORA/NIS2)
 
-<br/>
+**Scenario:** EU financial entity must comply with DORA ICT third-party requirements.
 
-## API Reference
+**Before VendorAuditAI:**
+- Manual mapping to DORA articles
+- Consultant fees for gap analysis
+- Uncertain coverage of requirements
+- Risk of regulatory penalties
 
-<br/>
+**With VendorAuditAI:**
+- Upload vendor documents
+- Automatic DORA framework mapping
+- Gap analysis against all 5 DORA pillars
+- Evidence collection for regulators
+- Third-party register generation
+- Audit-ready compliance reports
 
-**Base URL:** `https://vendorauditai-production.up.railway.app/api/v1`
-
-<br/>
-
-### Authentication
-```bash
-# Login
-POST /auth/login
-Content-Type: application/x-www-form-urlencoded
-
-username=user@company.com&password=yourpassword
-
-# Response
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIs...",
-  "token_type": "bearer",
-  "expires_in": 1800
-}
-```
-
-<br/>
-
-### Core Endpoints
-
-| Category | Endpoints | Description |
-|:---------|:----------|:------------|
-| **Auth** | `POST /auth/login` `POST /auth/register` | Authentication |
-| **Documents** | `POST /documents/upload` `GET /documents` | Document management |
-| **Query** | `POST /query` | Natural language Q&A |
-| **Analysis** | `POST /analysis/documents/{id}/analyze` | Run AI analysis |
-| **Vendors** | `GET /vendors` `POST /vendors` | Vendor management |
-| **Findings** | `GET /findings` | View analysis results |
-| **Frameworks** | `GET /frameworks` `GET /frameworks/search` | Compliance frameworks |
-| **Remediation** | `GET /remediation/tasks` `POST /remediation/tasks` | Task management |
-| **Monitoring** | `GET /monitoring/alerts` | Continuous monitoring |
-| **Audit** | `GET /audit/logs` | Audit trail |
-
-<br/>
-
-[**View Full API Documentation**](https://vendorauditai-production.up.railway.app/docs)
-
-<br/>
+</td>
+</tr>
+</table>
 
 ---
-
-<br/>
 
 ## Quick Start
 
-<br/>
+### Prerequisites
 
-### Option 1: Cloud (Recommended)
+- Python 3.12+
+- Node.js 18+
+- PostgreSQL 16+
+- API keys: Anthropic (Claude) or Google (Gemini), OpenAI (embeddings)
 
-Visit [vendor-audit-ai.netlify.app](https://vendor-audit-ai.netlify.app) and create an account.
-
-<br/>
-
-### Option 2: Self-Hosted
+### Installation
 
 ```bash
 # Clone the repository
@@ -314,7 +294,12 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env       # Configure your API keys
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys and database URL
+
+# Run backend
 uvicorn app.main:app --reload --port 8000
 
 # Frontend setup (new terminal)
@@ -323,13 +308,13 @@ npm install
 npm run dev
 ```
 
-<br/>
-
 ### Environment Variables
 
 ```env
-# Required
+# Database
 DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/vendorauditai
+
+# Security
 SECRET_KEY=your-secret-key-min-32-chars
 JWT_SECRET_KEY=your-jwt-secret-min-32-chars
 
@@ -338,213 +323,144 @@ LLM_PROVIDER=anthropic
 ANTHROPIC_API_KEY=sk-ant-...
 
 # Or use Gemini
-LLM_PROVIDER=gemini
-GOOGLE_API_KEY=AIza...
+# LLM_PROVIDER=gemini
+# GOOGLE_API_KEY=AIza...
 
-# Embeddings
+# Embeddings (required)
 OPENAI_API_KEY=sk-...
 ```
 
-<br/>
+---
+
+## API Endpoints
+
+### Core Endpoints
+
+| Category | Method | Endpoint | Description |
+|:---------|:------:|:---------|:------------|
+| **Auth** | POST | `/api/v1/auth/login` | User authentication |
+| **Auth** | POST | `/api/v1/auth/register` | User registration |
+| **Documents** | POST | `/api/v1/documents/upload` | Upload vendor document |
+| **Documents** | GET | `/api/v1/documents` | List all documents |
+| **Query** | POST | `/api/v1/query` | Natural language Q&A |
+| **Analysis** | POST | `/api/v1/analysis/documents/{id}/analyze` | Run AI analysis |
+| **Vendors** | GET | `/api/v1/vendors` | List vendors |
+| **Vendors** | POST | `/api/v1/vendors` | Create vendor |
+| **Frameworks** | GET | `/api/v1/frameworks` | List compliance frameworks |
+| **Frameworks** | GET | `/api/v1/frameworks/search` | Search controls |
+| **Findings** | GET | `/api/v1/findings` | View analysis findings |
+| **Remediation** | GET | `/api/v1/remediation/tasks` | List remediation tasks |
+| **Monitoring** | GET | `/api/v1/monitoring/alerts` | View monitoring alerts |
+
+### Live API Documentation
+
+- **Swagger UI:** https://vendorauditai-production.up.railway.app/docs
+- **ReDoc:** https://vendorauditai-production.up.railway.app/redoc
 
 ---
 
-<br/>
+## Live Demo
 
-## Release History
+| | |
+|:--|:--|
+| **URL** | https://vendor-audit-ai.netlify.app |
+| **Email** | `newdemo@vendorauditai.com` |
+| **Password** | `Demo12345` |
 
-<br/>
-
-### v0.3.0 - Framework Expansion (January 2026)
-- SIG 2026 framework (800+ controls, 21 risk domains)
-- DORA framework for EU financial compliance
-- HECVAT framework for higher education
-- Intelligent vendor auto-categorization system
-- 12 compliance frameworks now supported
-- Vendor risk scoring recommendations
-
-### v0.2.0 - Production Release (January 2026)
-- CORS configuration for cross-origin deployments
-- Document processing pipeline with async optimization
-- AI-powered Query feature with source citations
-- Multi-LLM support (Anthropic Claude, Google Gemini)
-- Database async operation fixes
-- 129 passing tests
-
-### v0.1.0 - Initial Release
-- Document upload and parsing (PDF, DOCX)
-- 9 compliance framework mappings
-- Natural language query interface
-- Remediation workflow with SLA tracking
-- Continuous monitoring and alerts
-- SSO/SAML 2.0 integration
-- Multi-factor authentication
-
-<br/>
-
-### Roadmap
-
-- [ ] Vendor Risk Scoring Algorithm
-- [ ] Advanced Analytics Dashboard
-- [ ] Excel/CSV Export
-- [ ] Jira & ServiceNow Integration
-- [ ] Custom Framework Builder
-- [ ] Mobile Application (iOS/Android)
-- [ ] GraphQL API
-- [ ] On-Premise Deployment Option
-
-<br/>
+*Full access to all features. Sample documents pre-loaded for testing.*
 
 ---
 
-<br/>
-
-## Competitive Advantage
-
-<br/>
-
-<div align="center">
-
-**Why VendorAuditAI Wins**
-
-</div>
-
-<br/>
+## Project Structure
 
 ```
-DOCUMENT ANALYSIS SPEED COMPARISON
-
-VendorAuditAI     [==================] 15 minutes
-                  AI reads entire document, extracts controls
-
-Legacy GRC        [================================================================] 6-8 hours
-                  Manual analyst review required
+VendorAuditAI/
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/endpoints/     # REST API endpoints
+│   │   ├── data/frameworks/      # 12 compliance framework definitions
+│   │   ├── models/               # SQLAlchemy ORM models
+│   │   ├── schemas/              # Pydantic request/response schemas
+│   │   ├── services/             # Business logic and AI services
+│   │   │   ├── llm.py            # Claude/Gemini integration
+│   │   │   ├── embedding.py      # OpenAI embeddings
+│   │   │   ├── processing.py     # Document pipeline
+│   │   │   ├── compliance.py     # Framework management
+│   │   │   └── vendor_categorization.py  # Auto-classification
+│   │   └── prompts/              # AI prompt templates
+│   ├── tests/                    # 129 pytest tests
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/           # React components
+│   │   ├── pages/                # Route pages
+│   │   ├── hooks/                # Custom React hooks
+│   │   └── lib/                  # API client, utilities
+│   └── package.json
+├── docs/
+│   └── PLATFORM_OVERVIEW.md      # Detailed platform documentation
+├── COMPETITIVE_ANALYSIS.md       # Market positioning analysis
+└── README.md
 ```
 
-<br/>
+---
 
-| Capability | VendorAuditAI | OneTrust | Vanta | SecurityScorecard |
-|:-----------|:-------------:|:--------:|:-----:|:-----------------:|
-| **AI Document Analysis** | Yes | Limited | No | No |
-| **Natural Language Query** | Yes | No | No | No |
-| **Time to First Assessment** | 15 min | 60+ days | 7 days | N/A |
-| **Starting Price** | $$ | $$$$$ | $$$ | $$$$ |
-| **Multi-Framework Mapping** | 9 frameworks | 9+ | 3 | External only |
+## Skills Demonstrated
 
-<br/>
-
-[**View Full Competitive Analysis**](COMPETITIVE_ANALYSIS.md) | [**Platform Deep Dive**](docs/PLATFORM_OVERVIEW.md)
-
-<br/>
+| Category | Technologies & Concepts |
+|----------|------------------------|
+| **AI/ML Engineering** | LLM integration (Claude, Gemini), RAG architecture, prompt engineering, embeddings, vector search |
+| **Backend Development** | Python 3.12, FastAPI, async/await, SQLAlchemy 2.0, Pydantic v2, REST API design |
+| **Frontend Development** | React 18, TypeScript 5, TailwindCSS, Shadcn/UI, TanStack Query, Axios |
+| **Database** | PostgreSQL, async operations, migrations, pgvector for embeddings |
+| **Security** | JWT authentication, SAML 2.0 SSO, MFA/TOTP, RBAC, rate limiting, encryption |
+| **DevOps** | Railway deployment, Netlify hosting, GitHub Actions CI/CD, Docker |
+| **GRC/Compliance** | SOC 2, NIST, ISO 27001, DORA, HECVAT, SIG, third-party risk management |
+| **Architecture** | Microservices, event-driven processing, caching strategies, API design |
 
 ---
 
-<br/>
+## Roadmap
 
-## Enterprise Plans
-
-<br/>
-
-<div align="center">
-
-| | Starter | Professional | Enterprise |
-|:--|:-------:|:------------:|:----------:|
-| **Vendors** | 50 | 200 | Unlimited |
-| **Documents/Month** | 500 | 2,000 | Unlimited |
-| **Users** | 5 | 25 | Unlimited |
-| **Frameworks** | 3 | All 9 | All + Custom |
-| **SSO** | - | Yes | Yes |
-| **API Access** | - | Yes | Yes |
-| **SLA** | Email | Priority | Dedicated CSM |
-| **Deployment** | Cloud | Cloud | Cloud or On-Prem |
-
-<br/>
-
-[**Contact Sales**](mailto:contact@vendorauditai.com)
-
-</div>
-
-<br/>
+- [x] **v0.1.0** - Document upload, parsing, 9 frameworks, SSO/MFA
+- [x] **v0.2.0** - AI Query feature, multi-LLM support, production deployment
+- [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks, vendor auto-categorization
+- [ ] **v0.4.0** - Vendor risk scoring algorithm, analytics dashboard
+- [ ] **v0.5.0** - Excel/CSV export, Jira/ServiceNow integration
+- [ ] **v1.0.0** - Custom framework builder, mobile app, GraphQL API
 
 ---
 
-<br/>
+## Author
 
-## Security & Compliance
+**Dominic M. Hoang**
 
-<br/>
+GitHub: [@MikeDominic92](https://github.com/MikeDominic92)
 
-VendorAuditAI is built with enterprise security as a foundation, not an afterthought.
-
-| Certification | Status |
-|:--------------|:-------|
-| SOC 2 Type II | In Progress |
-| ISO 27001 | Planned |
-| GDPR Compliant | Yes |
-| CCPA Compliant | Yes |
-
-<br/>
-
-**Security Features:**
-- End-to-end encryption (AES-256 at rest, TLS 1.3 in transit)
-- Zero-trust architecture
-- Regular penetration testing
-- 99.9% uptime SLA
-- Data residency options (US, EU)
-
-<br/>
+Focus: Identity & Access Management, AI/ML Security, Third-Party Risk Management, Cloud Security
 
 ---
 
-<br/>
+## Related Projects
 
-## Support
-
-<br/>
-
-| Channel | Response Time |
-|:--------|:--------------|
-| Documentation | [docs.vendorauditai.com](https://vendorauditai-production.up.railway.app/docs) |
-| Email Support | support@vendorauditai.com |
-| Enterprise Support | Dedicated Slack channel |
-
-<br/>
+| Project | Description |
+|---------|-------------|
+| [ai-access-sentinel](https://github.com/MikeDominic92/ai-access-sentinel) | ITDR platform with ML-powered anomaly detection and UEBA |
+| [entra-id-governance](https://github.com/MikeDominic92/entra-id-governance) | Microsoft Entra ID governance toolkit with Splunk SIEM |
+| [keyless-kingdom](https://github.com/MikeDominic92/keyless-kingdom) | Multi-cloud workload identity federation with zero secrets |
+| [okta-sso-hub](https://github.com/MikeDominic92/okta-sso-hub) | Enterprise SSO implementation with SAML, OIDC, SCIM |
 
 ---
 
-<br/>
-
-<div align="center">
-
-## Ready to Transform Your Vendor Risk Program?
-
-<br/>
-
-[![Start Free Trial](https://img.shields.io/badge/START_FREE_TRIAL-00D4AA?style=for-the-badge)](https://vendor-audit-ai.netlify.app)
-&nbsp;&nbsp;&nbsp;
-[![Schedule Demo](https://img.shields.io/badge/SCHEDULE_DEMO-0066FF?style=for-the-badge)](mailto:contact@vendorauditai.com)
-&nbsp;&nbsp;&nbsp;
-[![View API](https://img.shields.io/badge/VIEW_API-333333?style=for-the-badge)](https://vendorauditai-production.up.railway.app/docs)
-
-<br/>
-<br/>
-
----
-
-<br/>
-
-**VendorAuditAI**
-
-*Securing the supply chain, one vendor at a time.*
-
-<br/>
-
-[Website](https://vendor-audit-ai.netlify.app) | [API](https://vendorauditai-production.up.railway.app/docs) | [GitHub](https://github.com/MikeDominic92/VendorAuditAI) | [Contact](mailto:contact@vendorauditai.com)
-
-<br/>
-
-Copyright 2026 VendorAuditAI. All rights reserved.
-
-<br/>
-
-</div>
+<p align="center">
+  <strong>VendorAuditAI</strong>
+  <br/>
+  <sub>Securing the supply chain, one vendor at a time.</sub>
+  <br/><br/>
+  <a href="https://vendor-audit-ai.netlify.app">Website</a> |
+  <a href="https://vendorauditai-production.up.railway.app/docs">API</a> |
+  <a href="https://github.com/MikeDominic92/VendorAuditAI">GitHub</a> |
+  <a href="mailto:contact@vendorauditai.com">Contact</a>
+  <br/><br/>
+  MIT License - Copyright 2026 VendorAuditAI
+</p>
