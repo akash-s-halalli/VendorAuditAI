@@ -13,14 +13,25 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg" alt="Claude"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/Version-0.4.0-00D4AA.svg" alt="Version"/>
-  <img src="https://img.shields.io/badge/Tests-123_Passing-00D4AA.svg" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Version-0.5.0-00D4AA.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
 </p>
 
 <p align="center">
   <strong>Transform vendor security assessments from 8 hours to 15 minutes using AI-powered document analysis and multi-framework compliance mapping</strong>
 </p>
+
+<table align="center">
+<tr>
+<td align="center">
+<h3>Try the Live Demo</h3>
+<a href="https://vendor-audit-ai.netlify.app"><strong>vendor-audit-ai.netlify.app</strong></a><br/><br/>
+<code>Email: newdemo@vendorauditai.com</code><br/>
+<code>Password: Demo12345</code>
+</td>
+</tr>
+</table>
 
 ---
 
@@ -87,7 +98,7 @@
 
 | Metric | Value |
 |--------|-------|
-| **API Endpoints** | 25+ |
+| **API Endpoints** | 90+ |
 | **Test Coverage** | 129 tests |
 | **Auth** | SSO/SAML 2.0 |
 | **Encryption** | AES-256/TLS 1.3 |
@@ -101,12 +112,13 @@
 | Capability | Technology | Outcome |
 |------------|------------|---------|
 | Document Intelligence | PDF parsing, OCR, semantic chunking | Extract text from any vendor document format |
-| AI-Powered Analysis | Claude Opus 4.5 + RAG architecture | Natural language Q&A with source citations |
+| AI-Powered Analysis | Claude Opus 4.5 + Gemini 3.0 + RAG | Natural language Q&A with source citations |
 | Multi-Framework Mapping | 12 compliance frameworks, 2500+ controls | One document mapped to SOC 2, NIST, ISO, SIG, DORA |
 | Gap Detection | AI control analysis + framework comparison | Automatic identification of missing or weak controls |
-| Vendor Categorization | DoorDash-style TPRM taxonomy, 25 categories | Auto-assign risk tiers and framework recommendations |
-| Remediation Workflow | Task management, SLA tracking, escalation | Never miss a remediation deadline |
-| Continuous Monitoring | Scheduled assessments, alerting | Proactive vendor risk management |
+| Vendor Management | Full CRUD, 25 categories, auto-classification | Complete vendor lifecycle management |
+| Remediation Workflow | Task management, SLA tracking, status workflows | Never miss a remediation deadline |
+| Continuous Monitoring | Scheduled assessments, alerts, notification channels | Proactive vendor risk management |
+| Export & Reporting | CSV, PDF export with findings | Audit-ready compliance documentation |
 
 ---
 
@@ -510,8 +522,9 @@ VendorAuditAI/
 - [x] **v0.2.0** - AI Query feature, multi-LLM support, production deployment
 - [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks, basic vendor categorization
 - [x] **v0.4.0** - DoorDash-style 25-category TPRM taxonomy with auto-classification
-- [ ] **v0.5.0** - Vendor risk scoring algorithm, analytics dashboard
-- [ ] **v0.6.0** - Excel/CSV export, Jira/ServiceNow integration
+- [x] **v0.5.0** - Full CRUD operations, remediation workflows, monitoring dashboards, 90+ API endpoints
+- [ ] **v0.6.0** - Vendor risk scoring algorithm, analytics dashboard
+- [ ] **v0.7.0** - Excel/CSV export, Jira/ServiceNow integration
 - [ ] **v1.0.0** - Custom framework builder, mobile app, GraphQL API
 
 ---
