@@ -13,8 +13,8 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg" alt="Claude"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/Version-0.3.0-00D4AA.svg" alt="Version"/>
-  <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Version-0.4.0-00D4AA.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/Tests-123_Passing-00D4AA.svg" alt="Tests"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
 </p>
 
@@ -104,7 +104,7 @@
 | AI-Powered Analysis | Claude Opus 4.5 + RAG architecture | Natural language Q&A with source citations |
 | Multi-Framework Mapping | 12 compliance frameworks, 2500+ controls | One document mapped to SOC 2, NIST, ISO, SIG, DORA |
 | Gap Detection | AI control analysis + framework comparison | Automatic identification of missing or weak controls |
-| Vendor Categorization | ML-based classification, 14 categories | Auto-assign risk levels and recommended frameworks |
+| Vendor Categorization | DoorDash-style TPRM taxonomy, 25 categories | Auto-assign risk tiers and framework recommendations |
 | Remediation Workflow | Task management, SLA tracking, escalation | Never miss a remediation deadline |
 | Continuous Monitoring | Scheduled assessments, alerting | Proactive vendor risk management |
 
@@ -177,6 +177,87 @@
 | **CAIQ** | 260+ | 4.0 | Cloud security (CSA STAR) |
 | **NIST AI RMF** | 70+ | 1.0 | AI/ML vendors |
 | **AI Risk** | 50+ | 1.0 | AI vendor assessment |
+
+---
+
+## Vendor Categorization (25 Categories)
+
+VendorAuditAI implements a comprehensive DoorDash-style TPRM vendor taxonomy with automatic categorization based on keywords, service types, and data access patterns.
+
+### Risk Tiers
+
+| Tier | Risk Level | Assessment Approach | Review Frequency |
+|:----:|:----------:|:--------------------|:-----------------|
+| **Tier 1** | Critical | SOC 2 Type II + SIG Core + on-site validation | Quarterly |
+| **Tier 2** | High | SOC 2 Type II + SIG Core | Semi-annual |
+| **Tier 3** | Medium | SOC 2 Type I/II + SIG Lite | Annual |
+| **Tier 4** | Low | Self-attestation + basic questionnaire | Every 2-3 years |
+
+### Category Taxonomy
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+**Tier 1 - Critical**
+- Cloud Infrastructure (AWS, GCP, Azure)
+- Data Warehouse (Snowflake, Databricks)
+- Payment Processing (Stripe, Adyen)
+- Identity & Access (Okta, Auth0)
+- Background Check (Checkr, Sterling)
+- Healthcare/PHI Vendors
+- POS Integration (Toast, Square)
+
+</td>
+<td width="33%" valign="top">
+
+**Tier 2 - High**
+- AI/ML Platforms (Anthropic, OpenAI)
+- Fraud Detection (Sift, Forter)
+- Analytics & BI (Amplitude, Mixpanel)
+- Customer Support (Zendesk, Salesforce)
+- Mapping & Logistics (Mapbox, HERE)
+- HR & Workforce (Workday, ADP)
+- Marketing & Ads (Braze, Segment)
+- Security Tools (CrowdStrike, Wiz)
+- Insurance & Risk Partners
+
+</td>
+<td width="33%" valign="top">
+
+**Tier 3/4 - Medium/Low**
+- Communication (Twilio, SendGrid)
+- DevOps Tools (GitHub, PagerDuty)
+- Legal & Contract (DocuSign, Ironclad)
+- Office Collaboration (Slack, Zoom)
+- Physical Security (Verkada, Kastle)
+- Tax Compliance (Everlance, TaxBandits)
+- Fleet Management (Samsara, Geotab)
+- Food Safety (FoodLogiQ, Squadle)
+- Autonomous/Robotics (Starship, Nuro)
+
+</td>
+</tr>
+</table>
+
+### Auto-Categorization API
+
+```bash
+# Categorize a vendor
+curl -X POST "https://vendorauditai-production.up.railway.app/api/v1/categorization/analyze" \
+  -H "Content-Type: application/json" \
+  -d '{"vendor_name": "Stripe", "vendor_description": "Payment processing platform"}'
+
+# Response
+{
+  "primary_category": "payment_processing",
+  "confidence": 0.95,
+  "risk_level": "critical",
+  "recommended_frameworks": ["PCI-DSS", "SOC 2 Type II", "SOC 1"],
+  "data_types": ["credit_cards", "bank_accounts", "ssn", "transaction_data"],
+  "assessment_priority": "immediate"
+}
+```
 
 ---
 
@@ -348,6 +429,9 @@ OPENAI_API_KEY=sk-...
 | **Vendors** | POST | `/api/v1/vendors` | Create vendor |
 | **Frameworks** | GET | `/api/v1/frameworks` | List compliance frameworks |
 | **Frameworks** | GET | `/api/v1/frameworks/search` | Search controls |
+| **Categorization** | POST | `/api/v1/categorization/analyze` | Auto-categorize vendor |
+| **Categorization** | GET | `/api/v1/categorization/categories` | List 25 vendor categories |
+| **Categorization** | POST | `/api/v1/categorization/batch` | Batch categorize vendors |
 | **Findings** | GET | `/api/v1/findings` | View analysis findings |
 | **Remediation** | GET | `/api/v1/remediation/tasks` | List remediation tasks |
 | **Monitoring** | GET | `/api/v1/monitoring/alerts` | View monitoring alerts |
@@ -424,9 +508,10 @@ VendorAuditAI/
 
 - [x] **v0.1.0** - Document upload, parsing, 9 frameworks, SSO/MFA
 - [x] **v0.2.0** - AI Query feature, multi-LLM support, production deployment
-- [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks, vendor auto-categorization
-- [ ] **v0.4.0** - Vendor risk scoring algorithm, analytics dashboard
-- [ ] **v0.5.0** - Excel/CSV export, Jira/ServiceNow integration
+- [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks, basic vendor categorization
+- [x] **v0.4.0** - DoorDash-style 25-category TPRM taxonomy with auto-classification
+- [ ] **v0.5.0** - Vendor risk scoring algorithm, analytics dashboard
+- [ ] **v0.6.0** - Excel/CSV export, Jira/ServiceNow integration
 - [ ] **v1.0.0** - Custom framework builder, mobile app, GraphQL API
 
 ---
