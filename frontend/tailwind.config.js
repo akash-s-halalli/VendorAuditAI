@@ -13,6 +13,10 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Outfit', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      gridTemplateColumns: {
+        'bento': 'repeat(auto-fit, minmax(300px, 1fr))',
       },
       colors: {
         border: 'hsl(var(--border))',
