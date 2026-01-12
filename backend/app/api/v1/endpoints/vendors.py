@@ -1,14 +1,17 @@
 """Vendor management API endpoints."""
 
+import json
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
 from app.db import get_db
 from app.models import User
 from app.models.audit_log import AuditAction
+from app.models.vendor import Vendor
 from app.schemas.vendor import (
     VendorCreate,
     VendorListResponse,
@@ -17,6 +20,10 @@ from app.schemas.vendor import (
 )
 from app.services import vendor as vendor_service
 from app.services.audit import get_audit_service
+from app.services.vendor_categorization import (
+    EXAMPLE_VENDOR_TAXONOMY,
+    RiskLevel,
+)
 
 router = APIRouter(tags=["Vendors"])
 
@@ -257,3 +264,94 @@ async def delete_vendor(
             details=f"Deleted vendor: {vendor_name}",
         )
         await db.commit()
+
+
+# Map risk levels to tier strings
+_RISK_TO_TIER = {
+    RiskLevel.CRITICAL: "critical",
+    RiskLevel.HIGH: "high",
+    RiskLevel.MEDIUM: "medium",
+    RiskLevel.LOW: "low",
+}
+
+
+@router.post("/seed", status_code=status.HTTP_201_CREATED)
+async def seed_vendors(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> dict:
+    """
+    Seed the current user's organization with example vendors.
+
+    This endpoint populates the vendor list with 50+ example vendors from
+    the EXAMPLE_VENDOR_TAXONOMY, including confirmed DoorDash partners
+    and industry-standard vendors across all 25 categories.
+
+    Existing vendors with the same name will be skipped.
+    """
+    created_count = 0
+    skipped_count = 0
+    org_id = current_user.organization_id
+
+    for vendor_key, vendor_data in EXAMPLE_VENDOR_TAXONOMY.items():
+        # Check if vendor already exists
+        result = await db.execute(
+            select(Vendor).where(
+                Vendor.organization_id == org_id,
+                Vendor.name == vendor_data["name"]
+            )
+        )
+        existing = result.scalar_one_or_none()
+
+        if existing:
+            skipped_count += 1
+            continue
+
+        # Map data to Vendor model
+        category = vendor_data["category"]
+        risk_level: RiskLevel = vendor_data["risk_level"]
+
+        # Create vendor
+        vendor = Vendor(
+            organization_id=org_id,
+            name=vendor_data["name"],
+            description=vendor_data.get("service_description", ""),
+            category=category.value,
+            tier=_RISK_TO_TIER.get(risk_level, "medium"),
+            status="active",
+            recommended_frameworks=json.dumps(vendor_data.get("frameworks", [])),
+            data_types=json.dumps(vendor_data.get("data_access", [])),
+            categorization_confidence=0.95 if vendor_data.get("doordash_confirmed") else 0.85,
+            tags=json.dumps([
+                vendor_data.get("tier", ""),
+                "doordash_confirmed" if vendor_data.get("doordash_confirmed") else "",
+            ]),
+        )
+
+        db.add(vendor)
+        created_count += 1
+
+    await db.commit()
+
+    # Log seeding action
+    audit_service = get_audit_service(db)
+    await audit_service.log_action(
+        organization_id=org_id,
+        user_id=current_user.id,
+        action=AuditAction.CREATE,
+        resource_type="vendor_seed",
+        resource_id="batch",
+        new_values={"created": created_count, "skipped": skipped_count},
+        ip_address=_get_client_ip(request),
+        user_agent=_get_user_agent(request),
+        details=f"Seeded {created_count} vendors from taxonomy",
+    )
+    await db.commit()
+
+    return {
+        "message": f"Successfully seeded vendors",
+        "created": created_count,
+        "skipped": skipped_count,
+        "total_in_taxonomy": len(EXAMPLE_VENDOR_TAXONOMY),
+    }
