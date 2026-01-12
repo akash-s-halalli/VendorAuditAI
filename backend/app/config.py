@@ -83,9 +83,15 @@ class Settings(BaseSettings):
     @field_validator("cors_origins", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: str | list[str]) -> list[str]:
-        """Convert comma-separated origin string to list if necessary."""
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",") if i.strip()]
+        """Convert comma-separated origin string or JSON list string to list."""
+        if isinstance(v, str):
+            # Strip outer brackets if present
+            v = v.strip()
+            if v.startswith("[") and v.endswith("]"):
+                v = v[1:-1]
+            
+            # Split by comma and strip quotes and whitespace from each origin
+            return [i.strip().strip("'").strip('"') for i in v.split(",") if i.strip()]
         return v
 
     # Rate Limiting
