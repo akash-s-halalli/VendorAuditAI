@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, MoreVertical, Building2, Loader2, Pencil, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Search, MoreVertical, Building2, Loader2, Pencil, Trash2, Eye } from 'lucide-react';
 import {
   Button,
   Input,
@@ -21,6 +22,7 @@ import apiClient, { getApiErrorMessage } from '@/lib/api';
 import type { Vendor, VendorTier, VendorStatus, CreateVendorRequest, UpdateVendorRequest } from '@/types/api';
 
 export function Vendors() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -458,6 +460,17 @@ export function Vendors() {
                   </button>
                   {openMenuId === vendor.id && (
                     <div className="absolute right-0 top-full mt-1 w-36 rounded-md border bg-popover shadow-md z-50">
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(null);
+                          navigate(`/vendors/${vendor.id}`);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                        View Details
+                      </button>
                       <button
                         className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
                         onClick={(e) => {

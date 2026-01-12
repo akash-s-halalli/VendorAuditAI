@@ -4,6 +4,7 @@ export { Register } from './Register';
 export { Dashboard } from './Dashboard';
 export { Agents } from './Agents';
 export { Vendors } from './Vendors';
+export { VendorDetail } from './VendorDetail';
 export { Documents } from './Documents';
 export { Query } from './Query';
 export { Analysis } from './Analysis';
