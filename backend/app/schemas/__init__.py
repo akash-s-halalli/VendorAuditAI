@@ -1,5 +1,19 @@
 """Pydantic schemas package."""
 
+from app.schemas.agent import (
+    AgentBase,
+    AgentConfigUpdate,
+    AgentCreate,
+    AgentListResponse,
+    AgentResponse,
+    AgentStats,
+    AgentUpdate,
+    LogListResponse,
+    LogResponse,
+    TaskCreate,
+    TaskListResponse,
+    TaskResponse,
+)
 from app.schemas.auth import (
     LoginResponse,
     MFAEnableResponse,
@@ -76,6 +90,19 @@ from app.schemas.vendor import (
 )
 
 __all__ = [
+    # Agents
+    "AgentBase",
+    "AgentConfigUpdate",
+    "AgentCreate",
+    "AgentListResponse",
+    "AgentResponse",
+    "AgentStats",
+    "AgentUpdate",
+    "LogListResponse",
+    "LogResponse",
+    "TaskCreate",
+    "TaskListResponse",
+    "TaskResponse",
     # Auth
     "UserBase",
     "UserCreate",

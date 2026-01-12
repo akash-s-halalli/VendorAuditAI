@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
+    from app.models.agent import Agent
     from app.models.audit_log import AuditLog
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
@@ -100,6 +101,11 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     audit_logs: Mapped[list["AuditLog"]] = relationship(
         "AuditLog",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    agents: Mapped[list["Agent"]] = relationship(
+        "Agent",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

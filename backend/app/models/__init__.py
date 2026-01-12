@@ -1,5 +1,15 @@
 """Database models package."""
 
+from app.models.agent import (
+    Agent,
+    AgentLog,
+    AgentStatus,
+    AgentTask,
+    AgentType,
+    LogLevel,
+    TaskStatus,
+    TaskType,
+)
 from app.models.audit_log import AuditAction, AuditLog
 from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 from app.models.chunk import DocumentChunk
@@ -33,6 +43,11 @@ from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus, VendorTier
 
 __all__ = [
+    "Agent",
+    "AgentLog",
+    "AgentStatus",
+    "AgentTask",
+    "AgentType",
     "Alert",
     "AlertRule",
     "AlertSeverity",
@@ -65,9 +80,12 @@ __all__ = [
     "ScheduleFrequency",
     "ScheduleStatus",
     "SLAPolicy",
+    "LogLevel",
     "SoftDeleteMixin",
     "SSOConfig",
     "SSOProvider",
+    "TaskStatus",
+    "TaskType",
     "TimestampMixin",
     "UUIDMixin",
     "User",
