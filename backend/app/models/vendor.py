@@ -82,6 +82,12 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     )
     next_assessment_due: Mapped[date | None] = mapped_column(Date, nullable=True)
 
+    # Risk scoring
+    risk_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    risk_calculated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     # Relationships
     organization: Mapped["Organization"] = relationship(
         "Organization",

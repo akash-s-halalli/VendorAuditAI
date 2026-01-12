@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     agents,
     analysis,
+    analytics,
     audit,
     auth,
     categorization,
@@ -15,6 +16,7 @@ from app.api.v1.endpoints import (
     monitoring,
     query,
     remediation,
+    risk,
     search,
     sso,
     vendors,
@@ -42,6 +44,9 @@ api_router.include_router(query.router, prefix="/query", tags=["Query"])
 
 # Include dashboard router
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+
+# Include analytics router
+api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 
 # Include compliance frameworks router
 api_router.include_router(
@@ -75,6 +80,9 @@ api_router.include_router(sso.router, prefix="/sso", tags=["SSO"])
 # Include agents router
 api_router.include_router(agents.router, prefix="/agents", tags=["AI Agents"])
 
+# Include risk scoring router
+api_router.include_router(risk.router, prefix="/risk", tags=["Risk Scoring"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -85,6 +93,7 @@ async def api_status() -> dict:
         "endpoints": {
             "agents": "/api/v1/agents",
             "analysis": "/api/v1/analysis",
+            "analytics": "/api/v1/analytics",
             "audit": "/api/v1/audit",
             "auth": "/api/v1/auth",
             "categorization": "/api/v1/categorization",
@@ -96,6 +105,7 @@ async def api_status() -> dict:
             "monitoring": "/api/v1/monitoring",
             "query": "/api/v1/query",
             "remediation": "/api/v1/remediation",
+            "risk": "/api/v1/risk",
             "sso": "/api/v1/sso",
             "users": "/api/v1/users",
             "vendors": "/api/v1/vendors",
