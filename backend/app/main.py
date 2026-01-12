@@ -1,5 +1,6 @@
 """FastAPI application entry point."""
 
+import logging
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -16,6 +17,10 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.api.v1.router import api_router
 from app.config import get_settings
 from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 API_VERSION = "0.1.0"
 
@@ -68,6 +73,7 @@ def create_app() -> FastAPI:
     app.add_middleware(SlowAPIMiddleware)
 
     # Configure CORS
+    logger.info(f"Configuring CORS with origins: {settings.cors_origins}")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
