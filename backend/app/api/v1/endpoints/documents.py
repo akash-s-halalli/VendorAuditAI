@@ -119,7 +119,24 @@ async def upload_document(
         )
         await db.commit()
         await db.refresh(document)
-        return DocumentResponse.model_validate(document)
+
+        # Auto-process the document after upload
+        try:
+            processed_doc = await processing_service.process_document(db, document)
+            await db.commit()
+            await db.refresh(processed_doc)
+            return DocumentResponse.model_validate(processed_doc)
+        except Exception as process_error:
+            # If processing fails, still return the uploaded document
+            # User can manually retry via /documents/{id}/process
+            await db.rollback()
+            await db.refresh(document)
+            # Update status to indicate processing attempt failed
+            document.status = "pending"
+            document.error_message = str(process_error)
+            await db.commit()
+            await db.refresh(document)
+            return DocumentResponse.model_validate(document)
     except ValueError as e:
         await db.rollback()
         raise HTTPException(
