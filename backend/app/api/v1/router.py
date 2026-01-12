@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    agents,
     analysis,
     audit,
     auth,
@@ -71,6 +72,9 @@ api_router.include_router(audit.router, prefix="/audit", tags=["Audit"])
 # Include SSO router
 api_router.include_router(sso.router, prefix="/sso", tags=["SSO"])
 
+# Include agents router
+api_router.include_router(agents.router, prefix="/agents", tags=["AI Agents"])
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -79,20 +83,21 @@ async def api_status() -> dict:
         "api_version": "v1",
         "status": "operational",
         "endpoints": {
-            "auth": "/api/v1/auth",
-            "users": "/api/v1/users",
-            "vendors": "/api/v1/vendors",
-            "documents": "/api/v1/documents",
+            "agents": "/api/v1/agents",
             "analysis": "/api/v1/analysis",
+            "audit": "/api/v1/audit",
+            "auth": "/api/v1/auth",
+            "categorization": "/api/v1/categorization",
+            "dashboard": "/api/v1/dashboard",
+            "documents": "/api/v1/documents",
+            "export": "/api/v1/export",
             "findings": "/api/v1/findings",
             "frameworks": "/api/v1/frameworks",
-            "categorization": "/api/v1/categorization",
-            "query": "/api/v1/query",
-            "dashboard": "/api/v1/dashboard",
-            "export": "/api/v1/export",
-            "remediation": "/api/v1/remediation",
             "monitoring": "/api/v1/monitoring",
-            "audit": "/api/v1/audit",
+            "query": "/api/v1/query",
+            "remediation": "/api/v1/remediation",
             "sso": "/api/v1/sso",
+            "users": "/api/v1/users",
+            "vendors": "/api/v1/vendors",
         },
     }
