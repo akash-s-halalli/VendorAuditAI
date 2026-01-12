@@ -2,6 +2,7 @@ export { Landing } from './Landing';
 export { Login } from './Login';
 export { Register } from './Register';
 export { Dashboard } from './Dashboard';
+export { Agents } from './Agents';
 export { Vendors } from './Vendors';
 export { Documents } from './Documents';
 export { Query } from './Query';
