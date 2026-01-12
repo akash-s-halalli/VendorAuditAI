@@ -107,9 +107,13 @@ export function Documents() {
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    const validFiles = files.filter(
-      (f) => f.type === 'application/pdf' || f.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    );
+    // Validate by both MIME type and file extension for better security
+    const validExtensions = ['.pdf', '.docx'];
+    const validMimeTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const validFiles = files.filter((f) => {
+      const ext = f.name.toLowerCase().slice(f.name.lastIndexOf('.'));
+      return validMimeTypes.includes(f.type) && validExtensions.includes(ext);
+    });
 
     validFiles.forEach((file) => {
       uploadMutation.mutate(file);

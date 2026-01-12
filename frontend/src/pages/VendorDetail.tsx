@@ -398,7 +398,7 @@ export function VendorDetail() {
                   <label className="text-sm font-medium text-muted-foreground">Last Assessed</label>
                   <p className="mt-1 flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {vendor.lastAssessed
+                    {vendor.lastAssessed && !isNaN(new Date(vendor.lastAssessed).getTime())
                       ? new Date(vendor.lastAssessed).toLocaleDateString()
                       : 'Never'}
                   </p>
@@ -407,7 +407,7 @@ export function VendorDetail() {
                   <label className="text-sm font-medium text-muted-foreground">Next Assessment Due</label>
                   <p className="mt-1 flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {vendor.nextAssessmentDue
+                    {vendor.nextAssessmentDue && !isNaN(new Date(vendor.nextAssessmentDue).getTime())
                       ? new Date(vendor.nextAssessmentDue).toLocaleDateString()
                       : 'Not scheduled'}
                   </p>

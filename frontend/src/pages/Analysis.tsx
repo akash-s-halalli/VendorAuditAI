@@ -269,7 +269,7 @@ export function Analysis() {
                 <span>
                   <strong>Type:</strong> {selectedDocument.docType?.toUpperCase() || 'Document'}
                 </span>
-                {selectedDocument.pageCount && (
+                {selectedDocument.pageCount !== undefined && selectedDocument.pageCount !== null && (
                   <span>
                     <strong>Pages:</strong> {selectedDocument.pageCount}
                   </span>
