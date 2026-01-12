@@ -6,6 +6,7 @@ from app.api.v1.endpoints import (
     analysis,
     audit,
     auth,
+    categorization,
     compliance,
     dashboard,
     documents,
@@ -46,6 +47,11 @@ api_router.include_router(
     compliance.router, prefix="/frameworks", tags=["Compliance Frameworks"]
 )
 
+# Include categorization router
+api_router.include_router(
+    categorization.router, prefix="/categorization", tags=["Vendor Categorization"]
+)
+
 # Include export router
 api_router.include_router(export.router, prefix="/export", tags=["Export"])
 
@@ -80,6 +86,7 @@ async def api_status() -> dict:
             "analysis": "/api/v1/analysis",
             "findings": "/api/v1/findings",
             "frameworks": "/api/v1/frameworks",
+            "categorization": "/api/v1/categorization",
             "query": "/api/v1/query",
             "dashboard": "/api/v1/dashboard",
             "export": "/api/v1/export",

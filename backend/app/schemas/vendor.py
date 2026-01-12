@@ -3,7 +3,9 @@
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+import json
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class VendorBase(BaseModel):
@@ -17,6 +19,7 @@ class VendorBase(BaseModel):
     criticality_score: int | None = Field(default=None, ge=1, le=100)
     data_classification: str | None = None
     tags: list[str] | None = None
+    category: str | None = Field(default=None, max_length=50)
 
 
 class VendorCreate(VendorBase):
@@ -30,6 +33,7 @@ class VendorCreate(VendorBase):
     criticality_score: int | None = Field(default=None, ge=1, le=100)
     data_classification: str | None = None
     tags: list[str] | None = Field(default_factory=list)
+    category: str | None = Field(default=None, max_length=50)
 
 
 class VendorUpdate(BaseModel):
@@ -43,6 +47,7 @@ class VendorUpdate(BaseModel):
     criticality_score: int | None = Field(default=None, ge=1, le=100)
     data_classification: str | None = None
     tags: list[str] | None = None
+    category: str | None = Field(default=None, max_length=50)
 
 
 class VendorResponse(VendorBase):
@@ -55,8 +60,27 @@ class VendorResponse(VendorBase):
     next_assessment_due: date | None = None
     created_at: datetime
     updated_at: datetime
+    # Auto-categorization fields
+    recommended_frameworks: list[str] | None = None
+    data_types: list[str] | None = None
+    categorization_confidence: float | None = None
 
     model_config = {"from_attributes": True}
+
+    @field_validator("recommended_frameworks", "data_types", "tags", mode="before")
+    @classmethod
+    def parse_json_list(cls, v: str | list | None) -> list[str] | None:
+        """Parse JSON string to list if needed."""
+        if v is None:
+            return None
+        if isinstance(v, list):
+            return v
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return None
+        return None
 
 
 class VendorListResponse(BaseModel):

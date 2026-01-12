@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.vendor import Vendor
 from app.schemas.vendor import VendorCreate, VendorUpdate
+from app.services.vendor_categorization import categorize_vendor as auto_categorize
 
 
 async def get_vendor_by_id(
@@ -132,6 +133,23 @@ async def create_vendor(
     # Convert tags list to JSON string for storage
     tags_json = json.dumps(vendor_data.tags) if vendor_data.tags else None
 
+    # Auto-categorize the vendor if no category is provided
+    category = vendor_data.category
+    recommended_frameworks_json = None
+    data_types_json = None
+    categorization_confidence = None
+
+    if not category:
+        # Run auto-categorization based on vendor name and description
+        categorization_result = auto_categorize(
+            vendor_name=vendor_data.name,
+            vendor_description=vendor_data.description,
+        )
+        category = categorization_result.primary_category.value
+        recommended_frameworks_json = json.dumps(categorization_result.recommended_frameworks)
+        data_types_json = json.dumps(categorization_result.data_types)
+        categorization_confidence = categorization_result.confidence
+
     vendor = Vendor(
         organization_id=org_id,
         name=vendor_data.name,
@@ -142,6 +160,10 @@ async def create_vendor(
         criticality_score=vendor_data.criticality_score,
         data_classification=vendor_data.data_classification,
         tags=tags_json,
+        category=category,
+        recommended_frameworks=recommended_frameworks_json,
+        data_types=data_types_json,
+        categorization_confidence=categorization_confidence,
     )
     db.add(vendor)
     await db.flush()

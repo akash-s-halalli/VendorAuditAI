@@ -4,7 +4,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
@@ -69,6 +69,12 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     primary_contact: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
     tags: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array of strings
     extra_data: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON string
+
+    # Auto-categorization fields
+    category: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    recommended_frameworks: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array
+    data_types: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array
+    categorization_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     # Assessment tracking
     last_assessed: Mapped[datetime | None] = mapped_column(
