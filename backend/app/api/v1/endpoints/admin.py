@@ -599,40 +599,41 @@ async def seed_demo_data(
 
     await db.commit()
 
-    # Create Remediation Tasks
+    # Create Remediation Tasks (only if we have findings)
     remediation_tasks_created = 0
     task_objects = []
-    for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
-        # Link to a finding if available
-        finding = all_findings[i % len(all_findings)] if all_findings else None
-        vendor = random.choice(list(vendor_map.values()))
+    if all_findings:
+        for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
+            # Link to a finding (required FK)
+            finding = all_findings[i % len(all_findings)]
+            vendor = random.choice(list(vendor_map.values()))
 
-        due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
-        created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
+            due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
+            created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
 
-        # Check if SLA is breached (for some older tasks)
-        sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
+            # Check if SLA is breached (for some older tasks)
+            sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
 
-        task = RemediationTask(
-            id=str(uuid4()),
-            organization_id=org_id,
-            finding_id=finding.id if finding else None,
-            vendor_id=vendor.id,
-            assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
-            title=task_data["title"],
-            description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
-            status=task_data["status"],
-            priority=task_data["priority"],
-            due_date=due_date,
-            sla_days=task_data["sla_days"],
-            sla_breached=sla_breached,
-            created_at=created_at,
-        )
-        db.add(task)
-        task_objects.append(task)
-        remediation_tasks_created += 1
+            task = RemediationTask(
+                id=str(uuid4()),
+                organization_id=org_id,
+                finding_id=finding.id,
+                vendor_id=vendor.id,
+                assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
+                created_by_id=current_user.id,
+                title=task_data["title"],
+                description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
+                status=task_data["status"],
+                priority=task_data["priority"],
+                due_date=due_date,
+                sla_days=task_data["sla_days"],
+                sla_breached=sla_breached,
+            )
+            db.add(task)
+            task_objects.append(task)
+            remediation_tasks_created += 1
 
-    await db.commit()
+        await db.commit()
 
     # Create Remediation Comments
     remediation_comments_created = 0
@@ -677,9 +678,8 @@ async def seed_demo_data(
             frequency=freq_map[sched_data["frequency"]],
             status=status_map[sched_data["status"]],
             framework=sched_data["framework"],
-            last_run=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
-            next_run=datetime.now(timezone.utc) + timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
-            config=json.dumps({"auto_analyze": True, "notify_on_complete": True}),
+            last_run_at=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
+            next_run_at=datetime.now(timezone.utc) + timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
         )
         db.add(schedule)
         schedule_objects.append(schedule)
@@ -697,10 +697,11 @@ async def seed_demo_data(
             run = ScheduledRun(
                 id=str(uuid4()),
                 schedule_id=schedule.id,
+                organization_id=org_id,
                 status="completed" if random.random() > 0.1 else "failed",
                 started_at=started,
                 completed_at=started + timedelta(minutes=random.randint(5, 45)),
-                vendors_scanned=random.randint(5, 12),
+                vendors_assessed=random.randint(5, 12),
                 documents_analyzed=random.randint(3, 20),
                 findings_generated=random.randint(0, 10),
                 error_message=None if random.random() > 0.1 else "Connection timeout during scan",
@@ -728,9 +729,8 @@ async def seed_demo_data(
             name=rule_data["name"],
             trigger_type=rule_data["trigger_type"],
             severity=severity_map[rule_data["severity"]],
-            threshold=rule_data["threshold"],
-            is_enabled=True,
-            notification_channels=json.dumps([]),
+            trigger_conditions=json.dumps({"threshold": rule_data["threshold"]}),
+            is_active=True,
         )
         db.add(rule)
         rule_objects.append(rule)
@@ -759,13 +759,13 @@ async def seed_demo_data(
             rule_id=rule.id if rule else None,
             vendor_id=vendor.id,
             title=alert_data["title"],
-            message=alert_data["message"],
+            description=alert_data["message"],
             status=alert_status_map[alert_data["status"]],
             severity=severity_map[alert_data["severity"]],
             acknowledged_at=datetime.now(timezone.utc) - timedelta(hours=random.randint(1, 48)) if alert_data["status"] != "new" else None,
-            acknowledged_by=current_user.id if alert_data["status"] != "new" else None,
+            acknowledged_by_id=current_user.id if alert_data["status"] != "new" else None,
             resolved_at=datetime.now(timezone.utc) - timedelta(hours=random.randint(1, 24)) if alert_data["status"] == "resolved" else None,
-            resolved_by=current_user.id if alert_data["status"] == "resolved" else None,
+            resolved_by_id=current_user.id if alert_data["status"] == "resolved" else None,
         )
         db.add(alert)
         alerts_created += 1
@@ -780,10 +780,6 @@ async def seed_demo_data(
         "webhook": NotificationChannelType.WEBHOOK.value,
         "teams": NotificationChannelType.TEAMS.value,
     }
-    channel_status_map = {
-        "active": "active",
-        "inactive": "inactive",
-    }
 
     for channel_data in DEMO_NOTIFICATION_CHANNELS:
         channel = NotificationChannel(
@@ -791,9 +787,9 @@ async def seed_demo_data(
             organization_id=org_id,
             name=channel_data["name"],
             channel_type=channel_type_map[channel_data["channel_type"]],
-            status=channel_status_map[channel_data["status"]],
+            is_active=channel_data["status"] == "active",
             config=json.dumps(channel_data["config"]),
-            last_tested=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14)) if channel_data["status"] == "active" else None,
+            last_used_at=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14)) if channel_data["status"] == "active" else None,
         )
         db.add(channel)
         notification_channels_created += 1
@@ -866,10 +862,10 @@ async def seed_demo_data(
         agent_task = AgentTask(
             id=str(uuid4()),
             agent_id=agent.id,
-            task_type=task_type_map[task_data["task_type"]],
-            status=task_status_map[task_data["status"]],
-            input_data=json.dumps({"vendors": "all", "framework": "soc2"}),
-            output_data=json.dumps({"summary": f"Processed {task_data['items']} items, found {task_data['findings']} findings"}) if task_data["status"] == "completed" else None,
+            task_type=TaskType(task_data["task_type"]),
+            status=TaskStatus(task_data["status"]),
+            input_data={"vendors": "all", "framework": "soc2"},
+            output_data={"summary": f"Processed {task_data['items']} items, found {task_data['findings']} findings"} if task_data["status"] == "completed" else None,
             items_processed=task_data["items"],
             findings_count=task_data["findings"],
             started_at=started,
@@ -884,13 +880,6 @@ async def seed_demo_data(
 
     # Create Agent Logs
     agent_logs_created = 0
-    log_level_map = {
-        "debug": LogLevel.DEBUG.value,
-        "info": LogLevel.INFO.value,
-        "warning": LogLevel.WARNING.value,
-        "error": LogLevel.ERROR.value,
-    }
-
     for log_data in DEMO_AGENT_LOGS:
         agent = agents.get(log_data["agent_name"])
         if not agent:
@@ -903,9 +892,8 @@ async def seed_demo_data(
             id=str(uuid4()),
             agent_id=agent.id,
             task_id=agent_task.id if agent_task else None,
-            level=log_level_map[log_data["level"]],
+            level=LogLevel(log_data["level"]),
             message=log_data["message"],
-            created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23), minutes=random.randint(0, 59)),
         )
         db.add(agent_log)
         agent_logs_created += 1
