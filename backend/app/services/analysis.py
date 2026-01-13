@@ -10,7 +10,7 @@ This module provides enhanced RAG-based compliance analysis that:
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.chunk import DocumentChunk
@@ -95,10 +95,17 @@ async def get_findings(
     total_result = await db.execute(count_query)
     total = total_result.scalar() or 0
 
-    # Paginate
+    # Paginate with PostgreSQL-compatible severity ordering
+    severity_order = case(
+        (Finding.severity == "critical", 1),
+        (Finding.severity == "high", 2),
+        (Finding.severity == "medium", 3),
+        (Finding.severity == "low", 4),
+        (Finding.severity == "info", 5),
+        else_=6,
+    )
     query = query.order_by(
-        # Sort by severity (critical first)
-        func.field(Finding.severity, "critical", "high", "medium", "low", "info"),
+        severity_order,
         Finding.created_at.desc(),
     ).offset(skip).limit(limit)
 
