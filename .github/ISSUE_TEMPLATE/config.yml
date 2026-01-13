@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerabilities (Critical)
+    url: mailto:security@vendorauditai.com
+    about: For critical security vulnerabilities, please email us directly for responsible disclosure
+  - name: Documentation
+    url: https://vendorauditai-production.up.railway.app/docs
+    about: View our API documentation and guides
+  - name: Live Demo
+    url: https://vendor-audit-ai.netlify.app
+    about: Try VendorAuditAI with our live demo
+  - name: General Questions
+    url: https://github.com/MikeDominic92/VendorAuditAI/discussions
+    about: Ask questions and discuss VendorAuditAI in GitHub Discussions

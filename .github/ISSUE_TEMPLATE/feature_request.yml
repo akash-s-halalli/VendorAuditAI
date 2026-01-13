@@ -1,0 +1,109 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for VendorAuditAI
+title: "[FEATURE]: "
+labels: ["enhancement", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        We appreciate your ideas for improving VendorAuditAI. Please provide as much detail as possible.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What area does this feature relate to?
+      options:
+        - AI/ML Capabilities
+        - Document Processing
+        - Compliance Frameworks
+        - Vendor Management
+        - Risk Assessment
+        - Remediation Workflow
+        - Monitoring/Alerts
+        - Reporting/Export
+        - UI/UX Enhancement
+        - API/Integration
+        - Security
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Business Priority
+      description: How important is this feature to your use case?
+      options:
+        - Critical - Blocking adoption
+        - High - Significant value add
+        - Medium - Nice to have
+        - Low - Future consideration
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Describe the problem or limitation you're trying to solve
+      placeholder: |
+        As a [type of user], I need [capability] because [reason].
+        Currently, I have to [workaround], which is [impact].
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your ideal solution or feature
+      placeholder: Describe how you envision this feature working...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternatives or workarounds have you considered?
+      placeholder: Describe any alternative solutions...
+    validations:
+      required: false
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case / User Story
+      description: Provide a concrete example of how this feature would be used
+      placeholder: |
+        Example: When reviewing a vendor's SOC 2 report, I want to...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: willing_to_contribute
+    attributes:
+      label: Contribution
+      description: Would you be willing to contribute to this feature?
+      options:
+        - "Yes - I can help implement this"
+        - "Yes - I can help test this"
+        - "Yes - I can help document this"
+        - "No - I cannot contribute at this time"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this feature has not been requested
+          required: true
+        - label: This feature aligns with VendorAuditAI's mission of third-party risk management
+          required: true
