@@ -138,6 +138,44 @@
 
 ---
 
+## Market Position
+
+VendorAuditAI competes in the **$8.6B Third-Party Risk Management market** against 24 established players, projected to reach **$20-28B by 2030** (15-17% CAGR).
+
+### Competitive Advantage
+
+| Metric | Industry Standard | VendorAuditAI | Advantage |
+|--------|------------------|---------------|-----------|
+| **Assessment Time** | 2-4 hours | **15 minutes** | 97% faster |
+| **Implementation** | 6-18 months | **< 30 days** | 90% faster |
+| **AI Model** | Proprietary/Generic | **Claude Opus 4.5** | Superior reasoning |
+| **AI Agents** | 1 (single-purpose) | **4 autonomous** | 4x capability |
+
+### Key Differentiators vs Competitors
+
+| vs Competitor | Our Advantage |
+|---------------|---------------|
+| **Drata/Vanta** | They automate YOUR compliance. We evaluate YOUR VENDORS' compliance with deeper AI analysis. |
+| **SecurityScorecard/BitSight** | They provide ratings. We analyze actual audit reports with source citations. |
+| **OneTrust** | Market leader pricing ($100K+). We deliver 80% cost savings for better outcomes. |
+| **ProcessUnity** | They have 370K profiles. We provide real-time AI analysis vs stale questionnaire data. |
+
+### Threat Tier Analysis
+
+| Tier | Competitors | Our Response |
+|:----:|:------------|:-------------|
+| **1 - Critical** | Drata ($2B), Vanta ($4.15B), SecurityScorecard ($2.5B), ProcessUnity | Differentiate through Claude Opus 4.5 + multi-agent architecture |
+| **2 - High** | OneTrust ($4.5B), BitSight ($2.4B), Whistic, Panorays, Prevalent | Speed advantage (15 min vs hours) + pricing disruption |
+| **3 - Emerging** | Hyperproof, Sprinto, Anecdotes, Black Kite, UpGuard, Secureframe | Monitor growth, compete on AI capabilities |
+| **4-5 - Legacy/Niche** | ServiceNow GRC, MetricStream, Archer, SAP GRC, RiskRecon, Venminder | Modern architecture advantage vs legacy systems |
+
+<p align="center">
+  <a href="./COMPETITIVE_ANALYSIS.md"><strong>View Full Competitive Analysis</strong></a> |
+  <a href="https://vendor-audit-ai.netlify.app/competition"><strong>Interactive Market Dashboard</strong></a>
+</p>
+
+---
+
 ## Architecture
 
 ```

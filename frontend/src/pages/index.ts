@@ -5,6 +5,7 @@ export { Dashboard } from './Dashboard';
 export { Agents } from './Agents';
 export { Risk } from './Risk';
 export { Analytics } from './Analytics';
+export { Competition } from './Competition';
 export { Vendors } from './Vendors';
 export { VendorDetail } from './VendorDetail';
 export { Documents } from './Documents';

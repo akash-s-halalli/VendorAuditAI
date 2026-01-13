@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout, AuthLayout } from '@/components/layout';
-import { Landing, Login, Register, Dashboard, Vendors, VendorDetail, Documents, Query, Analysis, Remediation, Monitoring, Agents, Risk, Analytics } from '@/pages';
+import { Landing, Login, Register, Dashboard, Vendors, VendorDetail, Documents, Query, Analysis, Remediation, Monitoring, Agents, Risk, Analytics, Competition } from '@/pages';
 import { useAuthStore } from '@/stores/authStore';
 
 /**
@@ -64,6 +64,7 @@ function App() {
           <Route path="/agents" element={<Agents />} />
           <Route path="/risk" element={<Risk />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/competition" element={<Competition />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:id" element={<VendorDetail />} />
           <Route path="/documents" element={<Documents />} />
