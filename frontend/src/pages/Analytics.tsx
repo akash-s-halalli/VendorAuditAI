@@ -21,13 +21,13 @@ import apiClient, { getApiErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 // Framer Motion variants
+// Note: Removed delayChildren to fix initial render blank issue
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
@@ -281,6 +281,7 @@ export function Analytics() {
 
   return (
     <motion.div
+      key="analytics-hub"
       initial="hidden"
       animate="visible"
       variants={containerVariants}

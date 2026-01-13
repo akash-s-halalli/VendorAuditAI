@@ -26,13 +26,13 @@ import { CardSkeleton } from '@/components/ui/TypingIndicator';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 
 // Framer Motion variants for staggered animations
+// Note: Removed delayChildren to fix initial render blank issue
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
+      staggerChildren: 0.08,
     },
   },
 };
@@ -289,6 +289,7 @@ export function Risk() {
 
   return (
     <motion.div
+      key="risk-dashboard"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
