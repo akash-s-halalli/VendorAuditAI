@@ -1,38 +1,32 @@
 @layer base {
   :root {
     /* 2026 Cyber GRC Theme - Defaulting to Dark/Neon aesthetics */
-    --background: 224 71% 4%;
-    /* #02040a Deep Void */
-    --foreground: 210 40% 98%;
-    /* White/Gray */
+    --background: 224 71% 2%; /* #02040b Deep Void - slightly darker than tailwind config for depth */
+    --foreground: 210 40% 98%; /* White/Gray */
 
-    --card: 224 71% 4%;
+    --card: 224 71% 3%; /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 71% 4%;
+    --popover: 224 71% 3%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 183 100% 50%;
-    /* #00f2ff Neon Cyan */
-    --primary-foreground: 0 0% 0%;
-    /* Black text on neon */
+    --primary: 183 100% 50%; /* #00f2ff Neon Cyan */
+    --primary-foreground: 0 0% 0%; /* Black text on neon */
 
-    --secondary: 276 100% 53%;
-    /* #aa00ff Neon Purple */
+    --secondary: 276 100% 53%; /* #aa00ff Neon Purple */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
+    --muted: 217 33% 10%; /* Darker muted */
     --muted-foreground: 215 20% 65%;
 
-    --accent: 150 100% 50%;
-    /* #00ff9d Cyber Green */
+    --accent: 150 100% 50%; /* #00ff9d Cyber Green */
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 350 100% 60%; /* Bright Red */
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 217 33% 15%; /* Dark Border */
+    --input: 217 33% 15%;
     --ring: 183 100% 50%;
 
     --radius: 0.5rem;
@@ -42,9 +36,28 @@
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary font-sans;
     /* Immersive Detail: "Cyber Grid" + "Glow Orbs" */
     background-image:
-      radial-gradient(circle at 15% 50%, rgba(0, 242, 255, 0.05), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(170, 0, 255, 0.05), transparent 25%);
+      linear-gradient(rgba(0, 242, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 242, 255, 0.02) 1px, transparent 1px),
+      radial-gradient(circle at 15% 50%, rgba(0, 242, 255, 0.05), transparent 35%),
+      radial-gradient(circle at 85% 30%, rgba(176, 38, 255, 0.05), transparent 35%);
+    background-size: 50px 50px, 50px 50px, 100% 100%, 100% 100%;
     background-attachment: fixed;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 255, 0.1);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 242, 255, 0.3);
   }
 
   /* Noise Texture Overlay */
@@ -57,26 +70,26 @@
     height: 100%;
     pointer-events: none;
     z-index: 50;
-    opacity: 0.03;
+    opacity: 0.02;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-xl;
+    @apply bg-white/[0.03] backdrop-blur-md border border-white/[0.08] shadow-2xl;
   }
 
   .glass-card {
-    @apply bg-white/[0.02] backdrop-blur-sm border border-white/5 hover:border-primary/20 transition-all duration-300;
+    @apply bg-black/20 backdrop-blur-sm border border-white/5 hover:border-primary/30 transition-all duration-300;
   }
 
-  .neon-text {
+  .text-glow {
     text-shadow: 0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.3);
   }
 
-  .neon-border {
-    box-shadow: 0 0 10px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0, 242, 255, 0.1);
+  .border-glow {
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.2), inset 0 0 5px rgba(0, 242, 255, 0.1);
   }
 
   .animate-fade-in-up {
@@ -84,32 +97,24 @@
     opacity: 0;
   }
 
-  .delay-100 {
-    animation-delay: 100ms;
-  }
-
-  .delay-200 {
-    animation-delay: 200ms;
-  }
-
-  .delay-300 {
-    animation-delay: 300ms;
-  }
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-500 { animation-delay: 500ms; }
 
   @keyframes fade-in-up {
     from {
       opacity: 0;
       transform: translateY(20px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  .cyber-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500;
   }
 }
 

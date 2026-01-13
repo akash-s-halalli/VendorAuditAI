@@ -57,7 +57,7 @@ export default {
           cyan: '#00f2ff',
           purple: '#b026ff',
           green: '#00ff9d',
-          dark: '#030712',
+          dark: '#02040a', // Deep Void
           glass: 'rgba(255, 255, 255, 0.03)',
         },
         // Severity colors for findings
@@ -95,6 +95,10 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -102,11 +106,16 @@ export default {
         'glow': 'glow-pulse 3s infinite',
         'scanline': 'scanline 8s linear infinite',
         'float': 'float 6s ease-in-out infinite',
+        'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       backgroundImage: {
         'cyber-grid': 'linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px)',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
+      boxShadow: {
+        'neon': '0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.3)',
+        'neon-purple': '0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3)',
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
