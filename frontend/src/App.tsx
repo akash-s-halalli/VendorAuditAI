@@ -64,7 +64,6 @@ function App() {
           <Route path="/agents" element={<Agents />} />
           <Route path="/risk" element={<Risk />} />
           <Route path="/analytics" element={<Analytics />} />
-          <Route path="/competition" element={<Competition />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:id" element={<VendorDetail />} />
           <Route path="/documents" element={<Documents />} />
@@ -78,6 +77,9 @@ function App() {
 
         {/* Landing page */}
         <Route path="/" element={<Landing />} />
+
+        {/* Public Competition page (marketing) */}
+        <Route path="/competition" element={<Competition />} />
 
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />

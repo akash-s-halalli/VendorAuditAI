@@ -12,7 +12,9 @@ import {
   Lock,
   Globe,
   ArrowRight,
-  ChevronRight
+  ChevronRight,
+  Target,
+  TrendingUp
 } from 'lucide-react';
 import { Button } from '@/components/ui';
 
@@ -103,6 +105,7 @@ export function Landing() {
               <a href="#problem" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Problem</a>
               <a href="#solution" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Solution</a>
               <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</a>
+              <Link to="/competition" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Market Analysis</Link>
               <a href="#demo" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Demo</a>
             </div>
             <div className="flex items-center gap-4">
@@ -269,6 +272,44 @@ export function Landing() {
                     <div className="text-sm font-bold text-primary font-mono bg-primary/10 inline-block px-2 py-1 rounded w-fit">{row.vendorAudit}</div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Market Position CTA */}
+            <div className="glass-panel rounded-2xl p-8 lg:p-10 bg-gradient-to-br from-primary/5 to-blue-500/5 border border-primary/20">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Target className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">$8.6B Market Opportunity</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-4">
+                    See how VendorAuditAI compares against 24 competitors including Drata, Vanta, SecurityScorecard, and OneTrust.
+                    Interactive charts, threat tier analysis, and strategic roadmap.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2 text-green-400">
+                      <TrendingUp className="h-4 w-4" />
+                      <span>15-17% CAGR</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-yellow-400">
+                      <Building2 className="h-4 w-4" />
+                      <span>24 Competitors Analyzed</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-primary">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>91% Market Untapped</span>
+                    </div>
+                  </div>
+                </div>
+                <Link to="/competition">
+                  <Button size="lg" className="neon-border whitespace-nowrap">
+                    View Market Analysis
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

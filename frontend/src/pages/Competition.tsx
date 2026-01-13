@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, Target, Users, Layers, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { TrendingUp, Target, Users, Layers, ExternalLink, Shield, ArrowLeft } from 'lucide-react';
 import { CyberCard } from '@/components/ui/CyberCard';
 import { AnimatedCounter, AnimatedPercentage } from '@/components/ui/AnimatedCounter';
 import {
@@ -38,12 +39,52 @@ const itemVariants = {
 
 export function Competition() {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="space-y-8 pb-8"
-    >
+    <div className="min-h-screen bg-background">
+      {/* Public Navigation Header */}
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/10"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Shield className="h-5 w-5 text-primary" />
+              </div>
+              <span className="text-lg font-bold text-white">
+                VendorAudit<span className="text-primary">AI</span>
+              </span>
+            </Link>
+
+            {/* Navigation */}
+            <div className="flex items-center gap-4">
+              <Link
+                to="/"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 rounded-lg bg-primary text-black font-medium text-sm hover:bg-primary/90 transition-colors"
+              >
+                Get Started Free
+              </Link>
+            </div>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* Main Content */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8"
+      >
       {/* Hero Section - Market Overview */}
       <motion.div variants={itemVariants} className="relative overflow-hidden">
         <CyberCard className="p-8 relative">
@@ -249,15 +290,16 @@ export function Competition() {
               View on GitHub
               <ExternalLink className="h-4 w-4" />
             </a>
-            <a
-              href="/dashboard"
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-black font-medium hover:bg-primary/90 transition-colors"
             >
-              Try VendorAuditAI
-            </a>
+              Try VendorAuditAI Free
+            </Link>
           </div>
         </CyberCard>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
