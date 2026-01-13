@@ -561,9 +561,13 @@ VendorAuditAI/
 - [x] **v0.4.0** - DoorDash-style 25-category TPRM taxonomy with auto-classification
 - [x] **v0.5.0** - Full CRUD operations, remediation workflows, monitoring dashboards, 90+ API endpoints
 - [x] **v0.6.0** - AI Agent Network (Sentinel Prime, Vector Analyst, Watchdog Zero, Audit Core), Vendor Detail pages, JWT auth
-- [ ] **v0.7.0** - Vendor risk scoring algorithm, analytics dashboard
-- [ ] **v0.8.0** - Excel/CSV export, Jira/ServiceNow integration
-- [ ] **v1.0.0** - Custom framework builder, mobile app, GraphQL API
+- [x] **v0.7.0** - Risk scoring, analytics enhancements
+- [x] **v0.8.0** - Document Intelligence, Multi-Framework Compliance
+- [x] **v0.9.0** - NIST AI RMF, CSA CAIQ, Continuous Monitoring, Remediation Workflows
+- [x] **v1.0.0** - Enterprise Security Release: SSO/SAML 2.0, MFA/TOTP, Audit Logging, Rate Limiting
+- [ ] **v1.1.0** - Custom framework builder, advanced analytics
+- [ ] **v1.2.0** - Jira/ServiceNow integration
+- [ ] **v2.0.0** - GraphQL API, multi-tenant architecture
 
 ---
 
