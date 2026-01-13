@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
   AlertTriangle,
@@ -20,7 +21,48 @@ import {
   DialogDescription,
 } from '@/components/ui';
 import { CyberCard } from '@/components/ui/CyberCard';
+import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
+import { CardSkeleton } from '@/components/ui/TypingIndicator';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
+
+// Framer Motion variants for staggered animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
+
+const tableRowVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: i * 0.05,
+      type: 'spring' as const,
+      stiffness: 100,
+      damping: 15,
+    },
+  }),
+};
 
 // Types for Risk API responses - matches backend schemas
 interface RiskFactor {
@@ -195,18 +237,34 @@ export function Risk() {
     );
   };
 
-  // Loading state
+  // Loading state with premium skeleton
   if (isLoading) {
     return (
-      <div className="p-8 space-y-8">
-        <div className="h-12 w-1/3 bg-muted/20 animate-pulse rounded-lg" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="space-y-8"
+      >
+        <div className="h-12 w-1/3 bg-white/5 rounded-lg overflow-hidden relative">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+          />
+        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-muted/10 animate-pulse rounded-xl" />
+            <CardSkeleton key={i} />
           ))}
         </div>
-        <div className="h-96 bg-muted/10 animate-pulse rounded-xl" />
-      </div>
+        <div className="glass-panel-liquid rounded-2xl h-96 overflow-hidden relative">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+          />
+        </div>
+      </motion.div>
     );
   }
 
@@ -230,253 +288,334 @@ export function Risk() {
   const { total = 0, average_score = 0, high_risk_count = 0 } = riskResponse || {};
 
   return (
-    <div className="space-y-6 pb-8 animate-in fade-in duration-500">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-6 pb-8"
+    >
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8"
+      >
         <div>
           <h1 className="text-5xl font-bold tracking-tighter text-white neon-text mb-2">
             RISK<span className="text-primary">DASHBOARD</span>
           </h1>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              <motion.span
+                className="w-2 h-2 rounded-full bg-green-500"
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
               RISK ENGINE ACTIVE
             </span>
             <span className="text-white/10">|</span>
             <span className="font-mono text-primary/80">
-              {total} VENDORS MONITORED
+              <AnimatedCounter value={total} duration={1.5} /> VENDORS MONITORED
             </span>
           </div>
         </div>
 
-        <Button
-          onClick={() => recalculateMutation.mutate({ force: true })}
-          disabled={recalculateMutation.isPending}
-          className="bg-primary/20 border border-primary/50 hover:bg-primary/30"
-        >
-          {recalculateMutation.isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Recalculating...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Recalculate All
-            </>
-          )}
-        </Button>
-      </div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={() => recalculateMutation.mutate({ force: true })}
+            disabled={recalculateMutation.isPending}
+            className="bg-primary/20 border border-primary/50 hover:bg-primary/30 hover:glow-teal transition-all duration-300"
+          >
+            {recalculateMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Recalculating...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Recalculate All
+              </>
+            )}
+          </Button>
+        </motion.div>
+      </motion.div>
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Vendors */}
-        <CyberCard className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
-                Total Vendors
-              </p>
-              <div className="text-4xl font-bold text-white font-mono">{total}</div>
+        <motion.div variants={itemVariants}>
+          <CyberCard className="p-6 card-3d-tilt">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
+                  Total Vendors
+                </p>
+                <div className="text-4xl font-bold text-white font-mono">
+                  <AnimatedCounter value={total} duration={2} />
+                </div>
+              </div>
+              <motion.div
+                className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <Building2 className="h-7 w-7 text-primary" />
+              </motion.div>
             </div>
-            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-              <Building2 className="h-7 w-7 text-primary" />
-            </div>
-          </div>
-        </CyberCard>
+          </CyberCard>
+        </motion.div>
 
         {/* High Risk Count */}
-        <CyberCard variant="danger" className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
-                High Risk Vendors
-              </p>
-              <div className="text-4xl font-bold text-white font-mono flex items-baseline gap-2">
-                {high_risk_count}
-                {high_risk_count > 0 && (
-                  <span className="text-sm text-red-400 font-sans">
-                    <TrendingUp className="h-4 w-4 inline" /> Alert
-                  </span>
-                )}
+        <motion.div variants={itemVariants}>
+          <CyberCard
+            variant="danger"
+            className={`p-6 card-3d-tilt ${high_risk_count > 0 ? 'sla-breach-pulse' : ''}`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
+                  High Risk Vendors
+                </p>
+                <div className="text-4xl font-bold text-white font-mono flex items-baseline gap-2">
+                  <AnimatedCounter value={high_risk_count} duration={2} />
+                  {high_risk_count > 0 && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-sm text-red-400 font-sans"
+                    >
+                      <TrendingUp className="h-4 w-4 inline" /> Alert
+                    </motion.span>
+                  )}
+                </div>
               </div>
+              <motion.div
+                className="h-14 w-14 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20"
+                animate={high_risk_count > 0 ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <AlertTriangle className="h-7 w-7 text-red-500" />
+              </motion.div>
             </div>
-            <div className="h-14 w-14 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
-              <AlertTriangle className="h-7 w-7 text-red-500" />
-            </div>
-          </div>
-        </CyberCard>
+          </CyberCard>
+        </motion.div>
 
         {/* Average Score */}
-        <CyberCard className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
-                Average Risk Score
-              </p>
-              <div className={`text-4xl font-bold font-mono ${getScoreColor(average_score)}`}>
-                {average_score.toFixed(1)}
+        <motion.div variants={itemVariants}>
+          <CyberCard className="p-6 card-3d-tilt">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm uppercase tracking-wider mb-2">
+                  Average Risk Score
+                </p>
+                <div className={`text-4xl font-bold font-mono ${getScoreColor(average_score)}`}>
+                  <AnimatedCounter
+                    value={average_score}
+                    duration={2}
+                    formatValue={(v) => v.toFixed(1)}
+                  />
+                </div>
+              </div>
+              <motion.div
+                className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20"
+                whileHover={{ scale: 1.1 }}
+              >
+                <Activity className="h-7 w-7 text-yellow-500" />
+              </motion.div>
+            </div>
+            <div className="mt-4">
+              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(average_score, 100)}%` }}
+                  transition={{ duration: 1.5, ease: 'easeOut', delay: 0.5 }}
+                  className={`h-full ${
+                    average_score >= 80
+                      ? 'bg-red-500'
+                      : average_score >= 60
+                      ? 'bg-orange-500'
+                      : average_score >= 40
+                      ? 'bg-yellow-500'
+                      : 'bg-green-500'
+                  }`}
+                />
               </div>
             </div>
-            <div className="h-14 w-14 rounded-full bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
-              <Activity className="h-7 w-7 text-yellow-500" />
-            </div>
-          </div>
-          <div className="mt-4">
-            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-500 ${
-                  average_score >= 80
-                    ? 'bg-red-500'
-                    : average_score >= 60
-                    ? 'bg-orange-500'
-                    : average_score >= 40
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
-                }`}
-                style={{ width: `${Math.min(average_score, 100)}%` }}
-              />
-            </div>
-          </div>
-        </CyberCard>
+          </CyberCard>
+        </motion.div>
       </div>
 
       {/* Vendors Table */}
-      <CyberCard className="p-0 overflow-hidden">
-        <div className="p-6 border-b border-white/10">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            Vendor Risk Assessment
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Click on a vendor row to view detailed risk breakdown
-          </p>
-        </div>
-
-        {sortedVendors.length === 0 ? (
-          <div className="p-12 text-center">
-            <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">No Vendor Risk Data</h3>
-            <p className="text-muted-foreground mb-4">
-              No vendors have been assessed yet. Add vendors and run analysis to see risk scores.
+      <motion.div variants={itemVariants}>
+        <CyberCard className="p-0 overflow-hidden">
+          <div className="p-6 border-b border-white/10">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Vendor Risk Assessment
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Click on a vendor row to view detailed risk breakdown
             </p>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-white/5">
-                <tr>
-                  <th
-                    className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
-                    onClick={() => handleSort('vendor_name')}
-                  >
-                    Vendor Name
-                    <SortIndicator field="vendor_name" />
-                  </th>
-                  <th
-                    className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
-                    onClick={() => handleSort('overall_score')}
-                  >
-                    Risk Score
-                    <SortIndicator field="overall_score" />
-                  </th>
-                  <th
-                    className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
-                    onClick={() => handleSort('risk_level')}
-                  >
-                    Risk Level
-                    <SortIndicator field="risk_level" />
-                  </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-red-400 uppercase tracking-wider">
-                    Critical
-                  </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-orange-400 uppercase tracking-wider">
-                    High
-                  </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-yellow-400 uppercase tracking-wider">
-                    Medium
-                  </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-green-400 uppercase tracking-wider">
-                    Low
-                  </th>
-                  <th
-                    className="px-6 py-4 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
-                    onClick={() => handleSort('total_findings')}
-                  >
-                    Total
-                    <SortIndicator field="total_findings" />
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {sortedVendors.map((vendor) => (
-                  <tr
-                    key={vendor.vendor_id}
-                    className="hover:bg-white/5 cursor-pointer transition-colors"
-                    onClick={() => handleRowClick(vendor.vendor_id)}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Building2 className="h-4 w-4 text-primary" />
-                        </div>
-                        <span className="font-medium text-white">{vendor.vendor_name}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`font-mono font-bold ${getScoreColor(vendor.overall_score)}`}>
-                        {vendor.overall_score.toFixed(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase border ${getRiskBadgeClasses(
-                          vendor.risk_level
-                        )}`}
-                      >
-                        {vendor.risk_level}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span
-                        className={`font-mono ${
-                          vendor.findings_critical > 0 ? 'text-red-500 font-bold' : 'text-muted-foreground'
-                        }`}
-                      >
-                        {vendor.findings_critical}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span
-                        className={`font-mono ${
-                          vendor.findings_high > 0 ? 'text-orange-500 font-bold' : 'text-muted-foreground'
-                        }`}
-                      >
-                        {vendor.findings_high}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span
-                        className={`font-mono ${
-                          vendor.findings_medium > 0 ? 'text-yellow-500' : 'text-muted-foreground'
-                        }`}
-                      >
-                        {vendor.findings_medium}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="font-mono text-muted-foreground">{vendor.findings_low}</span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="font-mono text-white font-medium">{vendor.total_findings}</span>
-                    </td>
+
+          {sortedVendors.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-12 text-center"
+            >
+              <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-white mb-2">No Vendor Risk Data</h3>
+              <p className="text-muted-foreground mb-4">
+                No vendors have been assessed yet. Add vendors and run analysis to see risk scores.
+              </p>
+            </motion.div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-white/5">
+                  <tr>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('vendor_name')}
+                    >
+                      Vendor Name
+                      <SortIndicator field="vendor_name" />
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('overall_score')}
+                    >
+                      Risk Score
+                      <SortIndicator field="overall_score" />
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('risk_level')}
+                    >
+                      Risk Level
+                      <SortIndicator field="risk_level" />
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-red-400 uppercase tracking-wider">
+                      Critical
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-orange-400 uppercase tracking-wider">
+                      High
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-yellow-400 uppercase tracking-wider">
+                      Medium
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-green-400 uppercase tracking-wider">
+                      Low
+                    </th>
+                    <th
+                      className="px-6 py-4 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-white transition-colors"
+                      onClick={() => handleSort('total_findings')}
+                    >
+                      Total
+                      <SortIndicator field="total_findings" />
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </CyberCard>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <AnimatePresence mode="popLayout">
+                    {sortedVendors.map((vendor, index) => (
+                      <motion.tr
+                        key={vendor.vendor_id}
+                        custom={index}
+                        variants={tableRowVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit={{ opacity: 0, x: -20 }}
+                        whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                        className={`cursor-pointer transition-colors data-row-hover ${
+                          vendor.risk_level === 'critical' ? 'border-l-2 border-l-red-500' : ''
+                        }`}
+                        onClick={() => handleRowClick(vendor.vendor_id)}
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <motion.div
+                              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                vendor.risk_level === 'critical'
+                                  ? 'bg-red-500/10'
+                                  : vendor.risk_level === 'high'
+                                  ? 'bg-orange-500/10'
+                                  : 'bg-primary/10'
+                              }`}
+                              whileHover={{ scale: 1.1 }}
+                            >
+                              <Building2
+                                className={`h-4 w-4 ${
+                                  vendor.risk_level === 'critical'
+                                    ? 'text-red-500'
+                                    : vendor.risk_level === 'high'
+                                    ? 'text-orange-500'
+                                    : 'text-primary'
+                                }`}
+                              />
+                            </motion.div>
+                            <span className="font-medium text-white">{vendor.vendor_name}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`font-mono font-bold ${getScoreColor(vendor.overall_score)}`}>
+                            {vendor.overall_score.toFixed(1)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: index * 0.05 + 0.2 }}
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase border ${getRiskBadgeClasses(
+                              vendor.risk_level
+                            )}`}
+                          >
+                            {vendor.risk_level}
+                          </motion.span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span
+                            className={`font-mono ${
+                              vendor.findings_critical > 0 ? 'text-red-500 font-bold neon-text-crimson' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {vendor.findings_critical}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span
+                            className={`font-mono ${
+                              vendor.findings_high > 0 ? 'text-orange-500 font-bold' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {vendor.findings_high}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span
+                            className={`font-mono ${
+                              vendor.findings_medium > 0 ? 'text-yellow-500' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {vendor.findings_medium}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className="font-mono text-muted-foreground">{vendor.findings_low}</span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className="font-mono text-white font-medium">{vendor.total_findings}</span>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CyberCard>
+      </motion.div>
 
       {/* Vendor Detail Modal */}
       <Dialog open={showDetailModal} onOpenChange={handleCloseModal}>
@@ -607,6 +746,6 @@ export function Risk() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

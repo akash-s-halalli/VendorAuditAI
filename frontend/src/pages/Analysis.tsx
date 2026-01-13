@@ -1,10 +1,40 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Play, FileText, AlertTriangle, Loader2, RefreshCw, Download, FileSpreadsheet, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { CardSkeleton, SkeletonLoader } from '@/components/ui/TypingIndicator';
 import { FindingsSummary, FindingsList } from '@/components/findings';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import type { Document, Finding, AnalysisRun, Severity } from '@/types/api';
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+  },
+};
+
+// Finding variants for animated lists (exported for use in child components)
+export const findingVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.05, type: 'spring' as const, stiffness: 100 },
+  }),
+};
 
 // Supported compliance frameworks matching backend FrameworkType
 const FRAMEWORKS = [
@@ -162,265 +192,345 @@ export function Analysis() {
   const isAnalyzing = runAnalysisMutation.isPending || latestRun?.status === 'running';
 
   return (
-    <div className="p-8">
+    <motion.div
+      className="p-8"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Analysis Dashboard</h1>
+      <motion.div className="mb-8" variants={itemVariants}>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold neon-text">
+            ANALYSIS<span className="text-primary">ENGINE</span>
+          </h1>
+          <motion.div
+            className="w-2 h-2 rounded-full bg-obsidian-teal"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.7, 1, 0.7],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        </div>
         <p className="text-muted-foreground">
           Analyze security documents and review findings
         </p>
-      </div>
+      </motion.div>
 
       {/* Document Selection */}
-      <Card className="mb-6">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Document Selection
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            {/* Document Dropdown */}
-            <div className="md:col-span-1">
-              <label
-                htmlFor="document-select"
-                className="block text-sm font-medium text-muted-foreground mb-2"
-              >
-                Select a document
-              </label>
-              <select
-                id="document-select"
-                value={selectedDocumentId}
-                onChange={(e) => setSelectedDocumentId(e.target.value)}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                disabled={isLoadingDocuments}
-              >
-                <option value="">
-                  {isLoadingDocuments ? 'Loading documents...' : 'Choose a document...'}
-                </option>
-                {documents.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
-                    {doc.filename || doc.originalFilename} ({(doc.document_type || doc.docType)?.toUpperCase() || 'DOC'})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Framework Dropdown */}
-            <div className="md:col-span-1">
-              <label
-                htmlFor="framework-select"
-                className="block text-sm font-medium text-muted-foreground mb-2"
-              >
-                <Shield className="h-4 w-4 inline mr-1" />
-                Compliance Framework
-              </label>
-              <select
-                id="framework-select"
-                value={selectedFramework}
-                onChange={(e) => setSelectedFramework(e.target.value as FrameworkType)}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                {FRAMEWORKS.map((fw) => (
-                  <option key={fw.value} value={fw.value}>
-                    {fw.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                onClick={handleRunAnalysis}
-                disabled={!selectedDocumentId || isAnalyzing}
-                className="flex-1"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Run Analysis
-                  </>
-                )}
-              </Button>
-
-              {selectedDocumentId && (
-                <Button
-                  variant="outline"
-                  onClick={() => refetchFindings()}
-                  disabled={isLoadingFindings}
+      <motion.div variants={itemVariants}>
+        <Card className="mb-6 glass-panel-liquid">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Document Selection
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              {/* Document Dropdown */}
+              <div className="md:col-span-1">
+                <label
+                  htmlFor="document-select"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
                 >
-                  <RefreshCw className={`h-4 w-4 ${isLoadingFindings ? 'animate-spin' : ''}`} />
-                </Button>
-              )}
-            </div>
-          </div>
+                  Select a document
+                </label>
+                <select
+                  id="document-select"
+                  value={selectedDocumentId}
+                  onChange={(e) => setSelectedDocumentId(e.target.value)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  disabled={isLoadingDocuments}
+                >
+                  <option value="">
+                    {isLoadingDocuments ? 'Loading documents...' : 'Choose a document...'}
+                  </option>
+                  {documents.map((doc) => (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.filename || doc.originalFilename} ({(doc.document_type || doc.docType)?.toUpperCase() || 'DOC'})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Selected document info */}
-          {selectedDocument && (
-            <div className="mt-4 p-3 bg-secondary/50 rounded-md">
-              <div className="flex items-center gap-4 text-sm flex-wrap">
-                <span>
-                  <strong>Type:</strong> {(selectedDocument.document_type || selectedDocument.docType)?.toUpperCase() || 'Document'}
-                </span>
-                {(selectedDocument.page_count || selectedDocument.pageCount) !== undefined && (selectedDocument.page_count || selectedDocument.pageCount) !== null && (
-                  <span>
-                    <strong>Pages:</strong> {selectedDocument.page_count || selectedDocument.pageCount}
-                  </span>
-                )}
-                <span>
-                  <strong>Status:</strong>{' '}
-                  <span
-                    className={`font-medium ${
-                      selectedDocument.status === 'analyzed' || selectedDocument.status === 'processed'
-                        ? 'text-green-600'
-                        : selectedDocument.status === 'failed'
-                        ? 'text-red-600'
-                        : 'text-yellow-600'
-                    }`}
+              {/* Framework Dropdown */}
+              <div className="md:col-span-1">
+                <label
+                  htmlFor="framework-select"
+                  className="block text-sm font-medium text-muted-foreground mb-2"
+                >
+                  <Shield className="h-4 w-4 inline mr-1" />
+                  Compliance Framework
+                </label>
+                <select
+                  id="framework-select"
+                  value={selectedFramework}
+                  onChange={(e) => setSelectedFramework(e.target.value as FrameworkType)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  {FRAMEWORKS.map((fw) => (
+                    <option key={fw.value} value={fw.value}>
+                      {fw.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleRunAnalysis}
+                  disabled={!selectedDocumentId || isAnalyzing}
+                  className="flex-1"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4 mr-2" />
+                      Run Analysis
+                    </>
+                  )}
+                </Button>
+
+                {selectedDocumentId && (
+                  <Button
+                    variant="outline"
+                    onClick={() => refetchFindings()}
+                    disabled={isLoadingFindings}
                   >
-                    {selectedDocument.status?.charAt(0).toUpperCase() +
-                      selectedDocument.status?.slice(1)}
-                  </span>
-                </span>
-                {latestRun && (
-                  <span>
-                    <strong>Last Analysis:</strong>{' '}
-                    {new Date(latestRun.created_at).toLocaleDateString()} ({latestRun.framework})
-                  </span>
+                    <RefreshCw className={`h-4 w-4 ${isLoadingFindings ? 'animate-spin' : ''}`} />
+                  </Button>
                 )}
               </div>
             </div>
-          )}
 
-          {/* Error message */}
-          {analysisError && (
-            <div className="mt-4 flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md text-sm">
-              <AlertTriangle className="h-4 w-4" />
-              {analysisError}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            {/* Selected document info */}
+            {selectedDocument && (
+              <motion.div
+                className="mt-4 p-3 bg-secondary/50 rounded-md"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring' as const, stiffness: 100 }}
+              >
+                <div className="flex items-center gap-4 text-sm flex-wrap">
+                  <span>
+                    <strong>Type:</strong> {(selectedDocument.document_type || selectedDocument.docType)?.toUpperCase() || 'Document'}
+                  </span>
+                  {(selectedDocument.page_count || selectedDocument.pageCount) !== undefined && (selectedDocument.page_count || selectedDocument.pageCount) !== null && (
+                    <span>
+                      <strong>Pages:</strong> {selectedDocument.page_count || selectedDocument.pageCount}
+                    </span>
+                  )}
+                  <span>
+                    <strong>Status:</strong>{' '}
+                    <span
+                      className={`font-medium ${
+                        selectedDocument.status === 'analyzed' || selectedDocument.status === 'processed'
+                          ? 'text-green-600'
+                          : selectedDocument.status === 'failed'
+                          ? 'text-red-600'
+                          : 'text-yellow-600'
+                      }`}
+                    >
+                      {selectedDocument.status?.charAt(0).toUpperCase() +
+                        selectedDocument.status?.slice(1)}
+                    </span>
+                  </span>
+                  {latestRun && (
+                    <span>
+                      <strong>Last Analysis:</strong>{' '}
+                      {new Date(latestRun.created_at).toLocaleDateString()} ({latestRun.framework})
+                    </span>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Error message */}
+            <AnimatePresence>
+              {analysisError && (
+                <motion.div
+                  className="mt-4 flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md text-sm"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: 'spring' as const, stiffness: 100 }}
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  {analysisError}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Analysis Progress */}
-      {isAnalyzing && (
-        <Card className="mb-6 border-primary">
-          <CardContent className="py-8">
-            <div className="flex flex-col items-center justify-center">
-              <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-              <h3 className="text-lg font-medium mb-2">Analysis in Progress</h3>
-              <p className="text-muted-foreground text-center mb-4">
-                Analyzing document against {FRAMEWORKS.find(f => f.value === selectedFramework)?.label || selectedFramework}...
-              </p>
-              <p className="text-sm text-muted-foreground">
-                This may take 1-2 minutes depending on document size.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* No document selected state */}
-      {!selectedDocumentId && !isLoadingDocuments && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Select a Document</h3>
-            <p className="text-muted-foreground text-center max-w-md">
-              Choose a processed document from the dropdown above to view existing analysis results or run a
-              new analysis against a compliance framework.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Loading state for findings */}
-      {selectedDocumentId && isLoadingFindings && !isAnalyzing && (
-        <div className="space-y-4">
-          <Card className="animate-pulse">
-            <CardHeader>
-              <div className="h-6 bg-muted rounded w-48" />
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-20 bg-muted rounded" />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Analysis Results */}
-      {selectedDocumentId && !isLoadingFindings && !isAnalyzing && (
-        <>
-          {findings.length > 0 ? (
-            <div className="space-y-6">
-              {/* Summary Statistics */}
-              <FindingsSummary bySeverity={bySeverity} total={findings.length} />
-
-              {/* Findings List with Filtering */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">Findings ({findings.length})</h2>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleExport('csv')}
-                      disabled={isExporting !== null}
-                    >
-                      {isExporting === 'csv' ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      ) : (
-                        <FileSpreadsheet className="h-4 w-4 mr-2" />
-                      )}
-                      Export CSV
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleExport('pdf')}
-                      disabled={isExporting !== null}
-                    >
-                      {isExporting === 'pdf' ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      ) : (
-                        <Download className="h-4 w-4 mr-2" />
-                      )}
-                      Export PDF
-                    </Button>
-                  </div>
+      <AnimatePresence>
+        {isAnalyzing && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: 'spring' as const, stiffness: 100 }}
+          >
+            <Card className="mb-6 border-primary glass-panel-liquid">
+              <CardContent className="py-8">
+                <div className="flex flex-col items-center justify-center">
+                  <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Analysis in Progress</h3>
+                  <p className="text-muted-foreground text-center mb-4">
+                    Analyzing document against {FRAMEWORKS.find(f => f.value === selectedFramework)?.label || selectedFramework}...
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    This may take 1-2 minutes depending on document size.
+                  </p>
                 </div>
-                <FindingsList findings={findings} />
-              </div>
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <AlertTriangle className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">No Analysis Results</h3>
-                <p className="text-muted-foreground text-center max-w-md mb-4">
-                  This document hasn't been analyzed yet, or no findings were detected.
-                  Select a compliance framework and click "Run Analysis" to analyze this document.
-                </p>
-                <Button onClick={handleRunAnalysis} disabled={isAnalyzing || !selectedDocumentId}>
-                  <Play className="h-4 w-4 mr-2" />
-                  Run Analysis
-                </Button>
               </CardContent>
             </Card>
-          )}
-        </>
-      )}
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* No document selected state */}
+      <AnimatePresence>
+        {!selectedDocumentId && !isLoadingDocuments && (
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <Card className="glass-panel-liquid">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">Select a Document</h3>
+                <p className="text-muted-foreground text-center max-w-md">
+                  Choose a processed document from the dropdown above to view existing analysis results or run a
+                  new analysis against a compliance framework.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Loading state for findings */}
+      <AnimatePresence>
+        {selectedDocumentId && isLoadingFindings && !isAnalyzing && (
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <CardSkeleton />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardSkeleton />
+              <CardSkeleton />
+            </div>
+            <SkeletonLoader lines={5} className="glass-panel-liquid p-6 rounded-2xl" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Analysis Results */}
+      <AnimatePresence>
+        {selectedDocumentId && !isLoadingFindings && !isAnalyzing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {findings.length > 0 ? (
+              <div className="space-y-6">
+                {/* Summary Statistics */}
+                <motion.div variants={itemVariants}>
+                  <FindingsSummary bySeverity={bySeverity} total={findings.length} />
+                </motion.div>
+
+                {/* Findings List with Filtering */}
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">Findings ({findings.length})</h2>
+                    <div className="flex gap-2">
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExport('csv')}
+                          disabled={isExporting !== null}
+                        >
+                          {isExporting === 'csv' ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <FileSpreadsheet className="h-4 w-4 mr-2" />
+                          )}
+                          Export CSV
+                        </Button>
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExport('pdf')}
+                          disabled={isExporting !== null}
+                        >
+                          {isExporting === 'pdf' ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Download className="h-4 w-4 mr-2" />
+                          )}
+                          Export PDF
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </div>
+                  <FindingsList findings={findings} />
+                </motion.div>
+              </div>
+            ) : (
+              <motion.div variants={itemVariants}>
+                <Card className="glass-panel-liquid">
+                  <CardContent className="flex flex-col items-center justify-center py-16">
+                    <AlertTriangle className="h-16 w-16 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No Analysis Results</h3>
+                    <p className="text-muted-foreground text-center max-w-md mb-4">
+                      This document hasn't been analyzed yet, or no findings were detected.
+                      Select a compliance framework and click "Run Analysis" to analyze this document.
+                    </p>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button onClick={handleRunAnalysis} disabled={isAnalyzing || !selectedDocumentId}>
+                        <Play className="h-4 w-4 mr-2" />
+                        Run Analysis
+                      </Button>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

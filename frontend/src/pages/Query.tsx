@@ -1,9 +1,32 @@
 import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Send, MessageSquare, FileText, Loader2, Bot, User, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, MessageSquare, FileText, Bot, User, Sparkles } from 'lucide-react';
 import { Button, Input } from '@/components/ui';
+import { TypingIndicator } from '@/components/ui/TypingIndicator';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
+
+// Animation variants
+const messageVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+  },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
+};
+
+const suggestionVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.1, type: 'spring' as const, stiffness: 100 },
+  }),
+};
 
 interface Citation {
   document_id: string;
@@ -142,10 +165,25 @@ export function Query() {
       {/* Messages */}
       <div className="flex-1 overflow-auto p-4 space-y-6 custom-scrollbar scroll-smooth" ref={scrollRef}>
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <div className="h-24 w-24 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,242,255,0.1)] animate-float">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center h-full text-center p-8"
+          >
+            <motion.div
+              animate={{
+                y: [0, -10, 0],
+                boxShadow: [
+                  '0 0 30px rgba(0,212,170,0.1)',
+                  '0 0 50px rgba(0,212,170,0.2)',
+                  '0 0 30px rgba(0,212,170,0.1)',
+                ],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="h-24 w-24 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center mb-6"
+            >
               <MessageSquare className="h-10 w-10 text-primary/50" />
-            </div>
+            </motion.div>
             <h2 className="text-2xl font-bold mb-2 text-white">Awaiting Input</h2>
             <p className="text-muted-foreground max-w-md mb-8">
               Initialize query sequence. ask questions about your uploaded documents or compliance frameworks.
@@ -156,95 +194,136 @@ export function Query() {
                 "Are there any gaps in access control?",
                 "Summarize the incident response procedures"
               ].map((q, i) => (
-                <button
+                <motion.button
                   key={i}
+                  custom={i}
+                  variants={suggestionVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setQuestion(q)}
                   className="text-left px-4 py-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 group flex items-center justify-between"
                 >
                   <span className="text-muted-foreground group-hover:text-white transition-colors">{q}</span>
                   <Send className="h-3 w-3 text-primary/0 group-hover:text-primary transition-all transform translate-x-3 group-hover:translate-x-0" />
-                </button>
+                </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
         ) : (
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}
-            >
-              {message.role === 'assistant' && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/40 border border-primary/30 shadow-[0_0_10px_rgba(0,242,255,0.2)] mt-1">
-                  <Bot className="h-4 w-4 text-primary" />
-                </div>
-              )}
-
-              <div
-                className={cn(
-                  "max-w-[85%] rounded-2xl p-5 shadow-lg relative overflow-hidden",
-                  message.role === 'user'
-                    ? "bg-primary text-primary-foreground rounded-tr-sm"
-                    : "bg-white/5 border border-white/10 text-white rounded-tl-sm backdrop-blur-sm"
-                )}
+          <AnimatePresence mode="popLayout">
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                variants={messageVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {/* User Message Glow */}
+                {message.role === 'assistant' && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/40 border border-primary/30 shadow-[0_0_10px_rgba(0,212,170,0.2)] mt-1"
+                  >
+                    <Bot className="h-4 w-4 text-primary" />
+                  </motion.div>
+                )}
+
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className={cn(
+                    "max-w-[85%] rounded-2xl p-5 shadow-lg relative overflow-hidden",
+                    message.role === 'user'
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-white/5 border border-white/10 text-white rounded-tl-sm backdrop-blur-sm"
+                  )}
+                >
+                  {/* User Message Glow */}
+                  {message.role === 'user' && (
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none" />
+                  )}
+
+                  <p className="whitespace-pre-wrap leading-relaxed relative z-10">{message.content}</p>
+
+                  {/* Citations */}
+                  {message.citations && message.citations.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="mt-4 pt-4 border-t border-white/10 relative z-10"
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-primary/80 mb-3 flex items-center gap-1">
+                        <FileText className="h-3 w-3" />
+                        Verified Sources
+                      </p>
+                      <div className="space-y-2">
+                        {message.citations.slice(0, 3).map((citation, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 + i * 0.1 }}
+                            whileHover={{ x: 4 }}
+                            className="text-xs p-3 rounded-lg bg-black/20 border border-white/5 flex items-start gap-3 hover:bg-black/40 hover:border-primary/20 transition-colors cursor-help"
+                          >
+                            <div className="h-5 w-5 rounded bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                              <span className="text-[10px] font-mono text-primary">{i + 1}</span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-primary/90 mb-1">
+                                {citation.document_filename || 'Unknown Document'}
+                                {citation.page_number && <span className="text-white/40 font-normal ml-1">p.{citation.page_number}</span>}
+                              </p>
+                              <p className="text-white/60 line-clamp-2 leading-relaxed italic">"{citation.excerpt}"</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+
                 {message.role === 'user' && (
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none" />
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-white mt-1 shadow-[0_0_10px_rgba(176,38,255,0.3)]"
+                  >
+                    <User className="h-4 w-4" />
+                  </motion.div>
                 )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
 
-                <p className="whitespace-pre-wrap leading-relaxed relative z-10">{message.content}</p>
-
-                {/* Citations */}
-                {message.citations && message.citations.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-white/10 relative z-10">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-primary/80 mb-3 flex items-center gap-1">
-                      <FileText className="h-3 w-3" />
-                      Verified Sources
-                    </p>
-                    <div className="space-y-2">
-                      {message.citations.slice(0, 3).map((citation, i) => (
-                        <div
-                          key={i}
-                          className="text-xs p-3 rounded-lg bg-black/20 border border-white/5 flex items-start gap-3 hover:bg-black/40 hover:border-primary/20 transition-colors cursor-help"
-                        >
-                          <div className="h-5 w-5 rounded bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                            <span className="text-[10px] font-mono text-primary">{i + 1}</span>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-primary/90 mb-1">
-                              {citation.document_filename || 'Unknown Document'}
-                              {citation.page_number && <span className="text-white/40 font-normal ml-1">p.{citation.page_number}</span>}
-                            </p>
-                            <p className="text-white/60 line-clamp-2 leading-relaxed italic">"{citation.excerpt}"</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+        {/* Loading indicator with typing animation */}
+        <AnimatePresence>
+          {queryMutation.isPending && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex gap-4"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/40 border border-primary/30 mt-1"
+              >
+                <Bot className="h-4 w-4 text-primary" />
+              </motion.div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-sm px-5 py-4 flex items-center gap-4">
+                <TypingIndicator />
+                <span className="text-sm text-primary font-mono tracking-wider">PROCESSING QUERY...</span>
               </div>
-
-              {message.role === 'user' && (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-white mt-1 shadow-[0_0_10px_rgba(176,38,255,0.3)]">
-                  <User className="h-4 w-4" />
-                </div>
-              )}
-            </div>
-          ))
-        )}
-
-        {/* Loading indicator */}
-        {queryMutation.isPending && (
-          <div className="flex gap-4 animate-pulse">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/40 border border-primary/30 mt-1">
-              <Bot className="h-4 w-4 text-primary" />
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-sm px-5 py-4 flex items-center gap-3">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              <span className="text-sm text-primary font-mono tracking-wider">ANALYZING DATA STREAMS...</span>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Error message */}
         {error && (

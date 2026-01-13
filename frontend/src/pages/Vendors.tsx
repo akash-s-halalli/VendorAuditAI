@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, MoreVertical, Building2, Loader2, Pencil, Trash2, Eye } from 'lucide-react';
 import {
   Button,
@@ -18,8 +19,41 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui';
+import { CardSkeleton } from '@/components/ui/TypingIndicator';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import type { Vendor, VendorTier, VendorStatus, CreateVendorRequest, UpdateVendorRequest } from '@/types/api';
+
+// Framer Motion variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 20, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+  exit: {
+    y: -20,
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.2 },
+  },
+};
 
 export function Vendors() {
   const navigate = useNavigate();
@@ -195,17 +229,45 @@ export function Vendors() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6 pb-8"
+    >
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold">Vendors</h1>
-          <p className="text-muted-foreground">Manage your third-party vendors</p>
+          <h1 className="text-5xl font-bold tracking-tighter text-white neon-text mb-2">
+            VENDOR<span className="text-primary">HUB</span>
+          </h1>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <motion.span
+                className="w-2 h-2 rounded-full bg-green-500"
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              REGISTRY ACTIVE
+            </span>
+            <span className="text-white/10">|</span>
+            <span className="font-mono text-primary/80">
+              {vendors.length} VENDORS TRACKED
+            </span>
+          </div>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Vendor
-        </Button>
-      </div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-primary/20 border border-primary/50 hover:bg-primary/30 hover:glow-teal transition-all duration-300"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Vendor
+          </Button>
+        </motion.div>
+      </motion.div>
 
       {/* Create Vendor Modal */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
@@ -381,140 +443,206 @@ export function Vendors() {
       </Dialog>
 
       {/* Search and Filters */}
-      <div className="flex gap-4 mb-6">
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="flex gap-4"
+      >
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search vendors..."
-            className="pl-9"
+            className="pl-9 bg-white/5 border-white/10 focus:border-primary/50 focus:glow-teal transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Vendors Grid */}
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-muted rounded w-3/4"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
-                  <div className="h-4 bg-muted rounded w-1/4"></div>
-                </div>
-              </CardContent>
-            </Card>
+            <CardSkeleton key={i} />
           ))}
         </div>
       ) : vendors.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No vendors yet</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Add your first vendor to start tracking their security posture.
-            </p>
-            <Button onClick={() => setShowCreateModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Vendor
-            </Button>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <Card className="glass-panel-liquid">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
+              </motion.div>
+              <h3 className="text-lg font-medium mb-2 text-white">No vendors yet</h3>
+              <p className="text-muted-foreground text-center mb-4">
+                Add your first vendor to start tracking their security posture.
+              </p>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-primary/20 border border-primary/50 hover:bg-primary/30"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Vendor
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {vendors.map((vendor) => (
-            <Card key={vendor.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Building2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">{vendor.name}</CardTitle>
-                    {vendor.website && (
-                      <a
-                        href={vendor.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-muted-foreground hover:text-primary"
-                        onClick={(e) => e.stopPropagation()}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        >
+          <AnimatePresence mode="popLayout">
+            {vendors.map((vendor) => (
+              <motion.div
+                key={vendor.id}
+                variants={cardVariants}
+                layout
+                whileHover={{ y: -4, scale: 1.01 }}
+                className={`card-3d-tilt ${
+                  vendor.tier === 'critical'
+                    ? 'severity-critical'
+                    : vendor.tier === 'high'
+                    ? 'severity-high'
+                    : ''
+                }`}
+              >
+                <Card className="glass-panel-liquid border-0 h-full">
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0">
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                          vendor.tier === 'critical'
+                            ? 'bg-red-500/10 border border-red-500/30'
+                            : vendor.tier === 'high'
+                            ? 'bg-orange-500/10 border border-orange-500/30'
+                            : 'bg-primary/10 border border-primary/30'
+                        }`}
                       >
-                        {vendor.website.replace(/^https?:\/\//, '')}
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <div className="relative" ref={openMenuId === vendor.id ? menuRef : null}>
-                  <button
-                    className="rounded-full p-2 hover:bg-accent"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenMenuId(openMenuId === vendor.id ? null : vendor.id);
-                    }}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
-                  {openMenuId === vendor.id && (
-                    <div className="absolute right-0 top-full mt-1 w-36 rounded-md border bg-popover shadow-md z-50">
-                      <button
-                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenMenuId(null);
-                          navigate(`/vendors/${vendor.id}`);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                        View Details
-                      </button>
-                      <button
-                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openEditModal(vendor);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                        Edit
-                      </button>
-                      <button
-                        className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openDeleteModal(vendor);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete
-                      </button>
+                        <Building2
+                          className={`h-5 w-5 ${
+                            vendor.tier === 'critical'
+                              ? 'text-red-500'
+                              : vendor.tier === 'high'
+                              ? 'text-orange-500'
+                              : 'text-primary'
+                          }`}
+                        />
+                      </motion.div>
+                      <div>
+                        <CardTitle className="text-lg text-white">{vendor.name}</CardTitle>
+                        {vendor.website && (
+                          <a
+                            href={vendor.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {vendor.website.replace(/^https?:\/\//, '')}
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge variant={getTierVariant(vendor.tier)}>{vendor.tier}</Badge>
-                  <span className={`text-xs px-2 py-1 rounded-full capitalize ${getStatusColor(vendor.status)}`}>
-                    {vendor.status}
-                  </span>
-                </div>
-                {vendor.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                    {vendor.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>Last assessed: {(vendor.last_assessed || vendor.lastAssessed) ? new Date(vendor.last_assessed || vendor.lastAssessed || '').toLocaleDateString() : 'Never'}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div className="relative" ref={openMenuId === vendor.id ? menuRef : null}>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === vendor.id ? null : vendor.id);
+                        }}
+                      >
+                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                      </motion.button>
+                      <AnimatePresence>
+                        {openMenuId === vendor.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            className="absolute right-0 top-full mt-1 w-36 rounded-lg border border-white/10 bg-background/95 backdrop-blur shadow-xl z-50"
+                          >
+                            <button
+                              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors rounded-t-lg"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenMenuId(null);
+                                navigate(`/vendors/${vendor.id}`);
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                              View Details
+                            </button>
+                            <button
+                              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditModal(vendor);
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                              Edit
+                            </button>
+                            <button
+                              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-b-lg"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDeleteModal(vendor);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 mb-3">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <Badge variant={getTierVariant(vendor.tier)}>{vendor.tier}</Badge>
+                      </motion.div>
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className={`text-xs px-2 py-1 rounded-full capitalize ${getStatusColor(vendor.status)}`}
+                      >
+                        {vendor.status}
+                      </motion.span>
+                    </div>
+                    {vendor.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        {vendor.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>Last assessed: {(vendor.last_assessed || vendor.lastAssessed) ? new Date(vendor.last_assessed || vendor.lastAssessed || '').toLocaleDateString() : 'Never'}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

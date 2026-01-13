@@ -260,4 +260,278 @@
   .status-idle {
     @apply bg-slate-500/20 text-slate-400 border-slate-500/30;
   }
+
+  /* ========================================
+     PREMIUM ANIMATION ADDITIONS - V2.0
+     ======================================== */
+
+  /* 3D Card Tilt Effect */
+  .card-3d-tilt {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card-3d-tilt:hover {
+    transform: rotateX(2deg) rotateY(2deg) translateY(-4px);
+  }
+
+  .card-3d-tilt-inner {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  /* Real-time Pulse Effect */
+  @keyframes realtime-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(0, 212, 170, 0.2);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(0, 212, 170, 0.4);
+      opacity: 0.9;
+    }
+  }
+
+  .realtime-pulse {
+    animation: realtime-glow 2s ease-in-out infinite;
+  }
+
+  /* Critical SLA Pulse */
+  @keyframes sla-breach-pulse {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(230, 57, 70, 0.3);
+      border-color: rgba(230, 57, 70, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(230, 57, 70, 0.6);
+      border-color: rgba(230, 57, 70, 0.6);
+    }
+  }
+
+  .sla-breach-pulse {
+    animation: sla-breach-pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Warning Pulse */
+  @keyframes warning-pulse {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(255, 184, 0, 0.5);
+    }
+  }
+
+  .warning-pulse {
+    animation: warning-pulse 2s ease-in-out infinite;
+  }
+
+  /* Scroll Reveal Animations */
+  .scroll-hidden {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .scroll-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scroll-visible-scale {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scroll-hidden-scale {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  /* Progress Bar Animations */
+  @keyframes progress-fill {
+    from { width: 0; }
+  }
+
+  .progress-animated {
+    animation: progress-fill 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes progress-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .progress-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: progress-shimmer 2s ease-in-out infinite;
+  }
+
+  /* Stagger Animation Delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Severity Glow Classes */
+  .severity-critical {
+    @apply glass-panel-liquid border-obsidian-crimson/30;
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.15), inset 0 0 30px rgba(230, 57, 70, 0.05);
+  }
+
+  .severity-high {
+    @apply glass-panel-liquid border-obsidian-gold/30;
+    box-shadow: 0 0 20px rgba(255, 184, 0, 0.15), inset 0 0 30px rgba(255, 184, 0, 0.05);
+  }
+
+  .severity-medium {
+    @apply glass-panel-liquid border-obsidian-blue/30;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.15), inset 0 0 30px rgba(0, 102, 255, 0.05);
+  }
+
+  .severity-low {
+    @apply glass-panel-liquid border-obsidian-teal/30;
+    box-shadow: 0 0 20px rgba(0, 212, 170, 0.15), inset 0 0 30px rgba(0, 212, 170, 0.05);
+  }
+
+  /* Upload Zone Glow */
+  .upload-zone {
+    @apply glass-panel-liquid border-2 border-dashed border-white/10;
+    transition: all 0.3s ease;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.drag-active {
+    @apply border-obsidian-teal/50 bg-obsidian-teal/5;
+    box-shadow: 0 0 30px rgba(0, 212, 170, 0.2), inset 0 0 50px rgba(0, 212, 170, 0.05);
+  }
+
+  /* Chat Message Animations */
+  @keyframes message-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .message-animate {
+    animation: message-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Neon Text Effects */
+  .neon-text-teal {
+    color: #00D4AA;
+    text-shadow:
+      0 0 5px rgba(0, 212, 170, 0.5),
+      0 0 10px rgba(0, 212, 170, 0.3),
+      0 0 20px rgba(0, 212, 170, 0.2);
+  }
+
+  .neon-text-crimson {
+    color: #E63946;
+    text-shadow:
+      0 0 5px rgba(230, 57, 70, 0.5),
+      0 0 10px rgba(230, 57, 70, 0.3),
+      0 0 20px rgba(230, 57, 70, 0.2);
+  }
+
+  .neon-text-gold {
+    color: #FFB800;
+    text-shadow:
+      0 0 5px rgba(255, 184, 0, 0.5),
+      0 0 10px rgba(255, 184, 0, 0.3),
+      0 0 20px rgba(255, 184, 0, 0.2);
+  }
+
+  /* Icon Rotation Animation */
+  @keyframes icon-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .icon-spin {
+    animation: icon-rotate 1s linear infinite;
+  }
+
+  .icon-spin-slow {
+    animation: icon-rotate 3s linear infinite;
+  }
+
+  /* Badge Pop Animation */
+  @keyframes badge-pop {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .badge-animate {
+    animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  /* Data Row Hover */
+  .data-row-hover {
+    @apply transition-all duration-300;
+  }
+
+  .data-row-hover:hover {
+    @apply bg-white/[0.03];
+    transform: translateX(4px);
+  }
+
+  /* Tab Active Indicator */
+  .tab-active-indicator {
+    position: relative;
+  }
+
+  .tab-active-indicator::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00D4AA, #0066FF);
+    border-radius: 2px;
+    animation: tab-underline 0.3s ease forwards;
+  }
+
+  @keyframes tab-underline {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  /* Accessibility - Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .realtime-pulse,
+    .sla-breach-pulse,
+    .warning-pulse,
+    .animate-float,
+    .animate-pulse-scale,
+    .icon-spin,
+    .icon-spin-slow {
+      animation: none !important;
+    }
+  }
 }

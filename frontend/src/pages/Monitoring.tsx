@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
   Calendar,
@@ -30,7 +31,31 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui';
+import { CardSkeleton } from '@/components/ui/TypingIndicator';
+import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+  },
+};
+
+const tabVariants = {
+  inactive: { opacity: 0.6 },
+  active: { opacity: 1, scale: 1.02 },
+};
 
 type ScheduleFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly';
 type ScheduleStatus = 'active' | 'paused' | 'disabled';
@@ -323,14 +348,27 @@ export function Monitoring() {
   const isLoading = statsLoading || schedulesLoading || alertsLoading || channelsLoading;
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Monitoring & Alerts</h1>
-        <p className="text-muted-foreground">
+      <motion.div variants={itemVariants}>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold neon-text">
+            MONITORING<span className="text-primary">CENTER</span>
+          </h1>
+          <div className="realtime-pulse flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs text-green-400 font-medium">LIVE</span>
+          </div>
+        </div>
+        <p className="text-muted-foreground mt-1">
           Schedule automated assessments and manage notifications
         </p>
-      </div>
+      </motion.div>
 
       {/* Create Schedule Modal */}
       <Dialog open={showCreateScheduleModal} onOpenChange={setShowCreateScheduleModal}>
@@ -529,7 +567,7 @@ export function Monitoring() {
       </Dialog>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-4">
         <StatCard
           title="Active Schedules"
           value={dashboardStats.active_schedules}
@@ -558,55 +596,99 @@ export function Monitoring() {
           className="border-l-4 border-l-purple-500"
           isLoading={isLoading}
         />
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="border-b">
+      <motion.div variants={itemVariants} className="border-b">
         <nav className="-mb-px flex gap-4">
           {(['schedules', 'alerts', 'channels'] as const).map((tab) => (
-            <button
+            <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}
+              variants={tabVariants}
+              animate={activeTab === tab ? 'active' : 'inactive'}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               className={cn(
-                'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
+                'relative border-b-2 px-4 py-2 text-sm font-medium transition-colors',
                 activeTab === tab
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               )}
             >
-              {tab === 'schedules' && 'Schedules'}
-              {tab === 'alerts' && `Alerts (${dashboardStats.open_alerts})`}
-              {tab === 'channels' && 'Notification Channels'}
-            </button>
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="tab-active-indicator"
+                  className="absolute inset-0 bg-primary/10 rounded-t-lg"
+                  initial={false}
+                  transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">
+                {tab === 'schedules' && 'Schedules'}
+                {tab === 'alerts' && (
+                  <>
+                    Alerts (<AnimatedCounter value={dashboardStats.open_alerts} duration={1} />)
+                  </>
+                )}
+                {tab === 'channels' && 'Notification Channels'}
+              </span>
+            </motion.button>
           ))}
         </nav>
-      </div>
+      </motion.div>
 
       {/* Tab Content */}
-      {activeTab === 'schedules' && (
-        <SchedulesTab
-          schedules={schedules || []}
-          isLoading={schedulesLoading}
-          onAddSchedule={() => setShowCreateScheduleModal(true)}
-        />
-      )}
-      {activeTab === 'alerts' && (
-        <AlertsTab
-          alerts={alerts}
-          isLoading={alertsLoading}
-          onAlertClick={handleAlertClick}
-        />
-      )}
-      {activeTab === 'channels' && (
-        <ChannelsTab
-          channels={channels || []}
-          isLoading={channelsLoading}
-          onAddChannel={() => setShowCreateChannelModal(true)}
-          onTestChannel={(id) => testChannelMutation.mutate(id)}
-          testingChannelId={testChannelMutation.isPending ? testingChannelId ?? undefined : undefined}
-        />
-      )}
-    </div>
+      <AnimatePresence mode="wait">
+        {activeTab === 'schedules' && (
+          <motion.div
+            key="schedules"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <SchedulesTab
+              schedules={schedules || []}
+              isLoading={schedulesLoading}
+              onAddSchedule={() => setShowCreateScheduleModal(true)}
+            />
+          </motion.div>
+        )}
+        {activeTab === 'alerts' && (
+          <motion.div
+            key="alerts"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <AlertsTab
+              alerts={alerts}
+              isLoading={alertsLoading}
+              onAlertClick={handleAlertClick}
+            />
+          </motion.div>
+        )}
+        {activeTab === 'channels' && (
+          <motion.div
+            key="channels"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChannelsTab
+              channels={channels || []}
+              isLoading={channelsLoading}
+              onAddChannel={() => setShowCreateChannelModal(true)}
+              onTestChannel={(id) => testChannelMutation.mutate(id)}
+              testingChannelId={testChannelMutation.isPending ? testingChannelId ?? undefined : undefined}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -621,8 +703,10 @@ function SchedulesTab({
 }) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
@@ -707,8 +791,10 @@ function AlertsTab({
 }) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
@@ -726,17 +812,30 @@ function AlertsTab({
   }
 
   return (
-    <div className="rounded-lg border bg-card">
+    <motion.div
+      className="rounded-lg border bg-card glass-panel-liquid"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="divide-y">
-        {alerts.map((alert) => {
+        {alerts.map((alert, index) => {
           const StatusIcon = alertStatusIcons[alert.status];
+          const isHighSeverity = alert.severity === 'critical' || alert.severity === 'high';
           return (
-            <div
+            <motion.div
               key={alert.id}
-              className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer"
+              variants={itemVariants}
+              custom={index}
+              whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.05)' }}
+              whileTap={{ scale: 0.99 }}
+              className={cn(
+                'flex items-center gap-4 p-4 cursor-pointer transition-colors',
+                isHighSeverity && 'warning-pulse'
+              )}
               onClick={() => onAlertClick(alert)}
             >
-              <div
+              <motion.div
                 className={cn(
                   'flex h-10 w-10 items-center justify-center rounded-lg',
                   alert.severity === 'critical' && 'bg-red-100',
@@ -745,6 +844,8 @@ function AlertsTab({
                   alert.severity === 'low' && 'bg-green-100',
                   alert.severity === 'info' && 'bg-blue-100'
                 )}
+                whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ duration: 0.5 }}
               >
                 <Bell
                   className={cn(
@@ -756,18 +857,20 @@ function AlertsTab({
                     alert.severity === 'info' && 'text-blue-600'
                   )}
                 />
-              </div>
+              </motion.div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-medium text-foreground truncate">{alert.title}</h3>
-                  <span
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
                     className={cn(
                       'rounded border px-2 py-0.5 text-xs font-medium capitalize',
                       severityColors[alert.severity]
                     )}
                   >
                     {alert.severity}
-                  </span>
+                  </motion.span>
                 </div>
                 <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                   <span>{new Date(alert.created_at).toLocaleString()}</span>
@@ -777,12 +880,17 @@ function AlertsTab({
                 <StatusIcon className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground capitalize">{alert.status}</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-            </div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                transition={{ type: 'spring' as const, stiffness: 300 }}
+              >
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </motion.div>
+            </motion.div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -801,8 +909,9 @@ function ChannelsTab({
 }) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
@@ -888,19 +997,30 @@ function StatCard({
   isLoading?: boolean;
 }) {
   return (
-    <div className={cn('rounded-lg border bg-card p-4', className)}>
+    <motion.div
+      className={cn('rounded-lg border bg-card p-4 glass-panel-liquid', className)}
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
+    >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
           {isLoading ? (
             <div className="mt-1 h-8 w-12 animate-pulse rounded bg-muted"></div>
           ) : (
-            <p className="mt-1 text-2xl font-bold">{value}</p>
+            <p className="mt-1 text-2xl font-bold">
+              <AnimatedCounter value={value} duration={1.5} />
+            </p>
           )}
         </div>
-        <Icon className="h-8 w-8 text-muted-foreground/50" />
+        <motion.div
+          whileHover={{ rotate: 15 }}
+          transition={{ type: 'spring' as const, stiffness: 200 }}
+        >
+          <Icon className="h-8 w-8 text-muted-foreground/50" />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

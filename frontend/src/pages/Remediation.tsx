@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ClipboardList,
   Clock,
@@ -23,7 +24,26 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui';
+import { CardSkeleton } from '@/components/ui/TypingIndicator';
+import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+  },
+};
 
 type TaskStatus =
   | 'draft'
@@ -222,20 +242,45 @@ export function Remediation() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Remediation Workflow</h1>
-          <p className="text-muted-foreground">
-            Track and manage security finding remediation tasks
-          </p>
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold neon-text">Remediation Workflow</h1>
+              <motion.div
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30"
+                animate={{ opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <motion.span
+                  className="w-2 h-2 rounded-full bg-emerald-500"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <span className="text-xs text-emerald-400 font-medium">
+                  <AnimatedCounter value={dashboardStats.open_tasks} duration={1} /> Active
+                </span>
+              </motion.div>
+            </div>
+            <p className="text-muted-foreground">
+              Track and manage security finding remediation tasks
+            </p>
+          </div>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Task
-        </Button>
-      </div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Task
+          </Button>
+        </motion.div>
+      </motion.div>
 
       {/* Create Task Modal */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
@@ -478,7 +523,7 @@ export function Remediation() {
       </Dialog>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-4">
         <StatCard
           title="Total Tasks"
           value={dashboardStats.total_tasks}
@@ -499,6 +544,7 @@ export function Remediation() {
           icon={AlertTriangle}
           className="border-l-4 border-l-red-500"
           isLoading={isLoading}
+          isWarning
         />
         <StatCard
           title="SLA Breached"
@@ -506,17 +552,20 @@ export function Remediation() {
           icon={CheckCircle}
           className="border-l-4 border-l-orange-500"
           isLoading={isLoading}
+          isWarning
         />
-      </div>
+      </motion.div>
 
       {/* Filter Bar */}
-      <div className="flex items-center gap-2">
+      <motion.div variants={itemVariants} className="flex items-center gap-2">
         <Filter className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Filter:</span>
         {(['all', 'in_progress', 'pending_review', 'assigned', 'closed'] as const).map((status) => (
-          <button
+          <motion.button
             key={status}
             onClick={() => setFilter(status)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className={cn(
               'rounded-full px-3 py-1 text-xs font-medium transition-colors',
               filter === status
@@ -525,18 +574,24 @@ export function Remediation() {
             )}
           >
             {status === 'all' ? 'All' : statusLabels[status]}
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Task List */}
-      <div className="rounded-lg border bg-card">
+      <motion.div variants={itemVariants} className="rounded-lg border bg-card glass-panel-liquid">
         {tasksLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <div className="p-4 space-y-4">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
           </div>
         ) : tasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-12"
+          >
             <ClipboardList className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No tasks found</h3>
             <p className="text-muted-foreground text-center mb-4">
@@ -544,69 +599,96 @@ export function Remediation() {
                 ? 'Create your first remediation task to get started.'
                 : `No tasks with status "${statusLabels[filter as TaskStatus]}".`}
             </p>
-            <Button onClick={() => setShowCreateModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Task
-            </Button>
-          </div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button onClick={() => setShowCreateModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                New Task
+              </Button>
+            </motion.div>
+          </motion.div>
         ) : (
-          <div className="divide-y">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center gap-4 p-4 hover:bg-muted/50 cursor-pointer"
-                onClick={() => handleTaskClick(task)}
-              >
-                <div
-                  className={cn('w-1 h-12 rounded-full', {
-                    'bg-red-500': task.priority === 'critical',
-                    'bg-orange-500': task.priority === 'high',
-                    'bg-yellow-500': task.priority === 'medium',
-                    'bg-green-500': task.priority === 'low',
-                  })}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground truncate">{task.title}</h3>
-                    <span
-                      className={cn(
-                        'rounded-full px-2 py-0.5 text-xs font-medium',
-                        statusColors[task.status]
-                      )}
-                    >
-                      {statusLabels[task.status]}
-                    </span>
-                    {task.sla_breached && (
-                      <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                        SLA Breached
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                    {task.due_date && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Due: {new Date(task.due_date).toLocaleDateString()}
-                      </span>
-                    )}
-                    <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <span
+          <AnimatePresence mode="popLayout">
+            <div className="divide-y divide-border/50">
+              {tasks.map((task, index) => (
+                <motion.div
+                  key={task.id}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ y: -4, scale: 1.01 }}
                   className={cn(
-                    'rounded border px-2 py-0.5 text-xs font-medium capitalize',
-                    priorityColors[task.priority]
+                    'flex items-center gap-4 p-4 cursor-pointer transition-colors',
+                    'hover:bg-muted/50',
+                    task.sla_breached && 'sla-breach-pulse'
                   )}
+                  onClick={() => handleTaskClick(task)}
                 >
-                  {task.priority}
-                </span>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-              </div>
-            ))}
-          </div>
+                  <motion.div
+                    className={cn('w-1 h-12 rounded-full', {
+                      'bg-red-500': task.priority === 'critical',
+                      'bg-orange-500': task.priority === 'high',
+                      'bg-yellow-500': task.priority === 'medium',
+                      'bg-green-500': task.priority === 'low',
+                    })}
+                    layoutId={`priority-${task.id}`}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium text-foreground truncate">{task.title}</h3>
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className={cn(
+                          'rounded-full px-2 py-0.5 text-xs font-medium',
+                          statusColors[task.status]
+                        )}
+                      >
+                        {statusLabels[task.status]}
+                      </motion.span>
+                      {task.sla_breached && (
+                        <motion.span
+                          animate={{ opacity: [1, 0.6, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                          className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700"
+                        >
+                          SLA Breached
+                        </motion.span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                      {task.due_date && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Due: {new Date(task.due_date).toLocaleDateString()}
+                        </span>
+                      )}
+                      <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <motion.span
+                    whileHover={{ scale: 1.1 }}
+                    className={cn(
+                      'rounded border px-2 py-0.5 text-xs font-medium capitalize',
+                      priorityColors[task.priority]
+                    )}
+                  >
+                    {task.priority}
+                  </motion.span>
+                  <motion.div
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </AnimatePresence>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -616,27 +698,50 @@ function StatCard({
   icon: Icon,
   className,
   isLoading,
+  isWarning,
 }: {
   title: string;
   value: number;
   icon: React.ElementType;
   className?: string;
   isLoading?: boolean;
+  isWarning?: boolean;
 }) {
   return (
-    <div className={cn('rounded-lg border bg-card p-4', className)}>
+    <motion.div
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
+      className={cn(
+        'rounded-lg border bg-card p-4 glass-panel-liquid',
+        isWarning && value > 0 && 'sla-breach-pulse',
+        className
+      )}
+    >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
           {isLoading ? (
             <div className="mt-1 h-8 w-12 animate-pulse rounded bg-muted"></div>
           ) : (
-            <p className="mt-1 text-2xl font-bold">{value}</p>
+            <motion.p
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring' as const, stiffness: 200, damping: 15 }}
+              className="mt-1 text-2xl font-bold"
+            >
+              <AnimatedCounter value={value} duration={1.5} />
+            </motion.p>
           )}
         </div>
-        <Icon className="h-8 w-8 text-muted-foreground/50" />
+        <motion.div
+          initial={{ rotate: -180, opacity: 0 }}
+          animate={{ rotate: 0, opacity: 1 }}
+          transition={{ type: 'spring' as const, stiffness: 200, damping: 15, delay: 0.2 }}
+        >
+          <Icon className="h-8 w-8 text-muted-foreground/50" />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Search, FileText, MoreVertical, CheckCircle, Clock, AlertCircle, Loader2, Download, Trash2 } from 'lucide-react';
 import {
   Button,
@@ -14,8 +15,27 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui';
+import { CardSkeleton } from '@/components/ui/TypingIndicator';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import type { DocumentStatus, DocumentType } from '@/types/api';
+
+// Framer Motion variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { x: -20, opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+  },
+};
 
 // Backend returns snake_case, so define the actual response type
 interface BackendDocument {
@@ -199,11 +219,34 @@ export function Documents() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6 pb-8"
+    >
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold">Documents</h1>
-          <p className="text-muted-foreground">Upload and manage security reports</p>
+          <h1 className="text-5xl font-bold tracking-tighter text-white neon-text mb-2">
+            DOCUMENT<span className="text-primary">VAULT</span>
+          </h1>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <motion.span
+                className="w-2 h-2 rounded-full bg-green-500"
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              AI ANALYSIS READY
+            </span>
+            <span className="text-white/10">|</span>
+            <span className="font-mono text-primary/80">
+              {documents.length} DOCUMENTS
+            </span>
+          </div>
         </div>
         <div>
           <input
@@ -214,12 +257,17 @@ export function Documents() {
             multiple
             onChange={handleFileSelect}
           />
-          <Button onClick={() => document.getElementById('header-upload')?.click()}>
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Document
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={() => document.getElementById('header-upload')?.click()}
+              className="bg-primary/20 border border-primary/50 hover:bg-primary/30 hover:glow-teal transition-all duration-300"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Document
+            </Button>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
@@ -243,16 +291,24 @@ export function Documents() {
       </Dialog>
 
       {/* Upload Zone */}
-      <div
-        className={`mb-6 border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          isDragging ? 'border-primary bg-primary/5' : 'border-border'
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className={`upload-zone rounded-2xl p-8 text-center transition-all duration-300 ${
+          isDragging ? 'drag-active' : ''
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <Upload className={`h-10 w-10 mx-auto mb-4 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
-        <p className="text-lg font-medium mb-1">
+        <motion.div
+          animate={isDragging ? { scale: 1.1, y: -5 } : { scale: 1, y: 0 }}
+          transition={{ type: 'spring' as const, stiffness: 300 }}
+        >
+          <Upload className={`h-10 w-10 mx-auto mb-4 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
+        </motion.div>
+        <p className="text-lg font-medium mb-1 text-white">
           {isDragging ? 'Drop files here' : 'Drag and drop files here'}
         </p>
         <p className="text-sm text-muted-foreground mb-4">
@@ -267,11 +323,15 @@ export function Documents() {
             multiple
             onChange={handleFileSelect}
           />
-          <Button variant="outline" onClick={() => document.getElementById('dropzone-upload')?.click()}>
+          <Button
+            variant="outline"
+            onClick={() => document.getElementById('dropzone-upload')?.click()}
+            className="bg-white/5 border-white/10 hover:border-primary/50 hover:bg-primary/10"
+          >
             Browse files
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {uploadError && (
         <div className="mb-6 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
@@ -303,87 +363,128 @@ export function Documents() {
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="h-10 w-10 bg-muted rounded"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded w-1/3"></div>
-                  <div className="h-3 bg-muted rounded w-1/4"></div>
-                </div>
-              </CardContent>
-            </Card>
+            <CardSkeleton key={i} />
           ))}
         </div>
       ) : documents.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No documents yet</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Upload your first security report to get started.
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <Card className="glass-panel-liquid">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+              </motion.div>
+              <h3 className="text-lg font-medium mb-2 text-white">No documents yet</h3>
+              <p className="text-muted-foreground text-center mb-4">
+                Upload your first security report to get started.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
-        <div className="space-y-2">
-          {documents.map((doc) => (
-            <Card key={doc.id} className="hover:shadow-sm transition-shadow">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded bg-primary/10">
-                  <FileText className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium truncate">{doc.filename}</p>
-                    {getStatusIcon(doc.status)}
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Badge variant="outline">{getDocTypeLabel(doc.document_type)}</Badge>
-                    <span>{formatFileSize(doc.file_size)}</span>
-                    {doc.page_count && <span>{doc.page_count} pages</span>}
-                    <span>{new Date(doc.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <div className="relative" ref={openMenuId === doc.id ? menuRef : null}>
-                  <button
-                    className="rounded-full p-2 hover:bg-accent"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenMenuId(openMenuId === doc.id ? null : doc.id);
-                    }}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
-                  {openMenuId === doc.id && (
-                    <div className="absolute right-0 top-full mt-1 w-40 rounded-md border bg-popover shadow-md z-50">
-                      <button
-                        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownload(doc);
-                        }}
-                      >
-                        <Download className="h-4 w-4" />
-                        Download
-                      </button>
-                      <button
-                        className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openDeleteModal(doc);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete
-                      </button>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-2"
+        >
+          <AnimatePresence mode="popLayout">
+            {documents.map((doc) => (
+              <motion.div
+                key={doc.id}
+                variants={itemVariants}
+                layout
+                whileHover={{ x: 4 }}
+                className="data-row-hover"
+              >
+                <Card className="glass-panel-liquid border-0">
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                        doc.status === 'analyzed' || doc.status === 'processed'
+                          ? 'bg-green-500/10 border border-green-500/30'
+                          : doc.status === 'failed'
+                          ? 'bg-red-500/10 border border-red-500/30'
+                          : 'bg-primary/10 border border-primary/30'
+                      }`}
+                    >
+                      <FileText className={`h-5 w-5 ${
+                        doc.status === 'analyzed' || doc.status === 'processed'
+                          ? 'text-green-500'
+                          : doc.status === 'failed'
+                          ? 'text-red-500'
+                          : 'text-primary'
+                      }`} />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium truncate text-white">{doc.filename}</p>
+                        {getStatusIcon(doc.status)}
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <Badge variant="outline" className="bg-white/5">{getDocTypeLabel(doc.document_type)}</Badge>
+                        <span>{formatFileSize(doc.file_size)}</span>
+                        {doc.page_count && <span>{doc.page_count} pages</span>}
+                        <span>{new Date(doc.created_at).toLocaleDateString()}</span>
+                      </div>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div className="relative" ref={openMenuId === doc.id ? menuRef : null}>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="rounded-full p-2 hover:bg-white/10 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === doc.id ? null : doc.id);
+                        }}
+                      >
+                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                      </motion.button>
+                      <AnimatePresence>
+                        {openMenuId === doc.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            className="absolute right-0 top-full mt-1 w-40 rounded-lg border border-white/10 bg-background/95 backdrop-blur shadow-xl z-50"
+                          >
+                            <button
+                              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors rounded-t-lg"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload(doc);
+                              }}
+                            >
+                              <Download className="h-4 w-4" />
+                              Download
+                            </button>
+                            <button
+                              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-b-lg"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDeleteModal(doc);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
