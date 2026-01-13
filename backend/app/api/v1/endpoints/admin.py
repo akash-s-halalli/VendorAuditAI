@@ -11,9 +11,17 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
+from app.models.agent import Agent, AgentTask, AgentLog, TaskStatus, TaskType, LogLevel
+from app.models.audit_log import AuditLog, AuditAction
 from app.models.chunk import DocumentChunk
 from app.models.document import Document, DocumentStatus, DocumentType, ProcessingStage
 from app.models.finding import AnalysisRun, Finding, FindingSeverity, FindingStatus
+from app.models.monitoring import (
+    MonitoringSchedule, ScheduledRun, AlertRule, Alert, NotificationChannel,
+    ScheduleFrequency, ScheduleStatus, AlertSeverity, AlertStatus, NotificationChannelType
+)
+from app.models.query import ConversationThread, QueryHistory, QueryStatus
+from app.models.remediation import RemediationTask, RemediationComment, SLAPolicy, RemediationStatus, RemediationPriority
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus, VendorTier
 from app.scripts.sample_content import get_document_content
@@ -30,6 +38,19 @@ class SeedResponse(BaseModel):
     chunks_created: int
     analysis_runs_created: int
     findings_created: int
+    remediation_tasks_created: int = 0
+    remediation_comments_created: int = 0
+    sla_policies_created: int = 0
+    schedules_created: int = 0
+    scheduled_runs_created: int = 0
+    alert_rules_created: int = 0
+    alerts_created: int = 0
+    notification_channels_created: int = 0
+    audit_logs_created: int = 0
+    agent_tasks_created: int = 0
+    agent_logs_created: int = 0
+    conversations_created: int = 0
+    queries_created: int = 0
 
 
 # Demo data definitions
@@ -66,6 +87,177 @@ DEMO_DOCUMENTS = [
     {"vendor": "Datadog", "filename": "Datadog_ISO27001_Cert.pdf", "doc_type": "iso27001", "pages": 6, "size": 520000},
     {"vendor": "Notion", "filename": "Notion_SIG_Lite.pdf", "doc_type": "sig_lite", "pages": 28, "size": 890000},
     {"vendor": "DocuSign", "filename": "DocuSign_SIG_Core.pdf", "doc_type": "sig_core", "pages": 198, "size": 1650000},
+]
+
+# Remediation demo data
+DEMO_SLA_POLICIES = [
+    {"name": "Default SLA Policy", "critical_days": 3, "high_days": 7, "medium_days": 30, "low_days": 90, "is_default": True},
+    {"name": "Expedited SLA Policy", "critical_days": 1, "high_days": 3, "medium_days": 14, "low_days": 30, "is_default": False},
+]
+
+DEMO_REMEDIATION_TASKS = [
+    {"title": "Implement MFA for Admin Access", "status": "in_progress", "priority": "critical", "sla_days": 3},
+    {"title": "Deploy Encryption at Rest Solution", "status": "in_progress", "priority": "critical", "sla_days": 3},
+    {"title": "Create Incident Response Plan", "status": "assigned", "priority": "critical", "sla_days": 3},
+    {"title": "Upgrade TLS Configuration", "status": "in_progress", "priority": "high", "sla_days": 7},
+    {"title": "Enhance Access Logging", "status": "pending_review", "priority": "high", "sla_days": 7},
+    {"title": "Update Subprocessor Disclosure", "status": "assigned", "priority": "high", "sla_days": 7},
+    {"title": "Strengthen Password Policy", "status": "pending_assignment", "priority": "high", "sla_days": 7},
+    {"title": "Document Data Retention Policy", "status": "pending_review", "priority": "medium", "sla_days": 30},
+    {"title": "Develop BCP/DR Plan", "status": "pending_assignment", "priority": "medium", "sla_days": 30},
+    {"title": "Patch Critical Vulnerabilities", "status": "pending_verification", "priority": "high", "sla_days": 7},
+    {"title": "Configure Session Timeouts", "status": "verified", "priority": "medium", "sla_days": 30},
+    {"title": "Implement Security Training", "status": "verified", "priority": "medium", "sla_days": 30},
+    {"title": "Add API Rate Limiting", "status": "closed", "priority": "low", "sla_days": 90},
+    {"title": "Add Security Headers", "status": "closed", "priority": "low", "sla_days": 90},
+    {"title": "Fix Verbose Errors", "status": "draft", "priority": "low", "sla_days": 90},
+]
+
+DEMO_TASK_COMMENTS = [
+    "Initial assessment completed. This is a critical priority item.",
+    "Reviewing vendor documentation for compliance requirements.",
+    "Implementation plan drafted and awaiting approval.",
+    "Technical team assigned to work on this task.",
+    "Progress update: 50% complete, on track for deadline.",
+    "Awaiting additional information from vendor.",
+    "Testing in progress, initial results look promising.",
+    "Escalated to security team for review.",
+    "Blocked: waiting for infrastructure team availability.",
+    "Completed internal review, ready for verification.",
+    "Successfully deployed to staging environment.",
+    "Final testing completed, ready for production.",
+    "Verified in production, closing task.",
+    "Documentation updated with new procedures.",
+    "Training materials prepared for team.",
+]
+
+# Monitoring demo data
+DEMO_SCHEDULES = [
+    {"name": "Weekly SOC 2 Compliance Check", "frequency": "weekly", "status": "active", "framework": "soc2"},
+    {"name": "Monthly ISO 27001 Assessment", "frequency": "monthly", "status": "active", "framework": "iso27001"},
+    {"name": "Bi-weekly Vendor Risk Review", "frequency": "biweekly", "status": "paused", "framework": None},
+    {"name": "Daily Security Posture Monitor", "frequency": "daily", "status": "active", "framework": None},
+    {"name": "Quarterly PCI DSS Audit", "frequency": "quarterly", "status": "active", "framework": "pci_dss"},
+]
+
+DEMO_ALERT_RULES = [
+    {"name": "Critical Finding Detected", "trigger_type": "finding_severity", "severity": "critical", "threshold": 1},
+    {"name": "SLA Breach Warning", "trigger_type": "sla_breach", "severity": "high", "threshold": 1},
+    {"name": "Document Processing Failed", "trigger_type": "processing_error", "severity": "medium", "threshold": 3},
+    {"name": "High Risk Vendor Detected", "trigger_type": "risk_threshold", "severity": "high", "threshold": 85},
+    {"name": "Compliance Gap Identified", "trigger_type": "compliance_gap", "severity": "medium", "threshold": 2},
+]
+
+DEMO_ALERTS = [
+    {"title": "Critical SQL Injection Finding", "status": "new", "severity": "critical", "message": "SQL injection vulnerability identified in Stripe API integration."},
+    {"title": "SLA Breach: Admin MFA Task", "status": "new", "severity": "high", "message": "Remediation task 'Implement MFA for Admin Access' has exceeded SLA."},
+    {"title": "High Risk Score: AWS", "status": "new", "severity": "high", "message": "AWS vendor risk score increased to 92, exceeding threshold."},
+    {"title": "Document Upload Failed", "status": "acknowledged", "severity": "medium", "message": "Failed to process Okta_SOC2_Report.pdf after 3 attempts."},
+    {"title": "Multiple Medium Findings", "status": "acknowledged", "severity": "medium", "message": "5 new medium severity findings detected in latest analysis."},
+    {"title": "SLA Warning: TLS Upgrade", "status": "acknowledged", "severity": "high", "message": "TLS upgrade task approaching SLA deadline (2 days remaining)."},
+    {"title": "Compliance Gap: Access Controls", "status": "acknowledged", "severity": "low", "message": "Minor gap identified in access control documentation."},
+    {"title": "New Vendor Assessment Due", "status": "in_progress", "severity": "medium", "message": "OpenAI vendor assessment due in 14 days."},
+    {"title": "Subprocessor Change Detected", "status": "in_progress", "severity": "medium", "message": "Snowflake added new subprocessor requiring review."},
+    {"title": "Backup Verification Needed", "status": "in_progress", "severity": "low", "message": "Quarterly backup verification for GitHub integration due."},
+    {"title": "Resolved: Encryption Finding", "status": "resolved", "severity": "high", "message": "Encryption at rest finding has been remediated."},
+    {"title": "Resolved: Access Logging", "status": "resolved", "severity": "medium", "message": "Access logging gaps have been addressed."},
+]
+
+DEMO_NOTIFICATION_CHANNELS = [
+    {"name": "Security Team Email", "channel_type": "email", "status": "active", "config": {"email": "security@company.com"}},
+    {"name": "#security-alerts Slack", "channel_type": "slack", "status": "active", "config": {"webhook_url": "https://hooks.slack.com/services/xxx"}},
+    {"name": "PagerDuty Webhook", "channel_type": "webhook", "status": "inactive", "config": {"url": "https://events.pagerduty.com/integration/xxx"}},
+]
+
+# Audit log demo data
+DEMO_AUDIT_ACTIONS = [
+    {"action": "LOGIN", "resource_type": "session", "details": "User logged in successfully"},
+    {"action": "LOGIN", "resource_type": "session", "details": "User logged in from new device"},
+    {"action": "CREATE", "resource_type": "vendor", "details": "Created new vendor: Stripe"},
+    {"action": "CREATE", "resource_type": "vendor", "details": "Created new vendor: AWS"},
+    {"action": "CREATE", "resource_type": "document", "details": "Uploaded SOC 2 Report"},
+    {"action": "CREATE", "resource_type": "document", "details": "Uploaded ISO 27001 Certificate"},
+    {"action": "CREATE", "resource_type": "finding", "details": "Analysis generated 5 findings"},
+    {"action": "UPDATE", "resource_type": "finding", "details": "Finding status changed to acknowledged"},
+    {"action": "UPDATE", "resource_type": "finding", "details": "Finding assigned to security team"},
+    {"action": "STATUS_CHANGE", "resource_type": "remediation", "details": "Task moved to in_progress"},
+    {"action": "STATUS_CHANGE", "resource_type": "remediation", "details": "Task completed and verified"},
+    {"action": "STATUS_CHANGE", "resource_type": "vendor", "details": "Vendor tier changed to critical"},
+    {"action": "EXPORT", "resource_type": "report", "details": "Exported compliance report PDF"},
+    {"action": "EXPORT", "resource_type": "findings", "details": "Exported findings to CSV"},
+    {"action": "LOGIN_FAILED", "resource_type": "session", "details": "Failed login attempt"},
+    {"action": "PERMISSION_CHANGE", "resource_type": "user", "details": "User role updated to admin"},
+    {"action": "CONFIG_CHANGE", "resource_type": "settings", "details": "Updated notification preferences"},
+    {"action": "BULK_OPERATION", "resource_type": "findings", "details": "Bulk acknowledged 10 findings"},
+    {"action": "CREATE", "resource_type": "alert_rule", "details": "Created new alert rule"},
+    {"action": "DELETE", "resource_type": "document", "details": "Deleted outdated document"},
+]
+
+# Agent demo data
+DEMO_AGENT_TASKS = [
+    {"agent_name": "Sentinel Prime", "task_type": "scan", "status": "completed", "items": 12, "findings": 4},
+    {"agent_name": "Sentinel Prime", "task_type": "monitor", "status": "completed", "items": 50, "findings": 2},
+    {"agent_name": "Sentinel Prime", "task_type": "scan", "status": "completed", "items": 8, "findings": 1},
+    {"agent_name": "Sentinel Prime", "task_type": "monitor", "status": "completed", "items": 45, "findings": 3},
+    {"agent_name": "Sentinel Prime", "task_type": "scan", "status": "completed", "items": 15, "findings": 5},
+    {"agent_name": "Sentinel Prime", "task_type": "monitor", "status": "running", "items": 0, "findings": 0},
+    {"agent_name": "Vector Analyst", "task_type": "analyze", "status": "completed", "items": 25, "findings": 8},
+    {"agent_name": "Vector Analyst", "task_type": "report", "status": "completed", "items": 30, "findings": 0},
+    {"agent_name": "Vector Analyst", "task_type": "analyze", "status": "completed", "items": 18, "findings": 6},
+    {"agent_name": "Vector Analyst", "task_type": "analyze", "status": "completed", "items": 22, "findings": 5},
+    {"agent_name": "Vector Analyst", "task_type": "report", "status": "pending", "items": 0, "findings": 0},
+    {"agent_name": "Watchdog Zero", "task_type": "scan", "status": "completed", "items": 100, "findings": 12},
+    {"agent_name": "Watchdog Zero", "task_type": "audit", "status": "completed", "items": 75, "findings": 8},
+    {"agent_name": "Watchdog Zero", "task_type": "scan", "status": "completed", "items": 88, "findings": 10},
+    {"agent_name": "Watchdog Zero", "task_type": "audit", "status": "completed", "items": 60, "findings": 5},
+    {"agent_name": "Watchdog Zero", "task_type": "scan", "status": "failed", "items": 10, "findings": 0},
+    {"agent_name": "Audit Core", "task_type": "audit", "status": "completed", "items": 40, "findings": 15},
+    {"agent_name": "Audit Core", "task_type": "report", "status": "completed", "items": 55, "findings": 0},
+    {"agent_name": "Audit Core", "task_type": "audit", "status": "completed", "items": 35, "findings": 12},
+    {"agent_name": "Audit Core", "task_type": "audit", "status": "running", "items": 20, "findings": 4},
+]
+
+DEMO_AGENT_LOGS = [
+    {"agent_name": "Sentinel Prime", "level": "info", "message": "Starting vendor risk scan"},
+    {"agent_name": "Sentinel Prime", "level": "info", "message": "Scanning 12 vendors for compliance gaps"},
+    {"agent_name": "Sentinel Prime", "level": "warning", "message": "Vendor AWS has elevated risk score"},
+    {"agent_name": "Sentinel Prime", "level": "info", "message": "Scan completed: 4 issues found"},
+    {"agent_name": "Sentinel Prime", "level": "info", "message": "Monitoring SOC 2 compliance status"},
+    {"agent_name": "Sentinel Prime", "level": "warning", "message": "Stripe SOC 2 report expires in 30 days"},
+    {"agent_name": "Vector Analyst", "level": "info", "message": "Analyzing document: AWS_SOC2_Type_II.pdf"},
+    {"agent_name": "Vector Analyst", "level": "info", "message": "Extracted 156 pages, generating embeddings"},
+    {"agent_name": "Vector Analyst", "level": "info", "message": "Analysis complete: 8 findings identified"},
+    {"agent_name": "Vector Analyst", "level": "warning", "message": "High confidence finding: Missing MFA"},
+    {"agent_name": "Watchdog Zero", "level": "info", "message": "Starting security posture assessment"},
+    {"agent_name": "Watchdog Zero", "level": "info", "message": "Scanning 100 endpoints"},
+    {"agent_name": "Watchdog Zero", "level": "error", "message": "Connection timeout to vendor API"},
+    {"agent_name": "Watchdog Zero", "level": "info", "message": "Retrying connection with backoff"},
+    {"agent_name": "Watchdog Zero", "level": "info", "message": "Audit completed successfully"},
+    {"agent_name": "Audit Core", "level": "info", "message": "Generating compliance report"},
+    {"agent_name": "Audit Core", "level": "info", "message": "Comparing against ISO 27001 framework"},
+    {"agent_name": "Audit Core", "level": "warning", "message": "Gap detected in access control policy"},
+    {"agent_name": "Audit Core", "level": "info", "message": "Report generated: 15 recommendations"},
+    {"agent_name": "Audit Core", "level": "info", "message": "Sending notification to security team"},
+]
+
+# Query demo data
+DEMO_CONVERSATIONS = [
+    {"title": "Critical Findings Investigation", "message_count": 4},
+    {"title": "AWS Security Assessment", "message_count": 3},
+    {"title": "Compliance Gap Analysis", "message_count": 5},
+]
+
+DEMO_QUERIES = [
+    {"question": "What are the critical findings across all vendors?", "answer": "Based on my analysis of your vendor documents, I found 3 critical findings: 1) Missing MFA for Admin Access affecting AWS and Okta, 2) Encryption at Rest Not Implemented affecting Stripe payment processing, 3) No Incident Response Plan affecting multiple vendors. These require immediate attention.", "confidence": 0.94, "chunks": 5},
+    {"question": "Which vendors lack SOC 2 certification?", "answer": "Looking at your vendor portfolio, the following vendors do not have SOC 2 Type II reports on file: Notion, Calendly, and DocuSign. However, DocuSign has submitted a SIG Core questionnaire which provides some security assurance.", "confidence": 0.91, "chunks": 4},
+    {"question": "Show me encryption-related gaps", "answer": "I identified 4 encryption-related gaps: 1) Stripe - Encryption at Rest Not Implemented for payment data, 2) Snowflake - Outdated TLS Version 1.1 still enabled, 3) OpenAI - No documented key rotation policy, 4) GitHub - Cookie Missing Secure Flag for session management.", "confidence": 0.88, "chunks": 6},
+    {"question": "What is AWS's risk score and why?", "answer": "AWS has a risk score of 78/100 (High Risk). Contributing factors include: 1) Critical finding for Missing MFA (40 points), 2) High finding for Outdated TLS Version (20 points), 3) Medium findings for Session Timeout and API Rate Limiting (18 points). Their SOC 2 Type II report was analyzed and showed strong controls in most areas.", "confidence": 0.92, "chunks": 8},
+    {"question": "List all high-severity findings", "answer": "There are 7 high-severity findings across your vendors: 1) Outdated TLS Version (AWS), 2) Insufficient Access Logging (Okta), 3) Undisclosed Subprocessor (Snowflake), 4) Weak Password Policy (Stripe), 5) No Data Retention Policy (OpenAI), 6) Missing BCP/DR Plan (GitHub), 7) Unpatched Vulnerabilities (Datadog).", "confidence": 0.95, "chunks": 7},
+    {"question": "What controls does Stripe have for data protection?", "answer": "Based on Stripe's SOC 2 report, they implement: 1) AES-256 encryption for data at rest, 2) TLS 1.3 for data in transit, 3) PCI DSS Level 1 compliance, 4) Multi-region data replication, 5) Access controls with MFA for all employees. However, a gap was noted in encryption at rest for certain legacy systems.", "confidence": 0.89, "chunks": 5},
+    {"question": "How many vendors need immediate attention?", "answer": "3 vendors require immediate attention based on critical findings: 1) AWS - Missing MFA for Admin Access, 2) Stripe - Encryption at Rest issue, 3) Okta - No documented Incident Response Plan. I recommend prioritizing AWS and Stripe as they handle sensitive customer data.", "confidence": 0.93, "chunks": 4},
+    {"question": "Summarize Okta's security posture", "answer": "Okta's security posture is rated Medium-High with a risk score of 68/100. Positives: Strong SOC 2 Type II controls, good access management, comprehensive logging. Concerns: Missing documented incident response plan (critical), Insufficient access logging detail (high), Penetration test showed IDOR vulnerability (medium).", "confidence": 0.90, "chunks": 9},
+    {"question": "What is the remediation status for critical findings?", "answer": "Of 3 critical findings: 1) Missing MFA for Admin Access - In Progress (60% complete, due in 2 days), 2) Encryption at Rest - In Progress (implementation started, due in 3 days), 3) No Incident Response Plan - Assigned (documentation phase, due in 5 days). All are being actively worked on within SLA.", "confidence": 0.96, "chunks": 3},
+    {"question": "Compare Snowflake and AWS security controls", "answer": "Comparison: AWS has stronger network segmentation and DDoS protection, while Snowflake excels in data encryption and access controls. Both have SOC 2 Type II. Gaps: AWS missing MFA (critical), Snowflake has TLS 1.1 enabled (high) and undisclosed subprocessor (high). Overall: AWS risk score 78, Snowflake risk score 72.", "confidence": 0.87, "chunks": 10},
 ]
 
 DEMO_FINDINGS = [
@@ -118,8 +310,82 @@ async def seed_demo_data(
     """
     org_id = current_user.organization_id
 
-    # Clear existing data
-    # Delete findings first
+    # Clear ALL existing data in reverse FK order
+
+    # Delete query history first (FK to conversations)
+    result = await db.execute(select(QueryHistory).where(QueryHistory.organization_id == org_id))
+    for q in result.scalars().all():
+        await db.delete(q)
+
+    # Delete conversation threads
+    result = await db.execute(select(ConversationThread).where(ConversationThread.organization_id == org_id))
+    for conv in result.scalars().all():
+        await db.delete(conv)
+
+    # Delete agent logs (FK to tasks)
+    result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
+    agents = result.scalars().all()
+    for agent in agents:
+        log_result = await db.execute(select(AgentLog).where(AgentLog.agent_id == agent.id))
+        for log in log_result.scalars().all():
+            await db.delete(log)
+
+    # Delete agent tasks
+    for agent in agents:
+        task_result = await db.execute(select(AgentTask).where(AgentTask.agent_id == agent.id))
+        for task in task_result.scalars().all():
+            await db.delete(task)
+
+    # Delete audit logs
+    result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
+    for log in result.scalars().all():
+        await db.delete(log)
+
+    # Delete notification channels
+    result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
+    for channel in result.scalars().all():
+        await db.delete(channel)
+
+    # Delete alerts
+    result = await db.execute(select(Alert).where(Alert.organization_id == org_id))
+    for alert in result.scalars().all():
+        await db.delete(alert)
+
+    # Delete alert rules
+    result = await db.execute(select(AlertRule).where(AlertRule.organization_id == org_id))
+    for rule in result.scalars().all():
+        await db.delete(rule)
+
+    # Delete scheduled runs (FK to schedules)
+    result = await db.execute(select(MonitoringSchedule).where(MonitoringSchedule.organization_id == org_id))
+    schedules = result.scalars().all()
+    for schedule in schedules:
+        run_result = await db.execute(select(ScheduledRun).where(ScheduledRun.schedule_id == schedule.id))
+        for run in run_result.scalars().all():
+            await db.delete(run)
+
+    # Delete monitoring schedules
+    for schedule in schedules:
+        await db.delete(schedule)
+
+    # Delete remediation comments (FK to tasks)
+    result = await db.execute(select(RemediationTask).where(RemediationTask.organization_id == org_id))
+    tasks = result.scalars().all()
+    for task in tasks:
+        comment_result = await db.execute(select(RemediationComment).where(RemediationComment.task_id == task.id))
+        for comment in comment_result.scalars().all():
+            await db.delete(comment)
+
+    # Delete remediation tasks
+    for task in tasks:
+        await db.delete(task)
+
+    # Delete SLA policies
+    result = await db.execute(select(SLAPolicy).where(SLAPolicy.organization_id == org_id))
+    for policy in result.scalars().all():
+        await db.delete(policy)
+
+    # Delete findings
     result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
     for finding in result.scalars().all():
         await db.delete(finding)
@@ -129,7 +395,7 @@ async def seed_demo_data(
     for run in result.scalars().all():
         await db.delete(run)
 
-    # Delete chunks (need to get document IDs first)
+    # Delete chunks (FK to documents)
     result = await db.execute(select(Document).where(Document.organization_id == org_id))
     docs_to_delete = result.scalars().all()
     for doc in docs_to_delete:
@@ -138,8 +404,7 @@ async def seed_demo_data(
             await db.delete(chunk)
 
     # Delete documents
-    result = await db.execute(select(Document).where(Document.organization_id == org_id))
-    for doc in result.scalars().all():
+    for doc in docs_to_delete:
         await db.delete(doc)
 
     # Delete vendors
@@ -309,14 +574,407 @@ async def seed_demo_data(
 
     await db.commit()
 
+    # Get all findings for remediation tasks
+    result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
+    all_findings = result.scalars().all()
+
+    # Create SLA Policies
+    sla_policies_created = 0
+    sla_policy_map = {}
+    for policy_data in DEMO_SLA_POLICIES:
+        policy = SLAPolicy(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name=policy_data["name"],
+            critical_sla_days=policy_data["critical_days"],
+            high_sla_days=policy_data["high_days"],
+            medium_sla_days=policy_data["medium_days"],
+            low_sla_days=policy_data["low_days"],
+            is_default=policy_data["is_default"],
+            is_active=True,
+        )
+        db.add(policy)
+        sla_policy_map[policy_data["name"]] = policy
+        sla_policies_created += 1
+
+    await db.commit()
+
+    # Create Remediation Tasks
+    remediation_tasks_created = 0
+    task_objects = []
+    for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
+        # Link to a finding if available
+        finding = all_findings[i % len(all_findings)] if all_findings else None
+        vendor = random.choice(list(vendor_map.values()))
+
+        due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
+        created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
+
+        # Check if SLA is breached (for some older tasks)
+        sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
+
+        task = RemediationTask(
+            id=str(uuid4()),
+            organization_id=org_id,
+            finding_id=finding.id if finding else None,
+            vendor_id=vendor.id,
+            assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
+            title=task_data["title"],
+            description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
+            status=task_data["status"],
+            priority=task_data["priority"],
+            due_date=due_date,
+            sla_days=task_data["sla_days"],
+            sla_breached=sla_breached,
+            created_at=created_at,
+        )
+        db.add(task)
+        task_objects.append(task)
+        remediation_tasks_created += 1
+
+    await db.commit()
+
+    # Create Remediation Comments
+    remediation_comments_created = 0
+    for task in task_objects:
+        # Add 2-3 comments per task
+        num_comments = random.randint(2, 3)
+        for i in range(num_comments):
+            comment_text = random.choice(DEMO_TASK_COMMENTS)
+            comment = RemediationComment(
+                id=str(uuid4()),
+                task_id=task.id,
+                user_id=current_user.id,
+                content=comment_text,
+                created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23)),
+            )
+            db.add(comment)
+            remediation_comments_created += 1
+
+    await db.commit()
+
+    # Create Monitoring Schedules
+    schedules_created = 0
+    schedule_objects = []
+    freq_map = {
+        "daily": ScheduleFrequency.DAILY.value,
+        "weekly": ScheduleFrequency.WEEKLY.value,
+        "biweekly": ScheduleFrequency.BIWEEKLY.value,
+        "monthly": ScheduleFrequency.MONTHLY.value,
+        "quarterly": ScheduleFrequency.QUARTERLY.value,
+    }
+    status_map = {
+        "active": ScheduleStatus.ACTIVE.value,
+        "paused": ScheduleStatus.PAUSED.value,
+        "disabled": ScheduleStatus.DISABLED.value,
+    }
+
+    for sched_data in DEMO_SCHEDULES:
+        schedule = MonitoringSchedule(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name=sched_data["name"],
+            frequency=freq_map[sched_data["frequency"]],
+            status=status_map[sched_data["status"]],
+            framework=sched_data["framework"],
+            last_run=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
+            next_run=datetime.now(timezone.utc) + timedelta(days=random.randint(1, 7)) if sched_data["status"] == "active" else None,
+            config=json.dumps({"auto_analyze": True, "notify_on_complete": True}),
+        )
+        db.add(schedule)
+        schedule_objects.append(schedule)
+        schedules_created += 1
+
+    await db.commit()
+
+    # Create Scheduled Runs
+    scheduled_runs_created = 0
+    for schedule in schedule_objects:
+        # Create 2-3 runs per schedule
+        num_runs = random.randint(2, 3)
+        for i in range(num_runs):
+            started = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 30), hours=random.randint(0, 23))
+            run = ScheduledRun(
+                id=str(uuid4()),
+                schedule_id=schedule.id,
+                status="completed" if random.random() > 0.1 else "failed",
+                started_at=started,
+                completed_at=started + timedelta(minutes=random.randint(5, 45)),
+                vendors_scanned=random.randint(5, 12),
+                documents_analyzed=random.randint(3, 20),
+                findings_generated=random.randint(0, 10),
+                error_message=None if random.random() > 0.1 else "Connection timeout during scan",
+            )
+            db.add(run)
+            scheduled_runs_created += 1
+
+    await db.commit()
+
+    # Create Alert Rules
+    alert_rules_created = 0
+    rule_objects = []
+    severity_map = {
+        "critical": AlertSeverity.CRITICAL.value,
+        "high": AlertSeverity.HIGH.value,
+        "medium": AlertSeverity.MEDIUM.value,
+        "low": AlertSeverity.LOW.value,
+        "info": AlertSeverity.INFO.value,
+    }
+
+    for rule_data in DEMO_ALERT_RULES:
+        rule = AlertRule(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name=rule_data["name"],
+            trigger_type=rule_data["trigger_type"],
+            severity=severity_map[rule_data["severity"]],
+            threshold=rule_data["threshold"],
+            is_enabled=True,
+            notification_channels=json.dumps([]),
+        )
+        db.add(rule)
+        rule_objects.append(rule)
+        alert_rules_created += 1
+
+    await db.commit()
+
+    # Create Alerts
+    alerts_created = 0
+    alert_status_map = {
+        "new": AlertStatus.NEW.value,
+        "acknowledged": AlertStatus.ACKNOWLEDGED.value,
+        "in_progress": AlertStatus.IN_PROGRESS.value,
+        "resolved": AlertStatus.RESOLVED.value,
+        "dismissed": AlertStatus.DISMISSED.value,
+    }
+
+    vendor_list = list(vendor_map.values())
+    for alert_data in DEMO_ALERTS:
+        rule = random.choice(rule_objects) if rule_objects else None
+        vendor = random.choice(vendor_list)
+
+        alert = Alert(
+            id=str(uuid4()),
+            organization_id=org_id,
+            rule_id=rule.id if rule else None,
+            vendor_id=vendor.id,
+            title=alert_data["title"],
+            message=alert_data["message"],
+            status=alert_status_map[alert_data["status"]],
+            severity=severity_map[alert_data["severity"]],
+            acknowledged_at=datetime.now(timezone.utc) - timedelta(hours=random.randint(1, 48)) if alert_data["status"] != "new" else None,
+            acknowledged_by=current_user.id if alert_data["status"] != "new" else None,
+            resolved_at=datetime.now(timezone.utc) - timedelta(hours=random.randint(1, 24)) if alert_data["status"] == "resolved" else None,
+            resolved_by=current_user.id if alert_data["status"] == "resolved" else None,
+        )
+        db.add(alert)
+        alerts_created += 1
+
+    await db.commit()
+
+    # Create Notification Channels
+    notification_channels_created = 0
+    channel_type_map = {
+        "email": NotificationChannelType.EMAIL.value,
+        "slack": NotificationChannelType.SLACK.value,
+        "webhook": NotificationChannelType.WEBHOOK.value,
+        "teams": NotificationChannelType.TEAMS.value,
+    }
+    channel_status_map = {
+        "active": "active",
+        "inactive": "inactive",
+    }
+
+    for channel_data in DEMO_NOTIFICATION_CHANNELS:
+        channel = NotificationChannel(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name=channel_data["name"],
+            channel_type=channel_type_map[channel_data["channel_type"]],
+            status=channel_status_map[channel_data["status"]],
+            config=json.dumps(channel_data["config"]),
+            last_tested=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14)) if channel_data["status"] == "active" else None,
+        )
+        db.add(channel)
+        notification_channels_created += 1
+
+    await db.commit()
+
+    # Create Audit Logs
+    audit_logs_created = 0
+    action_map = {
+        "LOGIN": AuditAction.LOGIN.value,
+        "LOGIN_FAILED": AuditAction.LOGIN_FAILED.value,
+        "CREATE": AuditAction.CREATE.value,
+        "UPDATE": AuditAction.UPDATE.value,
+        "DELETE": AuditAction.DELETE.value,
+        "EXPORT": AuditAction.EXPORT.value,
+        "STATUS_CHANGE": AuditAction.STATUS_CHANGE.value,
+        "PERMISSION_CHANGE": AuditAction.PERMISSION_CHANGE.value,
+        "CONFIG_CHANGE": AuditAction.CONFIG_CHANGE.value,
+        "BULK_OPERATION": AuditAction.BULK_OPERATION.value,
+    }
+
+    # Create 50+ audit log entries
+    for _ in range(3):  # Repeat the demo actions 3 times
+        for log_data in DEMO_AUDIT_ACTIONS:
+            audit_log = AuditLog(
+                id=str(uuid4()),
+                organization_id=org_id,
+                user_id=current_user.id,
+                action=action_map[log_data["action"]],
+                resource_type=log_data["resource_type"],
+                resource_id=str(uuid4()),
+                details=log_data["details"],
+                ip_address=f"192.168.1.{random.randint(1, 254)}",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23)),
+            )
+            db.add(audit_log)
+            audit_logs_created += 1
+
+    await db.commit()
+
+    # Get agents for tasks/logs
+    result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
+    agents = {a.name: a for a in result.scalars().all()}
+
+    # Create Agent Tasks
+    agent_tasks_created = 0
+    agent_task_objects = []
+    task_type_map = {
+        "scan": TaskType.SCAN.value,
+        "analyze": TaskType.ANALYZE.value,
+        "report": TaskType.REPORT.value,
+        "monitor": TaskType.MONITOR.value,
+        "audit": TaskType.AUDIT.value,
+    }
+    task_status_map = {
+        "pending": TaskStatus.PENDING.value,
+        "running": TaskStatus.RUNNING.value,
+        "completed": TaskStatus.COMPLETED.value,
+        "failed": TaskStatus.FAILED.value,
+        "cancelled": TaskStatus.CANCELLED.value,
+    }
+
+    for task_data in DEMO_AGENT_TASKS:
+        agent = agents.get(task_data["agent_name"])
+        if not agent:
+            continue
+
+        started = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 14), hours=random.randint(0, 23))
+        agent_task = AgentTask(
+            id=str(uuid4()),
+            agent_id=agent.id,
+            task_type=task_type_map[task_data["task_type"]],
+            status=task_status_map[task_data["status"]],
+            input_data=json.dumps({"vendors": "all", "framework": "soc2"}),
+            output_data=json.dumps({"summary": f"Processed {task_data['items']} items, found {task_data['findings']} findings"}) if task_data["status"] == "completed" else None,
+            items_processed=task_data["items"],
+            findings_count=task_data["findings"],
+            started_at=started,
+            completed_at=started + timedelta(minutes=random.randint(5, 60)) if task_data["status"] in ["completed", "failed"] else None,
+            error_message="Connection timeout" if task_data["status"] == "failed" else None,
+        )
+        db.add(agent_task)
+        agent_task_objects.append(agent_task)
+        agent_tasks_created += 1
+
+    await db.commit()
+
+    # Create Agent Logs
+    agent_logs_created = 0
+    log_level_map = {
+        "debug": LogLevel.DEBUG.value,
+        "info": LogLevel.INFO.value,
+        "warning": LogLevel.WARNING.value,
+        "error": LogLevel.ERROR.value,
+    }
+
+    for log_data in DEMO_AGENT_LOGS:
+        agent = agents.get(log_data["agent_name"])
+        if not agent:
+            continue
+
+        # Find a task for this agent
+        agent_task = next((t for t in agent_task_objects if t.agent_id == agent.id), None)
+
+        agent_log = AgentLog(
+            id=str(uuid4()),
+            agent_id=agent.id,
+            task_id=agent_task.id if agent_task else None,
+            level=log_level_map[log_data["level"]],
+            message=log_data["message"],
+            created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23), minutes=random.randint(0, 59)),
+        )
+        db.add(agent_log)
+        agent_logs_created += 1
+
+    await db.commit()
+
+    # Create Conversation Threads
+    conversations_created = 0
+    conversation_objects = []
+    for conv_data in DEMO_CONVERSATIONS:
+        conversation = ConversationThread(
+            id=str(uuid4()),
+            organization_id=org_id,
+            user_id=current_user.id,
+            title=conv_data["title"],
+            message_count=conv_data["message_count"],
+            created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14)),
+        )
+        db.add(conversation)
+        conversation_objects.append(conversation)
+        conversations_created += 1
+
+    await db.commit()
+
+    # Create Query History
+    queries_created = 0
+    for i, query_data in enumerate(DEMO_QUERIES):
+        # Assign to a conversation
+        conv = conversation_objects[i % len(conversation_objects)] if conversation_objects else None
+
+        query = QueryHistory(
+            id=str(uuid4()),
+            organization_id=org_id,
+            user_id=current_user.id,
+            conversation_id=conv.id if conv else None,
+            question=query_data["question"],
+            answer=query_data["answer"],
+            citations=json.dumps([{"chunk_id": str(uuid4()), "text": "Sample citation"} for _ in range(query_data["chunks"])]),
+            confidence_score=query_data["confidence"],
+            chunks_retrieved=query_data["chunks"],
+            status=QueryStatus.COMPLETED.value,
+            created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23)),
+        )
+        db.add(query)
+        queries_created += 1
+
+    await db.commit()
+
     return SeedResponse(
         success=True,
-        message="Demo data seeded successfully",
+        message="Demo data seeded successfully with all features",
         vendors_created=len(vendor_map),
         documents_created=len(documents),
         chunks_created=chunks_created,
         analysis_runs_created=len(runs),
         findings_created=findings_created,
+        remediation_tasks_created=remediation_tasks_created,
+        remediation_comments_created=remediation_comments_created,
+        sla_policies_created=sla_policies_created,
+        schedules_created=schedules_created,
+        scheduled_runs_created=scheduled_runs_created,
+        alert_rules_created=alert_rules_created,
+        alerts_created=alerts_created,
+        notification_channels_created=notification_channels_created,
+        audit_logs_created=audit_logs_created,
+        agent_tasks_created=agent_tasks_created,
+        agent_logs_created=agent_logs_created,
+        conversations_created=conversations_created,
+        queries_created=queries_created,
     )
 
 
@@ -327,53 +985,148 @@ async def clear_demo_data(
 ) -> dict:
     """Clear all demo data for the current user's organization."""
     org_id = current_user.organization_id
+    deleted = {}
 
-    # Delete in order due to foreign keys
+    # Delete query history first (FK to conversations)
+    result = await db.execute(select(QueryHistory).where(QueryHistory.organization_id == org_id))
+    deleted["queries"] = 0
+    for q in result.scalars().all():
+        await db.delete(q)
+        deleted["queries"] += 1
+
+    # Delete conversation threads
+    result = await db.execute(select(ConversationThread).where(ConversationThread.organization_id == org_id))
+    deleted["conversations"] = 0
+    for conv in result.scalars().all():
+        await db.delete(conv)
+        deleted["conversations"] += 1
+
+    # Delete agent logs (FK to tasks)
+    result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
+    agents = result.scalars().all()
+    deleted["agent_logs"] = 0
+    for agent in agents:
+        log_result = await db.execute(select(AgentLog).where(AgentLog.agent_id == agent.id))
+        for log in log_result.scalars().all():
+            await db.delete(log)
+            deleted["agent_logs"] += 1
+
+    # Delete agent tasks
+    deleted["agent_tasks"] = 0
+    for agent in agents:
+        task_result = await db.execute(select(AgentTask).where(AgentTask.agent_id == agent.id))
+        for task in task_result.scalars().all():
+            await db.delete(task)
+            deleted["agent_tasks"] += 1
+
+    # Delete audit logs
+    result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
+    deleted["audit_logs"] = 0
+    for log in result.scalars().all():
+        await db.delete(log)
+        deleted["audit_logs"] += 1
+
+    # Delete notification channels
+    result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
+    deleted["notification_channels"] = 0
+    for channel in result.scalars().all():
+        await db.delete(channel)
+        deleted["notification_channels"] += 1
+
+    # Delete alerts
+    result = await db.execute(select(Alert).where(Alert.organization_id == org_id))
+    deleted["alerts"] = 0
+    for alert in result.scalars().all():
+        await db.delete(alert)
+        deleted["alerts"] += 1
+
+    # Delete alert rules
+    result = await db.execute(select(AlertRule).where(AlertRule.organization_id == org_id))
+    deleted["alert_rules"] = 0
+    for rule in result.scalars().all():
+        await db.delete(rule)
+        deleted["alert_rules"] += 1
+
+    # Delete scheduled runs (FK to schedules)
+    result = await db.execute(select(MonitoringSchedule).where(MonitoringSchedule.organization_id == org_id))
+    schedules = result.scalars().all()
+    deleted["scheduled_runs"] = 0
+    for schedule in schedules:
+        run_result = await db.execute(select(ScheduledRun).where(ScheduledRun.schedule_id == schedule.id))
+        for run in run_result.scalars().all():
+            await db.delete(run)
+            deleted["scheduled_runs"] += 1
+
+    # Delete monitoring schedules
+    deleted["schedules"] = 0
+    for schedule in schedules:
+        await db.delete(schedule)
+        deleted["schedules"] += 1
+
+    # Delete remediation comments (FK to tasks)
+    result = await db.execute(select(RemediationTask).where(RemediationTask.organization_id == org_id))
+    tasks = result.scalars().all()
+    deleted["remediation_comments"] = 0
+    for task in tasks:
+        comment_result = await db.execute(select(RemediationComment).where(RemediationComment.task_id == task.id))
+        for comment in comment_result.scalars().all():
+            await db.delete(comment)
+            deleted["remediation_comments"] += 1
+
+    # Delete remediation tasks
+    deleted["remediation_tasks"] = 0
+    for task in tasks:
+        await db.delete(task)
+        deleted["remediation_tasks"] += 1
+
+    # Delete SLA policies
+    result = await db.execute(select(SLAPolicy).where(SLAPolicy.organization_id == org_id))
+    deleted["sla_policies"] = 0
+    for policy in result.scalars().all():
+        await db.delete(policy)
+        deleted["sla_policies"] += 1
+
+    # Delete findings
     result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
-    findings_count = 0
+    deleted["findings"] = 0
     for finding in result.scalars().all():
         await db.delete(finding)
-        findings_count += 1
+        deleted["findings"] += 1
 
+    # Delete analysis runs
     result = await db.execute(select(AnalysisRun).where(AnalysisRun.organization_id == org_id))
-    runs_count = 0
+    deleted["analysis_runs"] = 0
     for run in result.scalars().all():
         await db.delete(run)
-        runs_count += 1
+        deleted["analysis_runs"] += 1
 
-    # Delete chunks first (before documents)
+    # Delete chunks (FK to documents)
     result = await db.execute(select(Document).where(Document.organization_id == org_id))
-    chunks_count = 0
     docs_to_delete = result.scalars().all()
+    deleted["chunks"] = 0
     for doc in docs_to_delete:
         chunk_result = await db.execute(select(DocumentChunk).where(DocumentChunk.document_id == doc.id))
         for chunk in chunk_result.scalars().all():
             await db.delete(chunk)
-            chunks_count += 1
+            deleted["chunks"] += 1
 
-    # Now delete documents
-    result = await db.execute(select(Document).where(Document.organization_id == org_id))
-    docs_count = 0
-    for doc in result.scalars().all():
+    # Delete documents
+    deleted["documents"] = 0
+    for doc in docs_to_delete:
         await db.delete(doc)
-        docs_count += 1
+        deleted["documents"] += 1
 
+    # Delete vendors
     result = await db.execute(select(Vendor).where(Vendor.organization_id == org_id))
-    vendors_count = 0
+    deleted["vendors"] = 0
     for vendor in result.scalars().all():
         await db.delete(vendor)
-        vendors_count += 1
+        deleted["vendors"] += 1
 
     await db.commit()
 
     return {
         "success": True,
-        "message": "Demo data cleared",
-        "deleted": {
-            "vendors": vendors_count,
-            "documents": docs_count,
-            "chunks": chunks_count,
-            "analysis_runs": runs_count,
-            "findings": findings_count,
-        }
+        "message": "All demo data cleared",
+        "deleted": deleted,
     }
