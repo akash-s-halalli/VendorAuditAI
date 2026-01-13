@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/Version-1.0.0-00D4AA.svg" alt="Version"/>
   <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
   <img src="https://img.shields.io/badge/AI_Agents-4_Active-CC785C.svg" alt="AI Agents"/>
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
+  <img src="https://img.shields.io/badge/License-Proprietary-red.svg" alt="License"/>
 </p>
 
 <p align="center">
@@ -602,5 +602,5 @@ Focus: Identity & Access Management, AI/ML Security, Third-Party Risk Management
   <a href="https://github.com/MikeDominic92/VendorAuditAI">GitHub</a> |
   <a href="mailto:contact@vendorauditai.com">Contact</a>
   <br/><br/>
-  MIT License - Copyright 2026 VendorAuditAI
+  Proprietary - Copyright 2026 Dominic M. Hoang. All Rights Reserved.
 </p>
