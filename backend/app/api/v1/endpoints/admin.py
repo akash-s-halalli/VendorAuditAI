@@ -591,7 +591,6 @@ async def seed_demo_data(
             medium_sla_days=policy_data["medium_days"],
             low_sla_days=policy_data["low_days"],
             is_default=policy_data["is_default"],
-            is_active=True,
         )
         db.add(policy)
         sla_policy_map[policy_data["name"]] = policy
