@@ -11,10 +11,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
+from app.models.chunk import DocumentChunk
 from app.models.document import Document, DocumentStatus, DocumentType, ProcessingStage
 from app.models.finding import AnalysisRun, Finding, FindingSeverity, FindingStatus
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus, VendorTier
+from app.scripts.sample_content import get_document_content
 
 router = APIRouter()
 
@@ -25,6 +27,7 @@ class SeedResponse(BaseModel):
     message: str
     vendors_created: int
     documents_created: int
+    chunks_created: int
     analysis_runs_created: int
     findings_created: int
 
@@ -126,6 +129,14 @@ async def seed_demo_data(
     for run in result.scalars().all():
         await db.delete(run)
 
+    # Delete chunks (need to get document IDs first)
+    result = await db.execute(select(Document).where(Document.organization_id == org_id))
+    docs_to_delete = result.scalars().all()
+    for doc in docs_to_delete:
+        chunk_result = await db.execute(select(DocumentChunk).where(DocumentChunk.document_id == doc.id))
+        for chunk in chunk_result.scalars().all():
+            await db.delete(chunk)
+
     # Delete documents
     result = await db.execute(select(Document).where(Document.organization_id == org_id))
     for doc in result.scalars().all():
@@ -164,15 +175,19 @@ async def seed_demo_data(
 
     await db.commit()
 
-    # Create documents
+    # Create documents with chunks
     documents = []
+    chunks_created = 0
+    doc_chunks_map = {}  # Map document ID to its chunks for later use
+
     for d in DEMO_DOCUMENTS:
         vendor = vendor_map.get(d["vendor"])
         if not vendor:
             continue
 
+        doc_id = str(uuid4())
         doc = Document(
-            id=str(uuid4()),
+            id=doc_id,
             organization_id=org_id,
             vendor_id=vendor.id,
             filename=d["filename"],
@@ -187,6 +202,45 @@ async def seed_demo_data(
         )
         db.add(doc)
         documents.append(doc)
+
+        # Get content based on document type and vendor name
+        # Map doc_type to content type
+        content_type_map = {
+            "soc2": "soc2",
+            "iso27001": "iso27001",
+            "pentest": "pentest",
+            "sig_core": "sig_core",
+            "sig_lite": "sig_lite",
+            "other": "soc2",  # Default to soc2 for other types
+        }
+        content_type = content_type_map.get(d["doc_type"], "soc2")
+        vendor_name = vendor.name.split(" (")[0]  # Remove "(AWS)" etc.
+
+        # Get realistic document content
+        content_sections = get_document_content(content_type, vendor_name)
+        doc_chunks = []
+
+        for idx, section in enumerate(content_sections):
+            chunk = DocumentChunk(
+                id=str(uuid4()),
+                document_id=doc_id,
+                content=section["content"],
+                token_count=len(section["content"].split()) * 4 // 3,  # Rough token estimate
+                chunk_index=idx,
+                page_number=section["page_number"],
+                section_header=section["section_header"],
+                embedding=None,  # No embedding for demo data
+                metadata_=json.dumps({
+                    "source": d["filename"],
+                    "vendor": vendor.name,
+                    "doc_type": d["doc_type"],
+                }),
+            )
+            db.add(chunk)
+            doc_chunks.append(chunk)
+            chunks_created += 1
+
+        doc_chunks_map[doc_id] = doc_chunks
 
     await db.commit()
 
@@ -213,12 +267,23 @@ async def seed_demo_data(
 
     await db.commit()
 
-    # Create findings
+    # Create findings linked to actual chunks
     findings_created = 0
     for f in DEMO_FINDINGS:
         if not runs:
             break
         run = random.choice(runs)
+
+        # Get a random chunk from this document for citation
+        doc_chunks = doc_chunks_map.get(run.document_id, [])
+        cited_chunk = random.choice(doc_chunks) if doc_chunks else None
+
+        # Create detailed evidence based on chunk content
+        evidence_text = "Identified during document analysis."
+        if cited_chunk:
+            # Extract a snippet from the chunk content for evidence
+            content_snippet = cited_chunk.content[:300] + "..." if len(cited_chunk.content) > 300 else cited_chunk.content
+            evidence_text = f"Found in section '{cited_chunk.section_header}': \"{content_snippet}\""
 
         finding = Finding(
             id=str(uuid4()),
@@ -231,11 +296,13 @@ async def seed_demo_data(
             framework=f["framework"],
             framework_control=f["control"],
             description=f["desc"],
-            evidence="Identified during document analysis.",
+            evidence=evidence_text,
             remediation="Implement appropriate controls to address this finding.",
             impact="Security posture affected until remediated.",
             confidence_score=random.uniform(0.75, 0.98),
-            page_number=random.randint(1, 50),
+            chunk_id=cited_chunk.id if cited_chunk else None,
+            page_number=cited_chunk.page_number if cited_chunk else random.randint(1, 15),
+            section_header=cited_chunk.section_header if cited_chunk else None,
         )
         db.add(finding)
         findings_created += 1
@@ -247,6 +314,7 @@ async def seed_demo_data(
         message="Demo data seeded successfully",
         vendors_created=len(vendor_map),
         documents_created=len(documents),
+        chunks_created=chunks_created,
         analysis_runs_created=len(runs),
         findings_created=findings_created,
     )
@@ -273,6 +341,17 @@ async def clear_demo_data(
         await db.delete(run)
         runs_count += 1
 
+    # Delete chunks first (before documents)
+    result = await db.execute(select(Document).where(Document.organization_id == org_id))
+    chunks_count = 0
+    docs_to_delete = result.scalars().all()
+    for doc in docs_to_delete:
+        chunk_result = await db.execute(select(DocumentChunk).where(DocumentChunk.document_id == doc.id))
+        for chunk in chunk_result.scalars().all():
+            await db.delete(chunk)
+            chunks_count += 1
+
+    # Now delete documents
     result = await db.execute(select(Document).where(Document.organization_id == org_id))
     docs_count = 0
     for doc in result.scalars().all():
@@ -293,6 +372,7 @@ async def clear_demo_data(
         "deleted": {
             "vendors": vendors_count,
             "documents": docs_count,
+            "chunks": chunks_count,
             "analysis_runs": runs_count,
             "findings": findings_count,
         }
