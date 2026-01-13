@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg" alt="Claude"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/Version-0.6.0-00D4AA.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/Version-1.0.0-00D4AA.svg" alt="Version"/>
   <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg" alt="Tests"/>
   <img src="https://img.shields.io/badge/AI_Agents-4_Active-CC785C.svg" alt="AI Agents"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/>
@@ -481,7 +481,7 @@ OPENAI_API_KEY=sk-...
 | **Categorization** | POST | `/api/v1/categorization/analyze` | Auto-categorize vendor |
 | **Categorization** | GET | `/api/v1/categorization/categories` | List 25 vendor categories |
 | **Categorization** | POST | `/api/v1/categorization/batch` | Batch categorize vendors |
-| **Findings** | GET | `/api/v1/findings` | View analysis findings |
+| **Findings** | GET | `/api/v1/analysis/findings` | View analysis findings |
 | **Remediation** | GET | `/api/v1/remediation/tasks` | List remediation tasks |
 | **Monitoring** | GET | `/api/v1/monitoring/alerts` | View monitoring alerts |
 
