@@ -98,4 +98,166 @@
       transform: translateY(0);
     }
   }
+
+  /* Premium Shimmer Effect */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Neon Glow Effects */
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(0, 212, 170, 0.3), 0 0 40px rgba(0, 212, 170, 0.1);
+  }
+
+  .glow-crimson {
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.3), 0 0 40px rgba(230, 57, 70, 0.1);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(255, 184, 0, 0.3), 0 0 40px rgba(255, 184, 0, 0.1);
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 20px rgba(0, 200, 83, 0.3), 0 0 40px rgba(0, 200, 83, 0.1);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.3), 0 0 40px rgba(0, 102, 255, 0.1);
+  }
+
+  /* Text Glow */
+  .text-glow-teal {
+    text-shadow: 0 0 20px rgba(0, 212, 170, 0.5), 0 0 40px rgba(0, 212, 170, 0.3);
+  }
+
+  .text-glow-crimson {
+    text-shadow: 0 0 20px rgba(230, 57, 70, 0.5), 0 0 40px rgba(230, 57, 70, 0.3);
+  }
+
+  /* Premium Card Hover States */
+  .card-hover-lift {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .card-hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  /* Pulsing Border */
+  @keyframes border-pulse {
+    0%, 100% { border-color: rgba(0, 212, 170, 0.2); }
+    50% { border-color: rgba(0, 212, 170, 0.5); }
+  }
+
+  .border-pulse {
+    animation: border-pulse 2s ease-in-out infinite;
+  }
+
+  /* Gradient Border */
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(#04070D, #04070D) padding-box,
+                linear-gradient(135deg, #00D4AA, #0066FF) border-box;
+    border: 1px solid transparent;
+  }
+
+  /* Premium Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 170, 0.2);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 170, 0.4);
+  }
+
+  /* Glass Card Variants */
+  .glass-card-teal {
+    @apply glass-panel-liquid;
+    border-color: rgba(0, 212, 170, 0.1);
+  }
+
+  .glass-card-teal:hover {
+    border-color: rgba(0, 212, 170, 0.3);
+    box-shadow: 0 0 30px rgba(0, 212, 170, 0.1);
+  }
+
+  .glass-card-crimson {
+    @apply glass-panel-liquid;
+    border-color: rgba(230, 57, 70, 0.1);
+  }
+
+  .glass-card-crimson:hover {
+    border-color: rgba(230, 57, 70, 0.3);
+    box-shadow: 0 0 30px rgba(230, 57, 70, 0.1);
+  }
+
+  /* Floating Animation */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Pulse Scale */
+  @keyframes pulse-scale {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  .animate-pulse-scale {
+    animation: pulse-scale 2s ease-in-out infinite;
+  }
+
+  /* Gradient Text Animation */
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-gradient-text {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Premium Input Focus */
+  .input-premium:focus {
+    border-color: rgba(0, 212, 170, 0.5);
+    box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1), 0 0 20px rgba(0, 212, 170, 0.1);
+  }
+
+  /* Status Indicators */
+  .status-active {
+    @apply bg-obsidian-emerald/20 text-obsidian-emerald border-obsidian-emerald/30;
+  }
+
+  .status-warning {
+    @apply bg-obsidian-gold/20 text-obsidian-gold border-obsidian-gold/30;
+  }
+
+  .status-critical {
+    @apply bg-obsidian-crimson/20 text-obsidian-crimson border-obsidian-crimson/30;
+  }
+
+  .status-idle {
+    @apply bg-slate-500/20 text-slate-400 border-slate-500/30;
+  }
 }

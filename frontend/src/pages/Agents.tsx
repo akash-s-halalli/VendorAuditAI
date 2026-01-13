@@ -1,8 +1,23 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Cpu, Shield, Zap, Activity, Terminal, Eye, FileText, Play, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Cpu, Shield, Zap, Activity, Terminal, Eye, FileText, Play, Loader2, RefreshCw, AlertCircle, Sparkles, Radio } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Badge, Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
+
+// Animation variants
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 }
+};
 
 interface Agent {
   id: string;
@@ -50,11 +65,11 @@ const agentIcons: Record<string, typeof Shield> = {
   compliance_verification: FileText,
 };
 
-const agentColors: Record<string, string> = {
-  threat_detection: 'text-primary',
-  risk_assessment: 'text-yellow-400',
-  vulnerability_scanner: 'text-red-400',
-  compliance_verification: 'text-purple-400',
+const agentColors: Record<string, { text: string; glow: string; bg: string }> = {
+  threat_detection: { text: 'text-obsidian-teal', glow: 'glow-teal', bg: 'bg-obsidian-teal' },
+  risk_assessment: { text: 'text-obsidian-gold', glow: 'glow-gold', bg: 'bg-obsidian-gold' },
+  vulnerability_scanner: { text: 'text-obsidian-crimson', glow: 'glow-crimson', bg: 'bg-obsidian-crimson' },
+  compliance_verification: { text: 'text-obsidian-blue', glow: 'glow-blue', bg: 'bg-obsidian-blue' },
 };
 
 export function Agents() {
@@ -116,17 +131,17 @@ export function Agents() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return 'text-green-400 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.2)]';
+        return { class: 'text-obsidian-emerald bg-obsidian-emerald/10 glow-emerald', pulse: true };
       case 'processing':
-        return 'text-yellow-400 bg-yellow-500/10';
+        return { class: 'text-obsidian-gold bg-obsidian-gold/10 glow-gold', pulse: true };
       case 'idle':
-        return 'text-gray-400 bg-gray-500/10';
+        return { class: 'text-slate-400 bg-slate-500/10', pulse: false };
       case 'error':
-        return 'text-red-400 bg-red-500/10';
+        return { class: 'text-obsidian-crimson bg-obsidian-crimson/10 glow-crimson', pulse: true };
       case 'disabled':
-        return 'text-gray-600 bg-gray-800/50';
+        return { class: 'text-slate-600 bg-slate-800/50', pulse: false };
       default:
-        return 'text-gray-400 bg-gray-500/10';
+        return { class: 'text-slate-400 bg-slate-500/10', pulse: false };
     }
   };
 
@@ -164,12 +179,31 @@ export function Agents() {
 
   if (isLoading) {
     return (
-      <div className="space-y-8 pb-8 animate-in fade-in duration-500">
+      <div className="space-y-8 pb-8">
         <div className="flex items-center justify-center h-[60vh]">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 text-primary animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Initializing agent network...</p>
-          </div>
+          <motion.div
+            className="text-center glass-panel-liquid p-12 rounded-3xl"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              <Cpu className="h-16 w-16 text-obsidian-teal mx-auto mb-6 drop-shadow-[0_0_20px_rgba(0,212,170,0.5)]" />
+            </motion.div>
+            <p className="text-muted-foreground font-mono tracking-wider">INITIALIZING NEURAL NETWORK...</p>
+            <div className="mt-4 flex justify-center gap-1">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  className="w-2 h-2 rounded-full bg-obsidian-teal"
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{ duration: 1, delay: i * 0.2, repeat: Infinity }}
+                />
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -177,66 +211,123 @@ export function Agents() {
 
   if (isError) {
     return (
-      <div className="space-y-8 pb-8 animate-in fade-in duration-500">
+      <div className="space-y-8 pb-8">
         <div className="flex items-center justify-center h-[60vh]">
-          <div className="text-center glass-card p-8 rounded-xl">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Network Error</h3>
-            <p className="text-muted-foreground mb-4">{getApiErrorMessage(error)}</p>
-            <Button onClick={() => refetch()}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Retry Connection
-            </Button>
-          </div>
+          <motion.div
+            className="text-center glass-card-crimson p-12 rounded-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <AlertCircle className="h-16 w-16 text-obsidian-crimson mx-auto mb-6 drop-shadow-[0_0_20px_rgba(230,57,70,0.5)]" />
+            <h3 className="text-2xl font-bold text-white mb-2 font-heading">Network Error</h3>
+            <p className="text-muted-foreground mb-6">{getApiErrorMessage(error)}</p>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button onClick={() => refetch()} className="glow-teal">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry Connection
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-8 animate-in fade-in duration-500">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="space-y-8 pb-8"
+    >
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-white neon-text flex items-center gap-3">
-            <Cpu className="h-10 w-10 text-primary animate-pulse" />
-            AI Agent Network
+          <h1 className="text-5xl font-bold tracking-tight text-white font-heading flex items-center gap-4">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <Cpu className="h-12 w-12 text-obsidian-teal drop-shadow-[0_0_15px_rgba(0,212,170,0.5)]" />
+            </motion.div>
+            <span>Neural <span className="text-obsidian-teal">Network</span></span>
           </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <p className="text-muted-foreground mt-3 text-lg flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-obsidian-teal" />
             Autonomous agents managing your third-party risk ecosystem.
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_green]" />
-            <span className="text-xs font-mono text-green-400 tracking-wider">NETWORK STABLE</span>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button variant="outline" size="sm" onClick={() => refetch()} className="glass-panel-liquid border-white/10">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </motion.div>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full glass-panel-liquid border-obsidian-emerald/20 glow-emerald">
+            <motion.div
+              className="h-2 w-2 rounded-full bg-obsidian-emerald"
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+            <span className="text-xs font-mono text-obsidian-emerald tracking-wider">NETWORK STABLE</span>
           </div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Network Stats Bar */}
+      <motion.div variants={item} className="grid grid-cols-4 gap-4">
+        {[
+          { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, total: agents.length, color: 'obsidian-emerald' },
+          { label: 'Processing', value: agents.filter(a => a.status === 'processing').length, color: 'obsidian-gold' },
+          { label: 'Avg Uptime', value: `${(agents.reduce((acc, a) => acc + a.uptime_percentage, 0) / agents.length || 0).toFixed(1)}%`, color: 'obsidian-teal' },
+          { label: 'Error Rate', value: `${(agents.filter(a => a.status === 'error').length / agents.length * 100 || 0).toFixed(1)}%`, color: 'obsidian-crimson' }
+        ].map((stat, idx) => (
+          <motion.div
+            key={stat.label}
+            className="glass-panel-liquid rounded-2xl p-4 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + idx * 0.1 }}
+          >
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</p>
+            <p className={`text-2xl font-bold font-mono text-${stat.color}`}>
+              {typeof stat.value === 'number' ? stat.value : stat.value}
+              {stat.total !== undefined && <span className="text-sm text-muted-foreground">/{stat.total}</span>}
+            </p>
+          </motion.div>
+        ))}
+      </motion.div>
 
       {/* Agents Grid */}
       <div className="grid gap-6 md:grid-cols-2">
-        {agents.map((agent) => {
+        {agents.map((agent, idx) => {
           const Icon = agentIcons[agent.agent_type] || Shield;
-          const color = agentColors[agent.agent_type] || 'text-primary';
+          const colorConfig = agentColors[agent.agent_type] || { text: 'text-obsidian-teal', glow: 'glow-teal', bg: 'bg-obsidian-teal' };
+          const statusConfig = getStatusBadge(agent.status);
 
           return (
-            <div
+            <motion.div
               key={agent.id}
-              className="glass-card rounded-xl border-white/5 overflow-hidden flex flex-col group hover:border-primary/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5"
+              variants={item}
+              whileHover={{ y: -4 }}
+              className={`glass-panel-liquid rounded-3xl border-white/5 overflow-hidden flex flex-col group hover:border-obsidian-teal/30 transition-all duration-500 hover:${colorConfig.glow}`}
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-lg bg-black/40 ${color} shadow-lg ring-1 ring-white/5`}>
+              <div className="p-6 border-b border-white/5 bg-white/[0.03] flex items-center justify-between relative overflow-hidden">
+                {/* Background glow */}
+                <div className={`absolute -left-10 -top-10 w-32 h-32 ${colorConfig.bg}/10 rounded-full blur-2xl group-hover:${colorConfig.bg}/20 transition-all duration-500`} />
+
+                <div className="flex items-center gap-4 relative z-10">
+                  <motion.div
+                    className={`p-3 rounded-xl bg-black/40 ${colorConfig.text} shadow-lg ring-1 ring-white/10 ${colorConfig.glow}`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
                     <Icon className="h-6 w-6" />
-                  </div>
+                  </motion.div>
                   <div>
-                    <h3 className="font-bold text-lg text-white group-hover:text-primary transition-colors tracking-tight">
+                    <h3 className={`font-bold text-lg text-white group-hover:${colorConfig.text} transition-colors tracking-tight font-heading`}>
                       {agent.name}
                     </h3>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-mono">
@@ -246,28 +337,41 @@ export function Agents() {
                 </div>
                 <Badge
                   variant="outline"
-                  className={`glass-panel border-0 uppercase font-mono ${getStatusBadge(agent.status)}`}
+                  className={`glass-panel-liquid border-0 uppercase font-mono ${statusConfig.class} flex items-center gap-2`}
                 >
+                  {statusConfig.pulse && (
+                    <motion.span
+                      className="w-1.5 h-1.5 rounded-full bg-current"
+                      animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    />
+                  )}
                   {agent.status}
                 </Badge>
               </div>
 
               {/* Body */}
               <div className="p-6 space-y-6 flex-1 bg-black/20">
-                <p className="text-sm text-gray-400 leading-relaxed font-medium">
+                <p className="text-sm text-slate-400 leading-relaxed">
                   {agent.description}
                 </p>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 rounded-lg bg-black/40 border border-white/5 group-hover:border-white/10 transition-colors">
-                    <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Uptime</p>
-                    <p className="text-sm font-mono text-white font-bold">
-                      {agent.uptime_percentage.toFixed(2)}%
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 group-hover:border-white/10 transition-colors">
+                    <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider flex items-center gap-2">
+                      <Radio className="h-3 w-3" />
+                      Uptime
+                    </p>
+                    <p className={`text-xl font-mono ${colorConfig.text} font-bold`}>
+                      {agent.uptime_percentage.toFixed(1)}%
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-black/40 border border-white/5 group-hover:border-white/10 transition-colors">
-                    <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Last Run</p>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 group-hover:border-white/10 transition-colors">
+                    <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider flex items-center gap-2">
+                      <Activity className="h-3 w-3" />
+                      Last Run
+                    </p>
                     <p className="text-sm font-mono text-white font-bold">
                       {agent.last_run_at
                         ? new Date(agent.last_run_at).toLocaleTimeString()
@@ -278,45 +382,71 @@ export function Agents() {
 
                 {/* Error message if any */}
                 {agent.error_message && (
-                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
-                    <p className="text-xs text-red-400 font-mono">{agent.error_message}</p>
-                  </div>
+                  <motion.div
+                    className="rounded-xl bg-obsidian-crimson/10 border border-obsidian-crimson/20 p-4"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                  >
+                    <p className="text-xs text-obsidian-crimson font-mono flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      {agent.error_message}
+                    </p>
+                  </motion.div>
                 )}
 
                 {/* Configuration Preview */}
-                <div className="rounded-lg bg-black border border-white/10 p-4 font-mono text-xs space-y-2 h-24 overflow-hidden relative shadow-inner">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 pointer-events-none" />
-                  <div className="absolute top-0 right-0 p-2 opacity-50">
+                <div className="rounded-xl bg-black/60 border border-white/10 p-4 font-mono text-xs space-y-2 h-28 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 pointer-events-none" />
+                  <div className="absolute top-0 right-0 p-3 opacity-50">
                     <Terminal className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <div className="text-gray-500">
-                    <span className="text-primary">{'>'}</span> scan_frequency:{' '}
-                    <span className="text-green-400">{String(agent.configuration.scan_frequency || 'daily')}</span>
-                  </div>
-                  <div className="text-gray-500">
-                    <span className="text-primary">{'>'}</span> notification:{' '}
-                    <span className="text-green-400">
+                  <motion.div
+                    className="text-slate-500"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.1 }}
+                  >
+                    <span className={colorConfig.text}>{'>'}</span> scan_frequency:{' '}
+                    <span className="text-obsidian-emerald">{String(agent.configuration.scan_frequency || 'daily')}</span>
+                  </motion.div>
+                  <motion.div
+                    className="text-slate-500"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 + idx * 0.1 }}
+                  >
+                    <span className={colorConfig.text}>{'>'}</span> notification:{' '}
+                    <span className="text-obsidian-emerald">
                       {agent.configuration.notification_enabled ? 'enabled' : 'disabled'}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-primary/50">
-                    <span className="animate-bounce">_</span>
+                  </motion.div>
+                  <div className="flex items-center gap-1 text-obsidian-teal/50 mt-2">
+                    <motion.span
+                      animate={{ opacity: [1, 0, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      _
+                    </motion.span>
                   </div>
                 </div>
               </div>
 
               {/* Footer Actions */}
-              <div className="px-6 py-4 border-t border-white/5 bg-white/5 flex items-center justify-between group-hover:bg-white/10 transition-colors">
-                <button
-                  className="text-xs uppercase tracking-wider font-bold text-muted-foreground hover:text-white transition-colors"
+              <div className="px-6 py-4 border-t border-white/5 bg-white/[0.02] flex items-center justify-between group-hover:bg-white/[0.05] transition-colors">
+                <motion.button
+                  className="text-xs uppercase tracking-wider font-bold text-muted-foreground hover:text-white transition-colors flex items-center gap-2"
                   onClick={() => handleViewLogs(agent)}
+                  whileHover={{ x: 2 }}
                 >
+                  <Terminal className="h-3 w-3" />
                   View Logs
-                </button>
-                <button
-                  className="text-xs uppercase tracking-wider font-bold text-primary hover:text-white transition-colors flex items-center gap-2 disabled:opacity-50"
+                </motion.button>
+                <motion.button
+                  className={`text-xs uppercase tracking-wider font-bold ${colorConfig.text} hover:text-white transition-colors flex items-center gap-2 disabled:opacity-50 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10`}
                   onClick={() => handleRunTask(agent)}
                   disabled={runTaskMutation.isPending || agent.status === 'disabled'}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {runTaskMutation.isPending && runningAgentId === agent.id ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -324,41 +454,56 @@ export function Agents() {
                     <Play className="h-3 w-3" />
                   )}
                   Run Task
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Logs Modal */}
       <Dialog open={showLogsModal} onOpenChange={setShowLogsModal}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col glass-panel-liquid border-white/10">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Terminal className="h-5 w-5 text-primary" />
-              {selectedAgent?.name} - Logs
+            <DialogTitle className="flex items-center gap-2 text-white font-heading">
+              <Terminal className="h-5 w-5 text-obsidian-teal" />
+              {selectedAgent?.name} - Activity Logs
             </DialogTitle>
-            <DialogDescription>Recent activity logs for this agent</DialogDescription>
+            <DialogDescription className="text-muted-foreground">
+              Real-time activity monitoring for this agent
+            </DialogDescription>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto bg-black/50 rounded-lg p-4 font-mono text-xs space-y-2 min-h-[300px]">
+          <div className="flex-1 overflow-y-auto bg-black/60 rounded-xl p-4 font-mono text-xs space-y-2 min-h-[300px] border border-white/5 custom-scrollbar">
             {logsLoading ? (
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <Loader2 className="h-8 w-8 text-obsidian-teal" />
+                </motion.div>
               </div>
             ) : logs.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                No logs available yet. Run a task to generate logs.
+              <div className="text-center text-muted-foreground py-12">
+                <Terminal className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                <p>No logs available yet.</p>
+                <p className="text-xs mt-2">Run a task to generate activity logs.</p>
               </div>
             ) : (
-              logs.map((log) => (
-                <div key={log.id} className="flex items-start gap-3 py-1 border-b border-white/5">
-                  <span className="text-gray-600 whitespace-nowrap">
+              logs.map((log, i) => (
+                <motion.div
+                  key={log.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.02 }}
+                  className="flex items-start gap-3 py-2 border-b border-white/5 hover:bg-white/5 transition-colors rounded px-2"
+                >
+                  <span className="text-slate-600 whitespace-nowrap">
                     {new Date(log.created_at).toLocaleTimeString()}
                   </span>
-                  <span className={`uppercase w-16 ${getLogLevelColor(log.level)}`}>[{log.level}]</span>
-                  <span className="text-gray-300 flex-1">{log.message}</span>
-                </div>
+                  <span className={`uppercase w-16 font-bold ${getLogLevelColor(log.level)}`}>[{log.level}]</span>
+                  <span className="text-slate-300 flex-1">{log.message}</span>
+                </motion.div>
               ))
             )}
           </div>
@@ -367,45 +512,51 @@ export function Agents() {
 
       {/* Task Result Modal */}
       <Dialog open={showTaskResultModal} onOpenChange={setShowTaskResultModal}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl glass-panel-liquid border-white/10">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-primary" />
+            <DialogTitle className="flex items-center gap-2 text-white font-heading">
+              <Zap className="h-5 w-5 text-obsidian-gold drop-shadow-[0_0_10px_rgba(255,184,0,0.5)]" />
               Task Completed
             </DialogTitle>
-            <DialogDescription>Task execution results</DialogDescription>
+            <DialogDescription className="text-muted-foreground">
+              Execution results and findings summary
+            </DialogDescription>
           </DialogHeader>
           {lastTaskResult && (
-            <div className="space-y-4">
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-                  <p className="text-xs text-muted-foreground mb-1">Status</p>
-                  <p className="text-sm font-mono text-green-400 uppercase">{lastTaskResult.status}</p>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Status</p>
+                  <p className="text-lg font-mono text-obsidian-emerald uppercase font-bold glow-emerald">{lastTaskResult.status}</p>
                 </div>
-                <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-                  <p className="text-xs text-muted-foreground mb-1">Task Type</p>
-                  <p className="text-sm font-mono text-white uppercase">{lastTaskResult.task_type}</p>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Task Type</p>
+                  <p className="text-lg font-mono text-white uppercase font-bold">{lastTaskResult.task_type}</p>
                 </div>
-                <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-                  <p className="text-xs text-muted-foreground mb-1">Items Processed</p>
-                  <p className="text-sm font-mono text-white">{lastTaskResult.items_processed || 0}</p>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Items Processed</p>
+                  <p className="text-2xl font-mono text-obsidian-teal font-bold">{lastTaskResult.items_processed || 0}</p>
                 </div>
-                <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-                  <p className="text-xs text-muted-foreground mb-1">Findings</p>
-                  <p className="text-sm font-mono text-white">{lastTaskResult.findings_count || 0}</p>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Findings</p>
+                  <p className="text-2xl font-mono text-obsidian-gold font-bold">{lastTaskResult.findings_count || 0}</p>
                 </div>
               </div>
               {lastTaskResult.output_data && (
-                <div className="rounded-lg bg-black/50 p-4 font-mono text-xs overflow-auto max-h-60">
-                  <pre className="text-gray-300">
+                <div className="rounded-xl bg-black/60 p-4 font-mono text-xs overflow-auto max-h-60 border border-white/10 custom-scrollbar">
+                  <pre className="text-slate-300">
                     {JSON.stringify(lastTaskResult.output_data, null, 2)}
                   </pre>
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }
