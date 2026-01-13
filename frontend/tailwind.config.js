@@ -12,11 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
+        heading: ['Inter Display', 'Plus Jakarta Sans', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-      },
-      gridTemplateColumns: {
-        'bento': 'repeat(auto-fit, minmax(300px, 1fr))',
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -52,21 +50,16 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Cyber GRC Specific colors
-        cyber: {
-          cyan: '#00f2ff',
-          purple: '#b026ff',
-          green: '#00ff9d',
-          dark: '#02040a', // Deep Void
-          glass: 'rgba(255, 255, 255, 0.03)',
-        },
-        // Severity colors for findings
-        severity: {
-          critical: '#ff0033',
-          high: '#ff6600',
-          medium: '#ffcc00',
-          low: '#00ff9d',
-          info: '#00f2ff',
+        // Digital Obsidian Specific Colors
+        obsidian: {
+          dark: '#04070D', // Deep Space Black
+          darker: '#020305',
+          teal: '#00D4AA', // Electric Teal
+          blue: '#0066FF', // Sapphire Blue
+          gold: '#FFB800', // Amber Gold
+          crimson: '#E63946', // Ruby Crimson
+          emerald: '#00C853', // Success
+          pearl: '#F8FAFC', // Text
         },
       },
       borderRadius: {
@@ -83,39 +76,31 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 5px var(--glow-color, #00f2ff), 0 0 10px var(--glow-color, #00f2ff)' },
-          '50%': { boxShadow: '0 0 20px var(--glow-color, #00f2ff), 0 0 30px var(--glow-color, #00f2ff)' },
+        'liquid-flow': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
         },
-        'scanline': {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.8', transform: 'scale(0.95)' },
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
-        'fade-in-up': {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'glow': 'glow-pulse 3s infinite',
-        'scanline': 'scanline 8s linear infinite',
+        'liquid': 'liquid-flow 15s ease infinite',
+        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float': 'float 6s ease-in-out infinite',
-        'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       backgroundImage: {
-        'cyber-grid': 'linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px)',
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'obsidian-gradient': 'linear-gradient(to bottom right, #04070D, #080C14)',
+        'accent-gradient': 'linear-gradient(to right, #00D4AA, #0066FF)',
       },
-      boxShadow: {
-        'neon': '0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.3)',
-        'neon-purple': '0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3)',
-      }
     },
   },
   plugins: [require('tailwindcss-animate')],

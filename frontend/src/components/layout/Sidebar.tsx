@@ -42,28 +42,32 @@ export function Sidebar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <div className="flex h-full w-72 flex-col glass-panel border-r border-white/10 relative overflow-hidden transition-all duration-300">
-      {/* Glow Effect Background */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+    <div className="flex flex-col h-[calc(100vh-2rem)] w-72 m-4 rounded-2xl glass-panel-liquid relative overflow-hidden transition-all duration-300 z-50">
 
-      {/* Logo */}
-      <div className="flex h-20 items-center gap-3 px-6 border-b border-white/10 backdrop-blur-sm z-10 select-none">
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(0,242,255,0.3)] group-hover:shadow-[0_0_25px_rgba(0,242,255,0.5)] transition-all">
-          <Shield className="h-6 w-6 text-primary animate-pulse" />
-          <div className="absolute -inset-1 blur-md bg-primary/20 rounded-lg -z-10" />
+      {/* Visual Depth Elements */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-30" />
+
+      {/* Logo Section */}
+      <div className="flex h-24 items-center gap-4 px-6 select-none relative">
+        <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-lg group-hover:scale-105 transition-transform duration-500">
+          <Shield className="h-5 w-5 text-obsidian-teal drop-shadow-[0_0_8px_rgba(0,212,170,0.5)]" />
         </div>
-        <div className="flex flex-col">
-          <span className="text-xl font-bold tracking-wider text-white neon-text">
-            VENDOR<span className="text-primary">AUDIT</span>
+
+        <div className="flex flex-col justify-center">
+          <span className="text-lg font-bold tracking-tight text-white font-heading">
+            VendorAudit<span className="text-obsidian-teal">AI</span>
           </span>
-          <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground animate-pulse">
-            AI GRC Protocol
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
+            Ent. Risk OS
           </span>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 px-4 py-6 z-10 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 space-y-1.5 px-4 py-6 overflow-y-auto custom-scrollbar">
         {navigation.map((item) => {
           const isActive = location.pathname.startsWith(item.href);
           return (
@@ -71,19 +75,20 @@ export function Sidebar() {
               key={item.name}
               to={item.href}
               className={cn(
-                'group flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200 relative overflow-hidden',
+                'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300 relative overflow-hidden',
                 isActive
-                  ? 'text-primary bg-primary/10 border border-primary/20 shadow-[0_0_10px_rgba(0,242,255,0.15)]'
-                  : 'text-muted-foreground hover:text-white hover:bg-white/5 hover:border-white/10 border border-transparent'
+                  ? 'text-white bg-white/5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] border border-white/5'
+                  : 'text-muted-foreground hover:text-white hover:bg-white/[0.02] border border-transparent'
               )}
             >
               <item.icon className={cn(
-                "h-5 w-5 transition-transform duration-300 group-hover:scale-110",
-                isActive ? "text-primary drop-shadow-[0_0_5px_rgba(0,242,255,0.5)]" : "text-muted-foreground group-hover:text-primary"
+                "h-4 w-4 transition-all duration-300",
+                isActive ? "text-obsidian-teal drop-shadow-[0_0_6px_rgba(0,212,170,0.4)]" : "text-slate-400 group-hover:text-obsidian-teal"
               )} />
               <span className="relative z-10 tracking-wide">{item.name}</span>
+
               {isActive && (
-                <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_#00f2ff] animate-pulse" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/5 bg-obsidian-teal rounded-r-full shadow-[0_0_10px_#00D4AA] opacity-80" />
               )}
             </Link>
           );
@@ -91,35 +96,42 @@ export function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="border-t border-white/10 p-4 bg-black/40 backdrop-blur-md z-10">
-        <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-white/5 border border-white/5 hover:border-primary/20 transition-colors">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary/80 to-secondary/80 text-white text-sm font-bold shadow-lg ring-1 ring-white/10">
-            {(user as any)?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
-            <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-accent border-2 border-black shadow-[0_0_5px_#00ff9d]" />
+      <div className="p-4 mt-auto">
+        <div className="glass-panel-liquid rounded-xl p-3 border border-white/5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="relative h-9 w-9 rounded-full bg-gradient-to-tr from-obsidian-teal to-obsidian-blue p-[1px] shadow-lg">
+              <div className="h-full w-full rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-xs font-bold text-white">
+                {(user as any)?.user_metadata?.full_name?.charAt(0) || 'U'}
+              </div>
+              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-black" />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate font-heading">
+                {(user as any)?.user_metadata?.full_name || 'Admin User'}
+              </p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Authenticated
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate">{(user as any)?.user_metadata?.full_name || user?.email}</p>
-            <p className="text-xs text-primary/80 capitalize flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-primary inline-block animate-pulse" />
-              {(user as any)?.app_metadata?.roles?.[0] || 'Security Officer'}
-            </p>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Link
+              to="/settings"
+              className="flex items-center justify-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Config
+            </Link>
+            <button
+              onClick={logout}
+              className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Logout
+            </button>
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Link
-            to="/settings"
-            className="flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-white hover:bg-white/10 hover:border-primary/30 transition-all hover:shadow-[0_0_10px_rgba(0,242,255,0.1)]"
-          >
-            <Settings className="h-3.5 w-3.5" />
-            Config
-          </Link>
-          <button
-            onClick={logout}
-            className="flex items-center justify-center gap-2 rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive hover:bg-destructive/20 hover:text-destructive-foreground hover:border-destructive/40 transition-all hover:shadow-[0_0_10px_rgba(255,0,51,0.2)]"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            Logout
-          </button>
         </div>
       </div>
     </div>
