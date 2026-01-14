@@ -326,19 +326,22 @@ async def seed_demo_data(
     for conv in result.scalars().all():
         await db.delete(conv)
 
-    # Delete agent logs (FK to tasks)
-    result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
-    agents = result.scalars().all()
-    for agent in agents:
-        log_result = await db.execute(select(AgentLog).where(AgentLog.agent_id == agent.id))
-        for log in log_result.scalars().all():
-            await db.delete(log)
+    # Delete agent logs and tasks - wrapped in try-except for missing tables
+    try:
+        result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
+        agents = result.scalars().all()
+        for agent in agents:
+            log_result = await db.execute(select(AgentLog).where(AgentLog.agent_id == agent.id))
+            for log in log_result.scalars().all():
+                await db.delete(log)
 
-    # Delete agent tasks
-    for agent in agents:
-        task_result = await db.execute(select(AgentTask).where(AgentTask.agent_id == agent.id))
-        for task in task_result.scalars().all():
-            await db.delete(task)
+        # Delete agent tasks
+        for agent in agents:
+            task_result = await db.execute(select(AgentTask).where(AgentTask.agent_id == agent.id))
+            for task in task_result.scalars().all():
+                await db.delete(task)
+    except Exception:
+        pass  # Agent tables may not exist yet
 
     # Delete audit logs
     result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
@@ -842,74 +845,77 @@ async def seed_demo_data(
 
     await db.commit()
 
-    # Get agents for tasks/logs
-    result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
-    agents = {a.name: a for a in result.scalars().all()}
-
-    # Create Agent Tasks
+    # Get agents for tasks/logs - wrapped in try-except for missing tables
     agent_tasks_created = 0
-    agent_task_objects = []
-    task_type_map = {
-        "scan": TaskType.SCAN.value,
-        "analyze": TaskType.ANALYZE.value,
-        "report": TaskType.REPORT.value,
-        "monitor": TaskType.MONITOR.value,
-        "audit": TaskType.AUDIT.value,
-    }
-    task_status_map = {
-        "pending": TaskStatus.PENDING.value,
-        "running": TaskStatus.RUNNING.value,
-        "completed": TaskStatus.COMPLETED.value,
-        "failed": TaskStatus.FAILED.value,
-        "cancelled": TaskStatus.CANCELLED.value,
-    }
-
-    for task_data in DEMO_AGENT_TASKS:
-        agent = agents.get(task_data["agent_name"])
-        if not agent:
-            continue
-
-        started = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 14), hours=random.randint(0, 23))
-        agent_task = AgentTask(
-            id=str(uuid4()),
-            agent_id=agent.id,
-            task_type=TaskType(task_data["task_type"]),
-            status=TaskStatus(task_data["status"]),
-            input_data={"vendors": "all", "framework": "soc2"},
-            output_data={"summary": f"Processed {task_data['items']} items, found {task_data['findings']} findings"} if task_data["status"] == "completed" else None,
-            items_processed=task_data["items"],
-            findings_count=task_data["findings"],
-            started_at=started,
-            completed_at=started + timedelta(minutes=random.randint(5, 60)) if task_data["status"] in ["completed", "failed"] else None,
-            error_message="Connection timeout" if task_data["status"] == "failed" else None,
-        )
-        db.add(agent_task)
-        agent_task_objects.append(agent_task)
-        agent_tasks_created += 1
-
-    await db.commit()
-
-    # Create Agent Logs
     agent_logs_created = 0
-    for log_data in DEMO_AGENT_LOGS:
-        agent = agents.get(log_data["agent_name"])
-        if not agent:
-            continue
+    agent_task_objects = []
+    try:
+        result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
+        agents = {a.name: a for a in result.scalars().all()}
 
-        # Find a task for this agent
-        agent_task = next((t for t in agent_task_objects if t.agent_id == agent.id), None)
+        # Create Agent Tasks
+        task_type_map = {
+            "scan": TaskType.SCAN.value,
+            "analyze": TaskType.ANALYZE.value,
+            "report": TaskType.REPORT.value,
+            "monitor": TaskType.MONITOR.value,
+            "audit": TaskType.AUDIT.value,
+        }
+        task_status_map = {
+            "pending": TaskStatus.PENDING.value,
+            "running": TaskStatus.RUNNING.value,
+            "completed": TaskStatus.COMPLETED.value,
+            "failed": TaskStatus.FAILED.value,
+            "cancelled": TaskStatus.CANCELLED.value,
+        }
 
-        agent_log = AgentLog(
-            id=str(uuid4()),
-            agent_id=agent.id,
-            task_id=agent_task.id if agent_task else None,
-            level=LogLevel(log_data["level"]),
-            message=log_data["message"],
-        )
-        db.add(agent_log)
-        agent_logs_created += 1
+        for task_data in DEMO_AGENT_TASKS:
+            agent = agents.get(task_data["agent_name"])
+            if not agent:
+                continue
 
-    await db.commit()
+            started = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 14), hours=random.randint(0, 23))
+            agent_task = AgentTask(
+                id=str(uuid4()),
+                agent_id=agent.id,
+                task_type=TaskType(task_data["task_type"]),
+                status=TaskStatus(task_data["status"]),
+                input_data={"vendors": "all", "framework": "soc2"},
+                output_data={"summary": f"Processed {task_data['items']} items, found {task_data['findings']} findings"} if task_data["status"] == "completed" else None,
+                items_processed=task_data["items"],
+                findings_count=task_data["findings"],
+                started_at=started,
+                completed_at=started + timedelta(minutes=random.randint(5, 60)) if task_data["status"] in ["completed", "failed"] else None,
+                error_message="Connection timeout" if task_data["status"] == "failed" else None,
+            )
+            db.add(agent_task)
+            agent_task_objects.append(agent_task)
+            agent_tasks_created += 1
+
+        await db.commit()
+
+        # Create Agent Logs
+        for log_data in DEMO_AGENT_LOGS:
+            agent = agents.get(log_data["agent_name"])
+            if not agent:
+                continue
+
+            # Find a task for this agent
+            agent_task = next((t for t in agent_task_objects if t.agent_id == agent.id), None)
+
+            agent_log = AgentLog(
+                id=str(uuid4()),
+                agent_id=agent.id,
+                task_id=agent_task.id if agent_task else None,
+                level=LogLevel(log_data["level"]),
+                message=log_data["message"],
+            )
+            db.add(agent_log)
+            agent_logs_created += 1
+
+        await db.commit()
+    except Exception:
+        pass  # Agent tables may not exist yet
 
     # Create Conversation Threads
     conversations_created = 0
