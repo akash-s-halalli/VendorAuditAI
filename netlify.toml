@@ -3,6 +3,9 @@
   command = "npm run build"
   publish = "frontend/dist"
 
+[build.environment]
+  VITE_API_URL = "https://vendorauditai-production.up.railway.app"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
