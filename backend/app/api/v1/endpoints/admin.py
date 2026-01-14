@@ -13,6 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user, get_db
 from app.models.agent import Agent, AgentTask, AgentLog, TaskStatus, TaskType, LogLevel
 from app.models.audit_log import AuditLog, AuditAction
+from app.models.playbook import AIPlaybook, PlaybookStep
+from app.data.playbooks.defaults import DEFAULT_PLAYBOOKS  # Direct import to bypass broken __init__
 from app.models.chunk import DocumentChunk
 from app.models.document import Document, DocumentStatus, DocumentType, ProcessingStage
 from app.models.finding import AnalysisRun, Finding, FindingSeverity, FindingStatus
@@ -51,6 +53,8 @@ class SeedResponse(BaseModel):
     agent_logs_created: int = 0
     conversations_created: int = 0
     queries_created: int = 0
+    playbooks_created: int = 0
+    playbook_steps_created: int = 0
 
 
 # Demo data definitions
@@ -340,6 +344,11 @@ async def seed_demo_data(
     result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
     for log in result.scalars().all():
         await db.delete(log)
+
+    # Delete playbooks (steps will cascade)
+    result = await db.execute(select(AIPlaybook).where(AIPlaybook.organization_id == org_id))
+    for playbook in result.scalars().all():
+        await db.delete(playbook)
 
     # Delete notification channels
     result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
@@ -941,6 +950,51 @@ async def seed_demo_data(
 
     await db.commit()
 
+    # Create AI Governance Playbooks from defaults
+    playbooks_created = 0
+    playbook_steps_created = 0
+    for playbook_data in DEFAULT_PLAYBOOKS:
+        playbook = AIPlaybook(
+            id=str(uuid4()),
+            organization_id=org_id,
+            created_by_id=current_user.id,
+            name=playbook_data["name"],
+            description=playbook_data["description"],
+            phase=playbook_data["phase"],
+            target_audience=playbook_data["target_audience"],
+            department=playbook_data["department"],
+            estimated_duration_minutes=playbook_data.get("estimated_duration_minutes"),
+            icon=playbook_data.get("icon"),
+            color=playbook_data.get("color"),
+            is_active=True,
+            is_default=True,
+        )
+        db.add(playbook)
+        await db.flush()  # Get the playbook ID
+
+        # Create steps for this playbook
+        for step_data in playbook_data.get("steps", []):
+            step = PlaybookStep(
+                id=str(uuid4()),
+                playbook_id=playbook.id,
+                step_number=step_data["step_number"],
+                title=step_data["title"],
+                description=step_data.get("description"),
+                instructions=step_data["instructions"],
+                checklist=json.dumps(step_data.get("checklist")) if step_data.get("checklist") else None,
+                required_approvals=json.dumps(step_data.get("required_approvals")) if step_data.get("required_approvals") else None,
+                estimated_time_minutes=step_data.get("estimated_time_minutes"),
+                resources=json.dumps(step_data.get("resources")) if step_data.get("resources") else None,
+                tips=step_data.get("tips"),
+                warning=step_data.get("warning"),
+            )
+            db.add(step)
+            playbook_steps_created += 1
+
+        playbooks_created += 1
+
+    await db.commit()
+
     return SeedResponse(
         success=True,
         message="Demo data seeded successfully with all features",
@@ -962,6 +1016,8 @@ async def seed_demo_data(
         agent_logs_created=agent_logs_created,
         conversations_created=conversations_created,
         queries_created=queries_created,
+        playbooks_created=playbooks_created,
+        playbook_steps_created=playbook_steps_created,
     )
 
 
@@ -1012,6 +1068,13 @@ async def clear_demo_data(
     for log in result.scalars().all():
         await db.delete(log)
         deleted["audit_logs"] += 1
+
+    # Delete playbooks (steps will cascade)
+    result = await db.execute(select(AIPlaybook).where(AIPlaybook.organization_id == org_id))
+    deleted["playbooks"] = 0
+    for playbook in result.scalars().all():
+        await db.delete(playbook)
+        deleted["playbooks"] += 1
 
     # Delete notification channels
     result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))

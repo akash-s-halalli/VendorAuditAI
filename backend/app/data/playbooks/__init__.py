@@ -1,0 +1,15 @@
+"""Playbooks data package."""
+
+from app.data.playbooks.defaults import (
+    DEFAULT_PLAYBOOKS,
+    DEPLOYMENT_PLAYBOOK,
+    REGRESSION_PROTECTION_PLAYBOOK,
+    TOOL_SELECTION_PLAYBOOK,
+)
+
+__all__ = [
+    "DEFAULT_PLAYBOOKS",
+    "DEPLOYMENT_PLAYBOOK",
+    "REGRESSION_PROTECTION_PLAYBOOK",
+    "TOOL_SELECTION_PLAYBOOK",
+]
