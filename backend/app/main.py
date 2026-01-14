@@ -94,7 +94,8 @@ def create_app() -> FastAPI:
             "app_env": settings.app_env,
         }
 
-    # Configure CORS - Use settings from config (NOT hardcoded!)
+    # Configure CORS LAST (middleware added last = outermost = processed first on request)
+    # This ensures CORS headers are always set, even on error responses
     logger.info(f"Configuring CORS with origins: {settings.cors_origins}")
     app.add_middleware(
         CORSMiddleware,

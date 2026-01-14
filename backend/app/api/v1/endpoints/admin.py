@@ -951,49 +951,56 @@ async def seed_demo_data(
     await db.commit()
 
     # Create AI Governance Playbooks from defaults
+    # Wrapped in try-except to handle missing tables gracefully
     playbooks_created = 0
     playbook_steps_created = 0
-    for playbook_data in DEFAULT_PLAYBOOKS:
-        playbook = AIPlaybook(
-            id=str(uuid4()),
-            organization_id=org_id,
-            created_by_id=current_user.id,
-            name=playbook_data["name"],
-            description=playbook_data["description"],
-            phase=playbook_data["phase"],
-            target_audience=playbook_data["target_audience"],
-            department=playbook_data["department"],
-            estimated_duration_minutes=playbook_data.get("estimated_duration_minutes"),
-            icon=playbook_data.get("icon"),
-            color=playbook_data.get("color"),
-            is_active=True,
-            is_default=True,
-        )
-        db.add(playbook)
-        await db.flush()  # Get the playbook ID
-
-        # Create steps for this playbook
-        for step_data in playbook_data.get("steps", []):
-            step = PlaybookStep(
+    try:
+        for playbook_data in DEFAULT_PLAYBOOKS:
+            playbook = AIPlaybook(
                 id=str(uuid4()),
-                playbook_id=playbook.id,
-                step_number=step_data["step_number"],
-                title=step_data["title"],
-                description=step_data.get("description"),
-                instructions=step_data["instructions"],
-                checklist=json.dumps(step_data.get("checklist")) if step_data.get("checklist") else None,
-                required_approvals=json.dumps(step_data.get("required_approvals")) if step_data.get("required_approvals") else None,
-                estimated_time_minutes=step_data.get("estimated_time_minutes"),
-                resources=json.dumps(step_data.get("resources")) if step_data.get("resources") else None,
-                tips=step_data.get("tips"),
-                warning=step_data.get("warning"),
+                organization_id=org_id,
+                created_by_id=current_user.id,
+                name=playbook_data["name"],
+                description=playbook_data["description"],
+                phase=playbook_data["phase"],
+                target_audience=playbook_data["target_audience"],
+                department=playbook_data["department"],
+                estimated_duration_minutes=playbook_data.get("estimated_duration_minutes"),
+                icon=playbook_data.get("icon"),
+                color=playbook_data.get("color"),
+                is_active=True,
+                is_default=True,
             )
-            db.add(step)
-            playbook_steps_created += 1
+            db.add(playbook)
+            await db.flush()  # Get the playbook ID
 
-        playbooks_created += 1
+            # Create steps for this playbook
+            for step_data in playbook_data.get("steps", []):
+                step = PlaybookStep(
+                    id=str(uuid4()),
+                    playbook_id=playbook.id,
+                    step_number=step_data["step_number"],
+                    title=step_data["title"],
+                    description=step_data.get("description"),
+                    instructions=step_data["instructions"],
+                    checklist=json.dumps(step_data.get("checklist")) if step_data.get("checklist") else None,
+                    required_approvals=json.dumps(step_data.get("required_approvals")) if step_data.get("required_approvals") else None,
+                    estimated_time_minutes=step_data.get("estimated_time_minutes"),
+                    resources=json.dumps(step_data.get("resources")) if step_data.get("resources") else None,
+                    tips=step_data.get("tips"),
+                    warning=step_data.get("warning"),
+                )
+                db.add(step)
+                playbook_steps_created += 1
 
-    await db.commit()
+            playbooks_created += 1
+
+        await db.commit()
+    except Exception as e:
+        # Log and continue - playbooks are optional enhancement
+        import logging
+        logging.error(f"Failed to seed playbooks: {e}")
+        await db.rollback()
 
     return SeedResponse(
         success=True,
