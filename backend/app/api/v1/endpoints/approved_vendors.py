@@ -579,6 +579,7 @@ async def create_deployment(
 
 @router.put("/deployments/{deployment_id}/status", response_model=DeploymentResponse)
 async def update_deployment_status(
+    request: Request,
     deployment_id: str,
     status_value: DeploymentStatus = Query(..., alias="status", description="New deployment status"),
     db: AsyncSession = Depends(get_db),
