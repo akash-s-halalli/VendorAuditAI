@@ -331,7 +331,7 @@ async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
             # Rollback after each check to clear any failed transaction state
             await db.rollback()
 
-    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v7-raw-sql-remediation"}
+    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v8-debug-full"}
 
 
 @router.get("/debug-seed")
@@ -400,7 +400,87 @@ async def debug_seed(
     except Exception as e:
         steps["6_external_columns"] = f"FAIL: {str(e)[:100]}"
 
-    return {"org_id": org_id, "user_id": current_user.id, "steps": steps, "version": "v6-independent-sessions"}
+    return {"org_id": org_id, "user_id": current_user.id, "steps": steps, "version": "v7-independent-sessions"}
+
+
+@router.get("/debug-seed-full")
+async def debug_seed_full(
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """Full debug - actually tries mini seed operations to find failure point."""
+    import logging
+    from sqlalchemy import text
+    from app.db import async_session_factory
+
+    logger = logging.getLogger(__name__)
+    org_id = current_user.organization_id
+    steps = {}
+
+    # Test 1: Create a test vendor
+    test_vendor_id = str(uuid4())
+    try:
+        async with async_session_factory() as session:
+            await session.execute(text("""
+                INSERT INTO vendors (id, organization_id, name, description, website, tier, status, category, created_at, updated_at)
+                VALUES (:id, :org_id, 'TEST_VENDOR', 'Test', 'https://test.com', 'low', 'active', 'test', NOW(), NOW())
+            """), {"id": test_vendor_id, "org_id": org_id})
+            await session.commit()
+            steps["1_create_vendor"] = f"OK: {test_vendor_id}"
+    except Exception as e:
+        steps["1_create_vendor"] = f"FAIL: {str(e)[:150]}"
+
+    # Test 2: Create a test document
+    test_doc_id = str(uuid4())
+    try:
+        async with async_session_factory() as session:
+            await session.execute(text("""
+                INSERT INTO documents (id, organization_id, vendor_id, filename, storage_path, file_size, mime_type, status, created_at, updated_at)
+                VALUES (:id, :org_id, :vendor_id, 'test.pdf', 'test/path', 1000, 'application/pdf', 'pending', NOW(), NOW())
+            """), {"id": test_doc_id, "org_id": org_id, "vendor_id": test_vendor_id})
+            await session.commit()
+            steps["2_create_document"] = f"OK: {test_doc_id}"
+    except Exception as e:
+        steps["2_create_document"] = f"FAIL: {str(e)[:150]}"
+
+    # Test 3: Create SLA policy
+    test_sla_id = str(uuid4())
+    try:
+        async with async_session_factory() as session:
+            await session.execute(text("""
+                INSERT INTO sla_policies (id, organization_id, name, critical_sla_days, high_sla_days, medium_sla_days, low_sla_days, is_default, created_at, updated_at)
+                VALUES (:id, :org_id, 'TEST_SLA', 3, 7, 30, 90, false, NOW(), NOW())
+            """), {"id": test_sla_id, "org_id": org_id})
+            await session.commit()
+            steps["3_create_sla_policy"] = f"OK: {test_sla_id}"
+    except Exception as e:
+        steps["3_create_sla_policy"] = f"FAIL: {str(e)[:150]}"
+
+    # Test 4: Create playbook
+    test_playbook_id = str(uuid4())
+    try:
+        async with async_session_factory() as session:
+            await session.execute(text("""
+                INSERT INTO ai_playbooks (id, organization_id, created_by_id, name, description, phase, target_audience, department, is_active, is_default, created_at, updated_at)
+                VALUES (:id, :org_id, :user_id, 'TEST_PLAYBOOK', 'Test', 'selection', 'all', 'security', true, false, NOW(), NOW())
+            """), {"id": test_playbook_id, "org_id": org_id, "user_id": current_user.id})
+            await session.commit()
+            steps["4_create_playbook"] = f"OK: {test_playbook_id}"
+    except Exception as e:
+        steps["4_create_playbook"] = f"FAIL: {str(e)[:150]}"
+
+    # Cleanup - delete test records
+    try:
+        async with async_session_factory() as session:
+            await session.execute(text(f"DELETE FROM ai_playbooks WHERE id = '{test_playbook_id}'"))
+            await session.execute(text(f"DELETE FROM sla_policies WHERE id = '{test_sla_id}'"))
+            await session.execute(text(f"DELETE FROM documents WHERE id = '{test_doc_id}'"))
+            await session.execute(text(f"DELETE FROM vendors WHERE id = '{test_vendor_id}'"))
+            await session.commit()
+            steps["5_cleanup"] = "OK"
+    except Exception as e:
+        steps["5_cleanup"] = f"FAIL: {str(e)[:150]}"
+
+    return {"org_id": org_id, "steps": steps}
 
 
 @router.post("/seed-demo-data", response_model=SeedResponse)
