@@ -663,80 +663,84 @@ async def seed_demo_data(
     result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
     all_findings = result.scalars().all()
 
-    # Create SLA Policies
+    # Create SLA Policies and Remediation Tasks - wrapped in try-except for schema mismatches
     sla_policies_created = 0
-    sla_policy_map = {}
-    for policy_data in DEMO_SLA_POLICIES:
-        policy = SLAPolicy(
-            id=str(uuid4()),
-            organization_id=org_id,
-            name=policy_data["name"],
-            critical_sla_days=policy_data["critical_days"],
-            high_sla_days=policy_data["high_days"],
-            medium_sla_days=policy_data["medium_days"],
-            low_sla_days=policy_data["low_days"],
-            is_default=policy_data["is_default"],
-        )
-        db.add(policy)
-        sla_policy_map[policy_data["name"]] = policy
-        sla_policies_created += 1
-
-    await db.commit()
-
-    # Create Remediation Tasks (only if we have findings)
     remediation_tasks_created = 0
+    remediation_comments_created = 0
     task_objects = []
-    if all_findings:
-        for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
-            # Link to a finding (required FK)
-            finding = all_findings[i % len(all_findings)]
-            vendor = random.choice(list(vendor_map.values()))
-
-            due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
-            created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
-
-            # Check if SLA is breached (for some older tasks)
-            sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
-
-            task = RemediationTask(
+    try:
+        sla_policy_map = {}
+        for policy_data in DEMO_SLA_POLICIES:
+            policy = SLAPolicy(
                 id=str(uuid4()),
                 organization_id=org_id,
-                finding_id=finding.id,
-                vendor_id=vendor.id,
-                assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
-                created_by_id=current_user.id,
-                title=task_data["title"],
-                description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
-                status=task_data["status"],
-                priority=task_data["priority"],
-                due_date=due_date,
-                sla_days=task_data["sla_days"],
-                sla_breached=sla_breached,
+                name=policy_data["name"],
+                critical_sla_days=policy_data["critical_days"],
+                high_sla_days=policy_data["high_days"],
+                medium_sla_days=policy_data["medium_days"],
+                low_sla_days=policy_data["low_days"],
+                is_default=policy_data["is_default"],
             )
-            db.add(task)
-            task_objects.append(task)
-            remediation_tasks_created += 1
+            db.add(policy)
+            sla_policy_map[policy_data["name"]] = policy
+            sla_policies_created += 1
 
         await db.commit()
 
-    # Create Remediation Comments
-    remediation_comments_created = 0
-    for task in task_objects:
-        # Add 2-3 comments per task
-        num_comments = random.randint(2, 3)
-        for i in range(num_comments):
-            comment_text = random.choice(DEMO_TASK_COMMENTS)
-            comment = RemediationComment(
-                id=str(uuid4()),
-                task_id=task.id,
-                user_id=current_user.id,
-                content=comment_text,
-                created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23)),
-            )
-            db.add(comment)
-            remediation_comments_created += 1
+        # Create Remediation Tasks (only if we have findings)
+        if all_findings:
+            for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
+                # Link to a finding (required FK)
+                finding = all_findings[i % len(all_findings)]
+                vendor = random.choice(list(vendor_map.values()))
 
-    await db.commit()
+                due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
+                created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
+
+                # Check if SLA is breached (for some older tasks)
+                sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
+
+                task = RemediationTask(
+                    id=str(uuid4()),
+                    organization_id=org_id,
+                    finding_id=finding.id,
+                    vendor_id=vendor.id,
+                    assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
+                    created_by_id=current_user.id,
+                    title=task_data["title"],
+                    description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
+                    status=task_data["status"],
+                    priority=task_data["priority"],
+                    due_date=due_date,
+                    sla_days=task_data["sla_days"],
+                    sla_breached=sla_breached,
+                )
+                db.add(task)
+                task_objects.append(task)
+                remediation_tasks_created += 1
+
+            await db.commit()
+
+        # Create Remediation Comments
+        for task in task_objects:
+            # Add 2-3 comments per task
+            num_comments = random.randint(2, 3)
+            for i in range(num_comments):
+                comment_text = random.choice(DEMO_TASK_COMMENTS)
+                comment = RemediationComment(
+                    id=str(uuid4()),
+                    task_id=task.id,
+                    user_id=current_user.id,
+                    content=comment_text,
+                    created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23)),
+                )
+                db.add(comment)
+                remediation_comments_created += 1
+
+        await db.commit()
+    except Exception as e:
+        logger.warning(f"Could not seed remediation data (schema mismatch?): {e}")
+        await db.rollback()
 
     # Create Monitoring Schedules
     schedules_created = 0
