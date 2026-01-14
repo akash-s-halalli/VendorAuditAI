@@ -80,64 +80,103 @@ type DeploymentStatus = 'active' | 'pending' | 'suspended' | 'terminated';
 
 interface UseCase {
   id: string;
+  approved_vendor_id: string;
+  use_case_name: string;
+  description?: string;
+  data_types_allowed?: string[];
+  restrictions?: string;
+  example_prompts?: string[];
+  prohibited_actions?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface VendorInfo {
+  id: string;
   name: string;
-  description: string;
-  data_classification: DataClassification;
+  description?: string;
+  website?: string;
+  category?: string;
+  tier?: string;
+  status?: string;
 }
 
 interface ApprovedVendor {
   id: string;
-  name: string;
-  website?: string;
-  category: string;
-  description?: string;
-  logo_url?: string;
+  vendor_id: string;
+  organization_id: string;
   approval_status: ApprovalStatus;
+  approval_date?: string;
+  expiration_date?: string;
+  approved_by_id?: string;
+  approved_departments?: string[];
+  approved_use_cases?: string[];
+  prohibited_uses?: string[];
   data_classification_limit: DataClassification;
-  approved_use_cases: UseCase[];
-  conditions?: string[];
-  expiry_date?: string;
-  approved_at?: string;
-  approved_by?: string;
-  department_restrictions?: string[];
+  conditions?: string;
+  required_settings?: Record<string, unknown>;
+  required_training: boolean;
+  training_url?: string;
+  review_notes?: string;
+  risk_score?: number;
+  max_deployment_count?: number;
   created_at: string;
+  updated_at: string;
+  vendor?: VendorInfo;
+  use_cases?: UseCase[];
 }
 
 interface Deployment {
   id: string;
-  vendor_id: string;
-  vendor_name: string;
-  use_case_id: string;
-  use_case_name: string;
-  department: string;
+  approved_vendor_id: string;
+  organization_id: string;
+  deployed_by_id: string;
+  department?: string;
   team?: string;
+  use_case?: string;
   status: DeploymentStatus;
-  deployed_at: string;
-  deployed_by: string;
+  configuration?: Record<string, unknown>;
   data_classification: DataClassification;
+  activated_at?: string;
+  deactivated_at?: string;
+  last_used_at?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  approved_vendor?: ApprovedVendor;
 }
 
 interface ToolRequest {
   id: string;
-  tool_name: string;
-  website?: string;
-  description: string;
-  use_case_description: string;
-  business_justification: string;
-  department: string;
-  urgency: UrgencyLevel;
+  organization_id: string;
+  requested_by_id: string;
+  vendor_name: string;
+  vendor_website?: string;
+  tool_description?: string;
+  use_case_description?: string;
+  department?: string;
+  business_justification?: string;
+  expected_data_types?: string[];
+  urgency?: string;
   status: RequestStatus;
-  submitted_at: string;
-  submitted_by: string;
-  reviewer_notes?: string;
+  assigned_reviewer_id?: string;
+  review_notes?: string;
+  decision_date?: string;
+  created_vendor_id?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ApprovedVendorStats {
-  total_approved: number;
-  active_deployments: number;
-  pending_requests: number;
-  conditional_approvals: number;
+  total_approved_vendors: number;
+  total_active_deployments: number;
+  total_pending_requests: number;
+  total_conditional_approval: number;
+  total_pending_approval: number;
+  total_expired: number;
   expiring_soon: number;
+  deployments_by_department: Record<string, number>;
+  vendors_by_classification: Record<string, number>;
 }
 
 // Status styling configurations
@@ -240,9 +279,9 @@ export function ApprovedVendors() {
 
   // Request form state
   const [requestForm, setRequestForm] = useState({
-    tool_name: '',
-    website: '',
-    description: '',
+    vendor_name: '',
+    vendor_website: '',
+    tool_description: '',
     use_case_description: '',
     business_justification: '',
     department: '',
@@ -273,8 +312,8 @@ export function ApprovedVendors() {
     },
   });
 
-  // Fetch user's deployments
-  const { data: deploymentsResponse, isLoading: deploymentsLoading } = useQuery<{ data: Deployment[]; total: number }>({
+  // Fetch user's deployments (returns array directly, not wrapped)
+  const { data: deploymentsData, isLoading: deploymentsLoading } = useQuery<Deployment[]>({
     queryKey: ['my-deployments'],
     queryFn: async () => {
       const response = await apiClient.get('/approved-vendors/my-deployments');
@@ -283,8 +322,8 @@ export function ApprovedVendors() {
     enabled: activeTab === 'deployments',
   });
 
-  // Fetch user's requests
-  const { data: requestsResponse, isLoading: requestsLoading } = useQuery<{ data: ToolRequest[]; total: number }>({
+  // Fetch user's requests (returns array directly, not wrapped)
+  const { data: requestsData, isLoading: requestsLoading } = useQuery<ToolRequest[]>({
     queryKey: ['my-requests'],
     queryFn: async () => {
       const response = await apiClient.get('/approved-vendors/my-requests');
@@ -359,9 +398,9 @@ export function ApprovedVendors() {
 
   const resetRequestForm = () => {
     setRequestForm({
-      tool_name: '',
-      website: '',
-      description: '',
+      vendor_name: '',
+      vendor_website: '',
+      tool_description: '',
       use_case_description: '',
       business_justification: '',
       department: '',
@@ -383,19 +422,19 @@ export function ApprovedVendors() {
   };
 
   const handleRequestSubmit = () => {
-    if (!requestForm.tool_name.trim()) {
-      addToast({ type: 'error', title: 'Validation Error', description: 'Tool name is required.' });
+    if (!requestForm.vendor_name.trim()) {
+      addToast({ type: 'error', title: 'Validation Error', description: 'Vendor name is required.' });
       return;
     }
-    if (!requestForm.description.trim()) {
-      addToast({ type: 'error', title: 'Validation Error', description: 'Description is required.' });
+    if (!requestForm.tool_description?.trim()) {
+      addToast({ type: 'error', title: 'Validation Error', description: 'Tool description is required.' });
       return;
     }
-    if (!requestForm.use_case_description.trim()) {
+    if (!requestForm.use_case_description?.trim()) {
       addToast({ type: 'error', title: 'Validation Error', description: 'Use case description is required.' });
       return;
     }
-    if (!requestForm.business_justification.trim()) {
+    if (!requestForm.business_justification?.trim()) {
       addToast({ type: 'error', title: 'Validation Error', description: 'Business justification is required.' });
       return;
     }
@@ -407,14 +446,16 @@ export function ApprovedVendors() {
   };
 
   const vendors = vendorsResponse?.data || [];
-  const deployments = deploymentsResponse?.data || [];
-  const requests = requestsResponse?.data || [];
+  const deployments = deploymentsData || [];
+  const requests = requestsData || [];
 
   const filteredVendors = vendors.filter((vendor) => {
+    const vendorName = vendor.vendor?.name || '';
+    const vendorCategory = vendor.vendor?.category || '';
     const matchesSearch =
       !searchQuery ||
-      vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vendor.category.toLowerCase().includes(searchQuery.toLowerCase());
+      vendorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendorCategory.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || vendor.approval_status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -462,28 +503,28 @@ export function ApprovedVendors() {
       <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
         <StatCard
           title="Total Approved"
-          value={stats?.total_approved || 0}
+          value={stats?.total_approved_vendors || 0}
           icon={CheckCircle}
           className="border-l-4 border-l-emerald-500"
           isLoading={statsLoading}
         />
         <StatCard
           title="Active Deployments"
-          value={stats?.active_deployments || 0}
+          value={stats?.total_active_deployments || 0}
           icon={Rocket}
           className="border-l-4 border-l-blue-500"
           isLoading={statsLoading}
         />
         <StatCard
           title="Pending Requests"
-          value={stats?.pending_requests || 0}
+          value={stats?.total_pending_requests || 0}
           icon={Clock}
           className="border-l-4 border-l-yellow-500"
           isLoading={statsLoading}
         />
         <StatCard
           title="Conditional"
-          value={stats?.conditional_approvals || 0}
+          value={stats?.total_conditional_approval || 0}
           icon={AlertTriangle}
           className="border-l-4 border-l-orange-500"
           isLoading={statsLoading}
@@ -710,7 +751,7 @@ export function ApprovedVendors() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="h-5 w-5 text-primary" />
-              Deploy {selectedVendor?.name}
+              Deploy {selectedVendor?.vendor?.name || 'Vendor'}
             </DialogTitle>
             <DialogDescription>
               Step {deployWizardStep} of 4: {['Select Use Case', 'Team Details', 'Data Classification', 'Confirm'][deployWizardStep - 1]}
@@ -733,37 +774,38 @@ export function ApprovedVendors() {
               <div className="space-y-4">
                 <Label>Select Use Case *</Label>
                 <div className="space-y-2">
-                  {selectedVendor.approved_use_cases.map((useCase) => (
-                    <motion.div
-                      key={useCase.id}
-                      whileHover={{ x: 4 }}
-                      className={cn(
-                        'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
-                        deployForm.use_case_id === useCase.id
-                          ? 'bg-primary/10 border-primary/30'
-                          : 'bg-card hover:bg-muted/50 border-white/10'
-                      )}
-                      onClick={() => setDeployForm({ ...deployForm, use_case_id: useCase.id })}
-                    >
-                      <div
+                  {(selectedVendor.use_cases || []).length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No use cases defined for this vendor. You can proceed without selecting one.</p>
+                  ) : (
+                    (selectedVendor.use_cases || []).map((useCase) => (
+                      <motion.div
+                        key={useCase.id}
+                        whileHover={{ x: 4 }}
                         className={cn(
-                          'flex items-center justify-center w-5 h-5 rounded border mt-0.5',
+                          'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                           deployForm.use_case_id === useCase.id
-                            ? 'bg-primary border-primary'
-                            : 'border-muted-foreground/30'
+                            ? 'bg-primary/10 border-primary/30'
+                            : 'bg-card hover:bg-muted/50 border-white/10'
                         )}
+                        onClick={() => setDeployForm({ ...deployForm, use_case_id: useCase.id })}
                       >
-                        {deployForm.use_case_id === useCase.id && <Check className="h-3 w-3 text-white" />}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{useCase.name}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{useCase.description}</p>
-                        <Badge variant="outline" className={cn('mt-2 text-xs', dataClassificationConfig[useCase.data_classification].color)}>
-                          {dataClassificationConfig[useCase.data_classification].label}
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div
+                          className={cn(
+                            'flex items-center justify-center w-5 h-5 rounded border mt-0.5',
+                            deployForm.use_case_id === useCase.id
+                              ? 'bg-primary border-primary'
+                              : 'border-muted-foreground/30'
+                          )}
+                        >
+                          {deployForm.use_case_id === useCase.id && <Check className="h-3 w-3 text-white" />}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{useCase.use_case_name}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{useCase.description || 'No description'}</p>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
@@ -854,14 +896,16 @@ export function ApprovedVendors() {
                   <dl className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Vendor:</dt>
-                      <dd className="font-medium">{selectedVendor.name}</dd>
+                      <dd className="font-medium">{selectedVendor.vendor?.name || 'Unknown Vendor'}</dd>
                     </div>
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">Use Case:</dt>
-                      <dd className="font-medium">
-                        {selectedVendor.approved_use_cases.find((uc) => uc.id === deployForm.use_case_id)?.name}
-                      </dd>
-                    </div>
+                    {deployForm.use_case_id && (
+                      <div className="flex justify-between">
+                        <dt className="text-muted-foreground">Use Case:</dt>
+                        <dd className="font-medium">
+                          {(selectedVendor.use_cases || []).find((uc) => uc.id === deployForm.use_case_id)?.use_case_name || 'N/A'}
+                        </dd>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Department:</dt>
                       <dd className="font-medium">{deployForm.department}</dd>
@@ -883,20 +927,13 @@ export function ApprovedVendors() {
                   </dl>
                 </div>
 
-                {selectedVendor.conditions && selectedVendor.conditions.length > 0 && (
+                {selectedVendor.conditions && (
                   <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
                     <h4 className="font-medium text-yellow-400 mb-2 flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4" />
                       Conditions of Use
                     </h4>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      {selectedVendor.conditions.map((condition, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-yellow-400">[*]</span>
-                          {condition}
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-sm text-muted-foreground">{selectedVendor.conditions}</p>
                   </div>
                 )}
 
@@ -979,35 +1016,35 @@ export function ApprovedVendors() {
           <div className="py-4 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="tool_name">Tool Name *</Label>
+                <Label htmlFor="vendor_name">Vendor/Tool Name *</Label>
                 <Input
-                  id="tool_name"
+                  id="vendor_name"
                   placeholder="e.g., ChatGPT, Midjourney"
                   className="mt-2 bg-white/5 border-white/10"
-                  value={requestForm.tool_name}
-                  onChange={(e) => setRequestForm({ ...requestForm, tool_name: e.target.value })}
+                  value={requestForm.vendor_name}
+                  onChange={(e) => setRequestForm({ ...requestForm, vendor_name: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="website">Website</Label>
+                <Label htmlFor="vendor_website">Website</Label>
                 <Input
-                  id="website"
+                  id="vendor_website"
                   placeholder="https://example.com"
                   className="mt-2 bg-white/5 border-white/10"
-                  value={requestForm.website}
-                  onChange={(e) => setRequestForm({ ...requestForm, website: e.target.value })}
+                  value={requestForm.vendor_website}
+                  onChange={(e) => setRequestForm({ ...requestForm, vendor_website: e.target.value })}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="description">Tool Description *</Label>
+              <Label htmlFor="tool_description">Tool Description *</Label>
               <textarea
-                id="description"
+                id="tool_description"
                 placeholder="Briefly describe what this tool does..."
                 className="mt-2 flex min-h-[80px] w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                value={requestForm.description}
-                onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
+                value={requestForm.tool_description}
+                onChange={(e) => setRequestForm({ ...requestForm, tool_description: e.target.value })}
               />
             </div>
 
@@ -1119,14 +1156,14 @@ function VendorCard({
             </motion.div>
             <div>
               <CardTitle className="text-lg text-white group-hover:text-primary transition-colors">
-                {vendor.name}
+                {vendor.vendor?.name || 'Unknown Vendor'}
               </CardTitle>
-              <p className="text-xs text-muted-foreground">{vendor.category}</p>
+              <p className="text-xs text-muted-foreground">{vendor.vendor?.category || 'Uncategorized'}</p>
             </div>
           </div>
-          {vendor.website && (
+          {vendor.vendor?.website && (
             <a
-              href={vendor.website}
+              href={vendor.vendor.website}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition-colors"
@@ -1156,19 +1193,19 @@ function VendorCard({
           </div>
 
           {/* Description */}
-          {vendor.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{vendor.description}</p>
+          {vendor.vendor?.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2">{vendor.vendor.description}</p>
           )}
 
           {/* Use Cases Count */}
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1 text-muted-foreground">
               <Zap className="h-3 w-3" />
-              {vendor.approved_use_cases.length} Approved Use Cases
+              {vendor.use_cases?.length || 0} Approved Use Cases
             </span>
-            {vendor.expiry_date && (
+            {vendor.expiration_date && (
               <span className="text-xs text-muted-foreground">
-                Expires: {new Date(vendor.expiry_date).toLocaleDateString()}
+                Expires: {new Date(vendor.expiration_date).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -1192,6 +1229,8 @@ function VendorCard({
 
 // Deployment Card Component
 function DeploymentCard({ deployment }: { deployment: Deployment }) {
+  const vendorName = deployment.approved_vendor?.vendor?.name || 'Unknown Vendor';
+
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
@@ -1200,17 +1239,19 @@ function DeploymentCard({ deployment }: { deployment: Deployment }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Rocket className="h-4 w-4 text-primary" />
-          <span className="font-medium">{deployment.vendor_name}</span>
+          <span className="font-medium">{vendorName}</span>
         </div>
         <Badge variant="outline" className={deploymentStatusConfig[deployment.status].color}>
           {deploymentStatusConfig[deployment.status].label}
         </Badge>
       </div>
-      <p className="text-sm text-muted-foreground mb-2">{deployment.use_case_name}</p>
+      {deployment.use_case && (
+        <p className="text-sm text-muted-foreground mb-2">{deployment.use_case}</p>
+      )}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <Briefcase className="h-3 w-3" />
-          {deployment.department}
+          {deployment.department || 'No department'}
         </span>
         <span className="flex items-center gap-1">
           <Database className="h-3 w-3" />
@@ -1218,7 +1259,7 @@ function DeploymentCard({ deployment }: { deployment: Deployment }) {
         </span>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Deployed: {new Date(deployment.deployed_at).toLocaleDateString()}
+        Deployed: {new Date(deployment.created_at).toLocaleDateString()}
       </p>
     </motion.div>
   );
@@ -1226,6 +1267,8 @@ function DeploymentCard({ deployment }: { deployment: Deployment }) {
 
 // Request Card Component
 function RequestCard({ request }: { request: ToolRequest }) {
+  const urgency = (request.urgency || 'medium') as UrgencyLevel;
+
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
@@ -1234,28 +1277,30 @@ function RequestCard({ request }: { request: ToolRequest }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />
-          <span className="font-medium">{request.tool_name}</span>
+          <span className="font-medium">{request.vendor_name}</span>
         </div>
         <Badge variant="outline" className={requestStatusConfig[request.status].color}>
           {requestStatusConfig[request.status].label}
         </Badge>
       </div>
-      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{request.description}</p>
+      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+        {request.tool_description || request.use_case_description || 'No description'}
+      </p>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <Briefcase className="h-3 w-3" />
-          {request.department}
+          {request.department || 'No department'}
         </span>
-        <Badge variant="outline" className={urgencyConfig[request.urgency].color}>
-          {urgencyConfig[request.urgency].label}
+        <Badge variant="outline" className={urgencyConfig[urgency].color}>
+          {urgencyConfig[urgency].label}
         </Badge>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Submitted: {new Date(request.submitted_at).toLocaleDateString()}
+        Submitted: {new Date(request.created_at).toLocaleDateString()}
       </p>
-      {request.reviewer_notes && (
+      {request.review_notes && (
         <div className="mt-3 p-2 rounded bg-muted/50 text-xs text-muted-foreground">
-          <span className="font-medium">Reviewer Note:</span> {request.reviewer_notes}
+          <span className="font-medium">Reviewer Note:</span> {request.review_notes}
         </div>
       )}
     </motion.div>

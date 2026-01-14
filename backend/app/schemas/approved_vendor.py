@@ -181,6 +181,19 @@ class ApprovedVendorUpdate(BaseModel):
     )
 
 
+class VendorInfo(BaseModel):
+    """Nested schema for vendor details."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    description: str | None = None
+    website: str | None = None
+    category: str | None = None
+    tier: str | None = None
+    status: str | None = None
+
+
 class ApprovedVendorResponse(BaseModel):
     """Schema for approved vendor response."""
     model_config = ConfigDict(from_attributes=True)
@@ -205,6 +218,11 @@ class ApprovedVendorResponse(BaseModel):
     max_deployment_count: int | None = None
     created_at: datetime
     updated_at: datetime
+    # Nested vendor info
+    vendor: VendorInfo | None = Field(
+        default=None,
+        description="Linked vendor details"
+    )
 
 
 class UseCaseResponse(BaseModel):
