@@ -302,6 +302,92 @@ DEMO_FINDINGS = [
 ]
 
 
+@router.post("/run-migrations")
+async def run_migrations() -> dict:
+    """Run Alembic migrations on the database.
+
+    This endpoint is used to run pending migrations on Railway
+    since the internal database hostname is not accessible externally.
+    """
+    import subprocess
+    import os
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        # Get current directory (should be in backend/)
+        backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+
+        # Run alembic upgrade head
+        result = subprocess.run(
+            ["alembic", "upgrade", "head"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
+
+        if result.returncode == 0:
+            return {
+                "success": True,
+                "message": "Migrations completed successfully",
+                "stdout": result.stdout,
+                "stderr": result.stderr
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Migration failed",
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "return_code": result.returncode
+            }
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "message": "Migration timed out after 120 seconds"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error running migrations: {str(e)}"
+        }
+
+
+@router.get("/migration-status")
+async def migration_status() -> dict:
+    """Check current Alembic migration status."""
+    import subprocess
+    import os
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+
+        # Run alembic current
+        result = subprocess.run(
+            ["alembic", "current"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        return {
+            "success": result.returncode == 0,
+            "current_revision": result.stdout.strip(),
+            "stderr": result.stderr
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error checking migration status: {str(e)}"
+        }
+
+
 @router.get("/debug-tables")
 async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
     """Debug endpoint to check which tables exist (no auth required for debugging)."""
