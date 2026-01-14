@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { Building2, FileText, AlertTriangle, CheckCircle, Clock, Activity, Shield, Cpu, Search, Sparkles, TrendingUp } from 'lucide-react';
+import { Building2, FileText, AlertTriangle, CheckCircle, Clock, Activity, Shield, Cpu, Search, Sparkles, TrendingUp, RefreshCw, Loader2 } from 'lucide-react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import { Badge } from '@/components/ui';
+import { Badge, Button } from '@/components/ui';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
 import { useEffect, useState } from 'react';
@@ -94,12 +94,32 @@ function PulseRing({ color = 'obsidian-teal' }: { color?: string }) {
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [seedMessage, setSeedMessage] = useState<string | null>(null);
 
   const { data: stats, isLoading, isError, error } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       const response = await apiClient.get('/dashboard/stats');
       return response.data;
+    },
+  });
+
+  // Reseed demo data mutation
+  const reseedMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post('/admin/seed-demo-data');
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setSeedMessage(`Seeded: ${data.vendors_created} vendors, ${data.playbooks_created} playbooks, ${data.findings_created} findings`);
+      // Invalidate all queries to refresh data
+      queryClient.invalidateQueries();
+      setTimeout(() => setSeedMessage(null), 5000);
+    },
+    onError: (error) => {
+      setSeedMessage(`Error: ${getApiErrorMessage(error)}`);
+      setTimeout(() => setSeedMessage(null), 5000);
     },
   });
 
@@ -172,6 +192,23 @@ export function Dashboard() {
             </span>
             <span className="text-white/10">|</span>
             <span className="font-mono text-obsidian-teal/80">v3.0.0-OBSIDIAN</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => reseedMutation.mutate()}
+              disabled={reseedMutation.isPending}
+              className="ml-4"
+            >
+              {reseedMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Reseed Demo Data
+            </Button>
+            {seedMessage && (
+              <span className="ml-2 text-xs text-obsidian-teal">{seedMessage}</span>
+            )}
           </div>
         </div>
 
