@@ -331,7 +331,109 @@ async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
             # Rollback after each check to clear any failed transaction state
             await db.rollback()
 
-    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v4-rollback-fix"}
+    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v5-debug"}
+
+
+@router.post("/debug-seed")
+async def debug_seed(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """Debug seed endpoint - tests each step and reports failures."""
+    import logging
+    from sqlalchemy import text
+    logger = logging.getLogger(__name__)
+    org_id = current_user.organization_id
+    steps = {}
+
+    # Step 1: Test basic query
+    try:
+        result = await db.execute(text("SELECT 1"))
+        steps["1_basic_query"] = "OK"
+    except Exception as e:
+        steps["1_basic_query"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    # Step 2: Delete vendors (simple)
+    try:
+        await db.execute(text(f"DELETE FROM vendors WHERE organization_id = '{org_id}'"))
+        steps["2_delete_vendors"] = "OK"
+        await db.rollback()  # Don't actually delete
+    except Exception as e:
+        steps["2_delete_vendors"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    # Step 3: Create a vendor
+    try:
+        vendor = Vendor(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name="Test Vendor",
+            description="Test",
+            website="https://test.com",
+            tier="low",
+            status=VendorStatus.ACTIVE.value,
+            category="test",
+        )
+        db.add(vendor)
+        await db.flush()
+        steps["3_create_vendor"] = f"OK: {vendor.id}"
+        await db.rollback()  # Don't actually create
+    except Exception as e:
+        steps["3_create_vendor"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    # Step 4: Test remediation_tasks table with raw SQL
+    try:
+        await db.execute(text(f"SELECT id FROM remediation_tasks WHERE organization_id = '{org_id}' LIMIT 1"))
+        steps["4_query_remediation_raw"] = "OK"
+    except Exception as e:
+        steps["4_query_remediation_raw"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    # Step 5: Test SLAPolicy creation
+    try:
+        policy = SLAPolicy(
+            id=str(uuid4()),
+            organization_id=org_id,
+            name="Test Policy",
+            critical_sla_days=3,
+            high_sla_days=7,
+            medium_sla_days=30,
+            low_sla_days=90,
+            is_default=False,
+        )
+        db.add(policy)
+        await db.flush()
+        steps["5_create_sla_policy"] = f"OK: {policy.id}"
+        await db.rollback()
+    except Exception as e:
+        steps["5_create_sla_policy"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    # Step 6: Test AIPlaybook creation
+    try:
+        playbook = AIPlaybook(
+            id=str(uuid4()),
+            organization_id=org_id,
+            created_by_id=current_user.id,
+            name="Test Playbook",
+            description="Test",
+            phase="selection",
+            target_audience="all",
+            department="security",
+            is_active=True,
+            is_default=False,
+        )
+        db.add(playbook)
+        await db.flush()
+        steps["6_create_playbook"] = f"OK: {playbook.id}"
+        await db.rollback()
+    except Exception as e:
+        steps["6_create_playbook"] = f"FAIL: {str(e)[:100]}"
+        await db.rollback()
+
+    return {"org_id": org_id, "user_id": current_user.id, "steps": steps}
 
 
 @router.post("/seed-demo-data", response_model=SeedResponse)
