@@ -306,34 +306,30 @@ DEMO_FINDINGS = [
 async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
     """Debug endpoint to check which tables exist (no auth required for debugging)."""
     import logging
+    from sqlalchemy import text
     logger = logging.getLogger(__name__)
     results = {}
 
+    # Use raw SQL to check tables without ORM model issues
     tables_to_check = [
-        ("vendors", Vendor),
-        ("documents", Document),
-        ("findings", Finding),
-        ("analysis_runs", AnalysisRun),
-        ("agents", Agent),
-        ("agent_tasks", AgentTask),
-        ("agent_logs", AgentLog),
-        ("ai_playbooks", AIPlaybook),
-        ("playbook_steps", PlaybookStep),
-        ("monitoring_schedules", MonitoringSchedule),
-        ("alerts", Alert),
-        ("alert_rules", AlertRule),
-        ("remediation_tasks", RemediationTask),
-        ("audit_logs", AuditLog),
-        ("query_history", QueryHistory),
-        ("conversation_threads", ConversationThread),
+        "vendors", "documents", "findings", "analysis_runs",
+        "agents", "agent_tasks", "agent_logs",
+        "ai_playbooks", "playbook_steps",
+        "monitoring_schedules", "alerts", "alert_rules",
+        "remediation_tasks", "sla_policies",
+        "audit_logs", "query_history", "conversation_threads",
     ]
 
-    for name, model in tables_to_check:
+    for table_name in tables_to_check:
         try:
-            result = await db.execute(select(model).limit(1))
-            results[name] = "OK"
+            # Use raw SQL to avoid ORM column mapping issues
+            result = await db.execute(text(f"SELECT 1 FROM {table_name} LIMIT 1"))
+            results[table_name] = "OK"
         except Exception as e:
-            results[name] = f"ERROR: {str(e)[:100]}"
+            results[table_name] = f"ERROR: {str(e)[:80]}"
+        finally:
+            # Rollback after each check to clear any failed transaction state
+            await db.rollback()
 
     return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0}
 
