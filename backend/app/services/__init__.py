@@ -2,6 +2,7 @@
 
 from app.services import (
     analysis,
+    approved_vendor,
     auth,
     chunking,
     compliance,
@@ -18,6 +19,7 @@ from app.services import (
 
 __all__ = [
     "analysis",
+    "approved_vendor",
     "auth",
     "chunking",
     "compliance",

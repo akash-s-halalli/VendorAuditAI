@@ -14,3 +14,6 @@ export { Analysis } from './Analysis';
 export { Remediation } from './Remediation';
 export { Monitoring } from './Monitoring';
 export { Playbooks } from './Playbooks';
+export { ApprovedVendors } from './ApprovedVendors';
+export { BPO } from './BPO';
+export { Integrations } from './Integrations';

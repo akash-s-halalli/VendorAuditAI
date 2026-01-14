@@ -23,6 +23,10 @@ RemediationStatusType = Literal[
 
 RemediationPriorityType = Literal["critical", "high", "medium", "low"]
 
+# External sync types
+ExternalSystemType = Literal["jira", "servicenow", "github", "azure_devops", "gitlab", "asana", "trello", "custom"]
+SyncDirectionType = Literal["inbound", "outbound", "bidirectional"]
+
 
 class RemediationTaskCreate(BaseModel):
     """Schema for creating a remediation task."""
@@ -125,6 +129,14 @@ class RemediationTaskResponse(BaseModel):
     exception_reason: str | None
     exception_approved_by_id: str | None
     exception_approved_at: datetime | None
+    # External system integration fields
+    external_system: str | None = None
+    external_id: str | None = None
+    external_url: str | None = None
+    external_status: str | None = None
+    last_synced_at: datetime | None = None
+    sync_enabled: bool = False
+    sync_direction: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -183,3 +195,76 @@ class SLAPolicyResponse(BaseModel):
     low_sla_days: int
     created_at: datetime
     updated_at: datetime
+
+
+# External System Integration Schemas
+
+class ExternalSyncCreate(BaseModel):
+    """Schema for linking a remediation task to an external system."""
+
+    external_system: ExternalSystemType = Field(
+        ..., description="External system type (jira, servicenow, github, etc)"
+    )
+    external_id: str = Field(
+        ..., min_length=1, max_length=255, description="ID of the ticket in the external system"
+    )
+    external_url: str | None = Field(
+        None, max_length=500, description="Direct URL to the external ticket"
+    )
+    sync_direction: SyncDirectionType = Field(
+        default="outbound", description="Direction of synchronization"
+    )
+    sync_enabled: bool = Field(
+        default=True, description="Whether to enable automatic synchronization"
+    )
+
+
+class ExternalSyncResponse(BaseModel):
+    """Response schema for external sync information."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    task_id: str
+    external_system: str | None
+    external_id: str | None
+    external_url: str | None
+    external_status: str | None
+    last_synced_at: datetime | None
+    sync_enabled: bool
+    sync_direction: str | None
+
+
+class SyncStatusResponse(BaseModel):
+    """Response schema for sync status of a task."""
+
+    task_id: str
+    task_title: str
+    external_system: str | None
+    external_id: str | None
+    external_url: str | None
+    external_status: str | None
+    internal_status: str
+    last_synced_at: datetime | None
+    sync_enabled: bool
+    sync_direction: str | None
+    is_in_sync: bool = Field(
+        default=True, description="Whether internal and external statuses are aligned"
+    )
+    sync_error: str | None = Field(
+        default=None, description="Error message if last sync failed"
+    )
+
+
+class SyncResult(BaseModel):
+    """Response schema for a sync operation result."""
+
+    success: bool
+    task_id: str
+    external_system: str
+    external_id: str
+    external_status: str | None
+    synced_at: datetime
+    changes_applied: list[str] = Field(
+        default_factory=list, description="List of changes applied during sync"
+    )
+    error: str | None = None

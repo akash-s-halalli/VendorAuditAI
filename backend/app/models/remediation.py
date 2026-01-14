@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
@@ -151,6 +151,21 @@ class RemediationTask(Base, UUIDMixin, TimestampMixin):
     exception_approved_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+
+    # External system integration
+    external_system: Mapped[str | None] = mapped_column(
+        String(50), nullable=True, index=True
+    )
+    external_id: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, index=True
+    )
+    external_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    external_status: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    last_synced_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    sync_enabled: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    sync_direction: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
     # Relationships
     organization: Mapped["Organization"] = relationship(

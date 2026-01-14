@@ -11,6 +11,7 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.audit_log import AuditLog
+    from app.models.bpo import BPOAssessment
     from app.models.organization import Organization
     from app.models.query import ConversationThread, QueryHistory
     from app.models.remediation import RemediationTask
@@ -79,6 +80,10 @@ class User(Base, UUIDMixin, TimestampMixin):
     audit_logs: Mapped[list["AuditLog"]] = relationship(
         "AuditLog",
         back_populates="user",
+    )
+    bpo_assessments: Mapped[list["BPOAssessment"]] = relationship(
+        "BPOAssessment",
+        back_populates="assessor",
     )
 
     def __repr__(self) -> str:

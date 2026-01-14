@@ -8,13 +8,16 @@ from app.api.v1.endpoints import (
     ai_classification,
     analysis,
     analytics,
+    approved_vendors,
     audit,
     auth,
+    bpo,
     categorization,
     compliance,
     dashboard,
     documents,
     export,
+    integrations,
     monitoring,
     playbooks,
     query,
@@ -99,6 +102,21 @@ api_router.include_router(
     ai_classification.router, prefix="/ai-classification", tags=["AI Tool Classification"]
 )
 
+# Include approved vendors router
+api_router.include_router(
+    approved_vendors.router, prefix="/approved-vendors", tags=["Approved AI Vendors"]
+)
+
+# Include BPO router
+api_router.include_router(
+    bpo.router, prefix="/bpo", tags=["BPO Risk Management"]
+)
+
+# Include integrations router
+api_router.include_router(
+    integrations.router, prefix="/integrations", tags=["Integration Hub"]
+)
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -109,16 +127,20 @@ async def api_status() -> dict:
         "endpoints": {
             "admin": "/api/v1/admin",
             "agents": "/api/v1/agents",
+            "ai_classification": "/api/v1/ai-classification",
             "analysis": "/api/v1/analysis",
             "analysis_findings": "/api/v1/analysis/findings",
             "analytics": "/api/v1/analytics",
+            "approved_vendors": "/api/v1/approved-vendors",
             "audit": "/api/v1/audit",
             "auth": "/api/v1/auth",
+            "bpo": "/api/v1/bpo",
             "categorization": "/api/v1/categorization",
             "dashboard": "/api/v1/dashboard",
             "documents": "/api/v1/documents",
             "export": "/api/v1/export",
             "frameworks": "/api/v1/frameworks",
+            "integrations": "/api/v1/integrations",
             "monitoring": "/api/v1/monitoring",
             "playbooks": "/api/v1/playbooks",
             "query": "/api/v1/query",
@@ -127,6 +149,5 @@ async def api_status() -> dict:
             "search": "/api/v1/search",
             "sso": "/api/v1/sso",
             "vendors": "/api/v1/vendors",
-            "ai_classification": "/api/v1/ai-classification",
         },
     }

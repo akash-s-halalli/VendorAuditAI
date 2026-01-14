@@ -10,8 +10,10 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 if TYPE_CHECKING:
     from app.models.agent import Agent
     from app.models.audit_log import AuditLog
+    from app.models.bpo import BPOAssessment, BPOProvider
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
+    from app.models.integration import Integration, WebhookEndpoint
     from app.models.monitoring import Alert, AlertRule, MonitoringSchedule, NotificationChannel
     from app.models.playbook import AIPlaybook
     from app.models.query import ConversationThread, QueryHistory
@@ -112,6 +114,26 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     playbooks: Mapped[list["AIPlaybook"]] = relationship(
         "AIPlaybook",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    bpo_providers: Mapped[list["BPOProvider"]] = relationship(
+        "BPOProvider",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    bpo_assessments: Mapped[list["BPOAssessment"]] = relationship(
+        "BPOAssessment",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    integrations: Mapped[list["Integration"]] = relationship(
+        "Integration",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    webhook_endpoints: Mapped[list["WebhookEndpoint"]] = relationship(
+        "WebhookEndpoint",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

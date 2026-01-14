@@ -11,6 +11,8 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.ai_classification import AIToolClassification
+    from app.models.approved_vendor import ApprovedAIVendor
+    from app.models.bpo import BPOProvider
     from app.models.document import Document
     from app.models.monitoring import MonitoringSchedule
     from app.models.organization import Organization
@@ -108,6 +110,16 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     )
     ai_classification: Mapped["AIToolClassification"] = relationship(
         "AIToolClassification",
+        back_populates="vendor",
+        uselist=False,
+    )
+    bpo_provider: Mapped["BPOProvider"] = relationship(
+        "BPOProvider",
+        back_populates="vendor",
+        uselist=False,
+    )
+    approved_vendor_entry: Mapped["ApprovedAIVendor"] = relationship(
+        "ApprovedAIVendor",
         back_populates="vendor",
         uselist=False,
     )

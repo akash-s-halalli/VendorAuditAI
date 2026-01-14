@@ -11,6 +11,11 @@ import {
   ChevronRight,
   Loader2,
   X,
+  Link2,
+  Unlink,
+  RefreshCw,
+  ExternalLink,
+  Bug,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -61,6 +66,19 @@ type TaskStatus =
 
 type TaskPriority = 'critical' | 'high' | 'medium' | 'low';
 
+type ExternalSystem = 'jira' | 'servicenow' | 'github';
+
+type SyncStatus = 'synced' | 'pending' | 'error';
+
+interface ExternalLink {
+  system: ExternalSystem;
+  ticket_id: string;
+  ticket_url: string;
+  sync_status: SyncStatus;
+  last_synced_at?: string;
+  bidirectional_sync: boolean;
+}
+
 interface RemediationTask {
   id: string;
   title: string;
@@ -75,6 +93,7 @@ interface RemediationTask {
   sla_breached: boolean;
   created_at: string;
   updated_at: string;
+  external_link?: ExternalLink;
 }
 
 interface DashboardStats {
@@ -131,13 +150,56 @@ const priorityColors: Record<TaskPriority, string> = {
   low: 'bg-green-100 text-green-700 border-green-300',
 };
 
+const externalSystemLabels: Record<ExternalSystem, string> = {
+  jira: 'Jira',
+  servicenow: 'ServiceNow',
+  github: 'GitHub',
+};
+
+const syncStatusColors: Record<SyncStatus, string> = {
+  synced: 'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  error: 'bg-red-100 text-red-700',
+};
+
+const syncStatusLabels: Record<SyncStatus, string> = {
+  synced: 'Synced',
+  pending: 'Pending',
+  error: 'Error',
+};
+
+// External system icon component
+function ExternalSystemIcon({ system, className }: { system: ExternalSystem; className?: string }) {
+  switch (system) {
+    case 'jira':
+      return <Bug className={cn('text-blue-600', className)} />;
+    case 'servicenow':
+      return (
+        <svg className={cn('text-green-600', className)} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+        </svg>
+      );
+    case 'github':
+      return (
+        <svg className={cn('text-gray-800', className)} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+        </svg>
+      );
+  }
+}
+
 export function Remediation() {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<'all' | TaskStatus>('all');
+  const [externalLinkFilter, setExternalLinkFilter] = useState<'all' | 'linked' | 'unlinked'>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [showCreateExternalModal, setShowCreateExternalModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<RemediationTask | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [createExternalError, setCreateExternalError] = useState<string | null>(null);
 
   // Form state for new task
   const [newTask, setNewTask] = useState({
@@ -146,6 +208,18 @@ export function Remediation() {
     priority: 'medium' as TaskPriority,
     finding_id: '',
     sla_days: 30,
+  });
+
+  // Form state for linking external ticket
+  const [linkForm, setLinkForm] = useState({
+    system: 'jira' as ExternalSystem,
+    ticket_id: '',
+    bidirectional_sync: true,
+  });
+
+  // Form state for creating external ticket
+  const [createExternalForm, setCreateExternalForm] = useState({
+    system: 'jira' as ExternalSystem,
   });
 
   // Fetch dashboard stats
@@ -159,12 +233,15 @@ export function Remediation() {
 
   // Fetch tasks
   const { data: tasksResponse, isLoading: tasksLoading } = useQuery<TaskListResponse>({
-    queryKey: ['remediation-tasks', filter],
+    queryKey: ['remediation-tasks', filter, externalLinkFilter],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append('limit', '50');
       if (filter !== 'all') {
         params.append('status', filter);
+      }
+      if (externalLinkFilter !== 'all') {
+        params.append('has_external_link', externalLinkFilter === 'linked' ? 'true' : 'false');
       }
       const response = await apiClient.get(`/remediation/tasks?${params}`);
       return response.data;
@@ -211,6 +288,69 @@ export function Remediation() {
     },
   });
 
+  // Link external ticket mutation
+  const linkExternalMutation = useMutation({
+    mutationFn: async ({ taskId, data }: { taskId: string; data: typeof linkForm }) => {
+      const response = await apiClient.post(`/remediation/tasks/${taskId}/external-link`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['remediation-tasks'] });
+      setShowLinkModal(false);
+      setLinkForm({ system: 'jira', ticket_id: '', bidirectional_sync: true });
+      setLinkError(null);
+      // Refresh the selected task
+      if (selectedTask) {
+        setSelectedTask({ ...selectedTask, external_link: undefined });
+      }
+    },
+    onError: (error) => {
+      setLinkError(getApiErrorMessage(error));
+    },
+  });
+
+  // Unlink external ticket mutation
+  const unlinkExternalMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await apiClient.delete(`/remediation/tasks/${taskId}/external-link`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['remediation-tasks'] });
+      if (selectedTask) {
+        setSelectedTask({ ...selectedTask, external_link: undefined });
+      }
+    },
+  });
+
+  // Sync external ticket mutation
+  const syncExternalMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await apiClient.post(`/remediation/tasks/${taskId}/external-link/sync`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['remediation-tasks'] });
+    },
+  });
+
+  // Create external ticket mutation
+  const createExternalTicketMutation = useMutation({
+    mutationFn: async ({ taskId, system }: { taskId: string; system: ExternalSystem }) => {
+      const response = await apiClient.post(`/remediation/tasks/${taskId}/external-ticket`, { system });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['remediation-tasks'] });
+      setShowCreateExternalModal(false);
+      setCreateExternalForm({ system: 'jira' });
+      setCreateExternalError(null);
+    },
+    onError: (error) => {
+      setCreateExternalError(getApiErrorMessage(error));
+    },
+  });
+
   const handleCreateTask = () => {
     if (!newTask.title.trim()) {
       setCreateError('Task title is required');
@@ -227,6 +367,31 @@ export function Remediation() {
   const handleTaskClick = (task: RemediationTask) => {
     setSelectedTask(task);
     setShowDetailModal(true);
+  };
+
+  const handleLinkExternal = () => {
+    if (!selectedTask) return;
+    if (!linkForm.ticket_id.trim()) {
+      setLinkError('Ticket ID or URL is required');
+      return;
+    }
+    setLinkError(null);
+    linkExternalMutation.mutate({ taskId: selectedTask.id, data: linkForm });
+  };
+
+  const handleCreateExternalTicket = () => {
+    if (!selectedTask) return;
+    createExternalTicketMutation.mutate({ taskId: selectedTask.id, system: createExternalForm.system });
+  };
+
+  const handleOpenLinkModal = (task: RemediationTask) => {
+    setSelectedTask(task);
+    setShowLinkModal(true);
+  };
+
+  const handleOpenCreateExternalModal = (task: RemediationTask) => {
+    setSelectedTask(task);
+    setShowCreateExternalModal(true);
   };
 
   const tasks = tasksResponse?.data || [];
@@ -362,6 +527,152 @@ export function Remediation() {
         </DialogContent>
       </Dialog>
 
+      {/* Link External Ticket Modal */}
+      <Dialog open={showLinkModal} onOpenChange={setShowLinkModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Link External Ticket</DialogTitle>
+            <DialogDescription>
+              Connect this remediation task to an external issue tracker.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="external_system">External System</Label>
+              <select
+                id="external_system"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={linkForm.system}
+                onChange={(e) => setLinkForm({ ...linkForm, system: e.target.value as ExternalSystem })}
+              >
+                <option value="jira">Jira</option>
+                <option value="servicenow">ServiceNow</option>
+                <option value="github">GitHub Issues</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="ticket_id">Ticket ID or URL *</Label>
+              <Input
+                id="ticket_id"
+                placeholder={
+                  linkForm.system === 'jira'
+                    ? 'e.g., PROJ-123 or https://your-domain.atlassian.net/browse/PROJ-123'
+                    : linkForm.system === 'servicenow'
+                    ? 'e.g., INC0012345'
+                    : 'e.g., #123 or https://github.com/org/repo/issues/123'
+                }
+                value={linkForm.ticket_id}
+                onChange={(e) => setLinkForm({ ...linkForm, ticket_id: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="bidirectional_sync"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                checked={linkForm.bidirectional_sync}
+                onChange={(e) => setLinkForm({ ...linkForm, bidirectional_sync: e.target.checked })}
+              />
+              <Label htmlFor="bidirectional_sync" className="text-sm font-normal">
+                Enable bidirectional sync (updates flow both ways)
+              </Label>
+            </div>
+            {linkError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {linkError}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLinkModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleLinkExternal} disabled={linkExternalMutation.isPending}>
+              {linkExternalMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Link2 className="h-4 w-4 mr-2" />
+              Link Ticket
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create External Ticket Modal */}
+      <Dialog open={showCreateExternalModal} onOpenChange={setShowCreateExternalModal}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Create External Ticket</DialogTitle>
+            <DialogDescription>
+              Create a new ticket in an external system and link it to this task.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="create_external_system">Select Integration</Label>
+              <select
+                id="create_external_system"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={createExternalForm.system}
+                onChange={(e) => setCreateExternalForm({ system: e.target.value as ExternalSystem })}
+              >
+                <option value="jira">Jira</option>
+                <option value="servicenow">ServiceNow</option>
+                <option value="github">GitHub Issues</option>
+              </select>
+            </div>
+
+            {selectedTask && (
+              <div className="rounded-md border bg-muted/50 p-4 space-y-3">
+                <h4 className="text-sm font-medium">Pre-filled Ticket Details</h4>
+                <div className="grid gap-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Title:</span>
+                    <span className="ml-2">{selectedTask.title}</span>
+                  </div>
+                  {selectedTask.description && (
+                    <div>
+                      <span className="text-muted-foreground">Description:</span>
+                      <span className="ml-2">{selectedTask.description}</span>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-muted-foreground">Priority:</span>
+                    <span className={cn('ml-2 rounded border px-2 py-0.5 text-xs font-medium capitalize', priorityColors[selectedTask.priority])}>
+                      {selectedTask.priority}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Finding ID:</span>
+                    <span className="ml-2 font-mono text-xs">{selectedTask.finding_id}</span>
+                  </div>
+                  {selectedTask.due_date && (
+                    <div>
+                      <span className="text-muted-foreground">Due Date:</span>
+                      <span className="ml-2">{new Date(selectedTask.due_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {createExternalError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {createExternalError}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateExternalModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateExternalTicket} disabled={createExternalTicketMutation.isPending}>
+              {createExternalTicketMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Create & Link Ticket
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Task Detail Modal */}
       <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
         <DialogContent className="sm:max-w-[600px]">
@@ -413,6 +724,92 @@ export function Remediation() {
                   <span className="text-muted-foreground">Created:</span>
                   <span className="ml-2">{new Date(selectedTask.created_at).toLocaleDateString()}</span>
                 </div>
+              </div>
+
+              {/* External Link Section */}
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-medium mb-3">External Integration</h4>
+                {selectedTask.external_link ? (
+                  <div className="rounded-md border bg-muted/30 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <ExternalSystemIcon system={selectedTask.external_link.system} className="h-5 w-5" />
+                        <div>
+                          <a
+                            href={selectedTask.external_link.ticket_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                          >
+                            {selectedTask.external_link.ticket_id}
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                          <p className="text-xs text-muted-foreground">
+                            {externalSystemLabels[selectedTask.external_link.system]}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', syncStatusColors[selectedTask.external_link.sync_status])}>
+                          {syncStatusLabels[selectedTask.external_link.sync_status]}
+                        </span>
+                      </div>
+                    </div>
+                    {selectedTask.external_link.last_synced_at && (
+                      <p className="text-xs text-muted-foreground">
+                        Last synced: {new Date(selectedTask.external_link.last_synced_at).toLocaleString()}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 pt-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => syncExternalMutation.mutate(selectedTask.id)}
+                        disabled={syncExternalMutation.isPending}
+                      >
+                        {syncExternalMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                        )}
+                        Sync Now
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => unlinkExternalMutation.mutate(selectedTask.id)}
+                        disabled={unlinkExternalMutation.isPending}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        {unlinkExternalMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Unlink className="h-4 w-4 mr-2" />
+                        )}
+                        Unlink
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleOpenLinkModal(selectedTask)}
+                    >
+                      <Link2 className="h-4 w-4 mr-2" />
+                      Link External Ticket
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleOpenCreateExternalModal(selectedTask)}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create External Ticket
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Status Transition Buttons */}
@@ -557,25 +954,47 @@ export function Remediation() {
       </motion.div>
 
       {/* Filter Bar */}
-      <motion.div variants={itemVariants} className="flex items-center gap-2">
-        <Filter className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Filter:</span>
-        {(['all', 'in_progress', 'pending_review', 'assigned', 'closed'] as const).map((status) => (
-          <motion.button
-            key={status}
-            onClick={() => setFilter(status)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors',
-              filter === status
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            )}
-          >
-            {status === 'all' ? 'All' : statusLabels[status]}
-          </motion.button>
-        ))}
+      <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Status:</span>
+          {(['all', 'in_progress', 'pending_review', 'assigned', 'closed'] as const).map((status) => (
+            <motion.button
+              key={status}
+              onClick={() => setFilter(status)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                filter === status
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              {status === 'all' ? 'All' : statusLabels[status]}
+            </motion.button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <Link2 className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">External Link:</span>
+          {(['all', 'linked', 'unlinked'] as const).map((linkStatus) => (
+            <motion.button
+              key={linkStatus}
+              onClick={() => setExternalLinkFilter(linkStatus)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                externalLinkFilter === linkStatus
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              {linkStatus === 'all' ? 'All' : linkStatus === 'linked' ? 'Has Link' : 'No Link'}
+            </motion.button>
+          ))}
+        </div>
       </motion.div>
 
       {/* Task List */}
@@ -595,9 +1014,9 @@ export function Remediation() {
             <ClipboardList className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No tasks found</h3>
             <p className="text-muted-foreground text-center mb-4">
-              {filter === 'all'
+              {filter === 'all' && externalLinkFilter === 'all'
                 ? 'Create your first remediation task to get started.'
-                : `No tasks with status "${statusLabels[filter as TaskStatus]}".`}
+                : 'No tasks match the current filters.'}
             </p>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button onClick={() => setShowCreateModal(true)}>
@@ -667,6 +1086,32 @@ export function Remediation() {
                       <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
+
+                  {/* External Link Status in List View */}
+                  {task.external_link ? (
+                    <div className="flex items-center gap-2">
+                      <ExternalSystemIcon system={task.external_link.system} className="h-4 w-4" />
+                      <span className="text-xs font-mono text-muted-foreground">
+                        {task.external_link.ticket_id}
+                      </span>
+                      <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', syncStatusColors[task.external_link.sync_status])}>
+                        {syncStatusLabels[task.external_link.sync_status]}
+                      </span>
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenLinkModal(task);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Link2 className="h-4 w-4" />
+                    </Button>
+                  )}
+
                   <motion.span
                     whileHover={{ scale: 1.1 }}
                     className={cn(

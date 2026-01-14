@@ -17,12 +17,16 @@ from app.models.remediation import (
     VALID_TRANSITIONS,
 )
 from app.schemas.remediation import (
+    ExternalSyncCreate,
+    ExternalSyncResponse,
     RemediationCommentCreate,
     RemediationDashboardStats,
     RemediationTaskCreate,
     RemediationTaskUpdate,
     RemediationTransition,
     SLAPolicyCreate,
+    SyncResult,
+    SyncStatusResponse,
 )
 
 
@@ -513,6 +517,267 @@ class RemediationService:
         self.db.add(log)
         await self.db.flush()
         return log
+
+    # External System Integration Methods
+
+    async def link_external_ticket(
+        self,
+        task_id: str,
+        organization_id: str,
+        external_system: str,
+        external_id: str,
+        external_url: str | None = None,
+        sync_direction: str = "outbound",
+        sync_enabled: bool = True,
+        user_id: str | None = None,
+    ) -> RemediationTask | None:
+        """Link a remediation task to an external ticket system.
+
+        Args:
+            task_id: ID of the remediation task
+            organization_id: Organization ID for access control
+            external_system: Type of external system (jira, servicenow, github, etc)
+            external_id: ID of the ticket in the external system
+            external_url: Direct URL to the external ticket
+            sync_direction: Direction of sync (inbound, outbound, bidirectional)
+            sync_enabled: Whether to enable automatic synchronization
+            user_id: ID of user performing the action (for audit)
+
+        Returns:
+            Updated RemediationTask or None if not found
+        """
+        task = await self.get_task(task_id, organization_id)
+        if not task:
+            return None
+
+        # Store old values for audit log
+        old_external_system = task.external_system
+        old_external_id = task.external_id
+
+        # Update external link fields
+        task.external_system = external_system
+        task.external_id = external_id
+        task.external_url = external_url
+        task.sync_direction = sync_direction
+        task.sync_enabled = sync_enabled
+        task.last_synced_at = datetime.now(timezone.utc)
+
+        # Create audit log
+        await self._create_audit_log(
+            task_id=task.id,
+            user_id=user_id,
+            action="external_link_created",
+            field_changed="external_system",
+            old_value=old_external_system,
+            new_value=external_system,
+            notes=f"Linked to {external_system} ticket: {external_id}",
+        )
+
+        await self.db.commit()
+        await self.db.refresh(task)
+        return task
+
+    async def sync_with_external(
+        self,
+        task_id: str,
+        organization_id: str,
+        user_id: str | None = None,
+    ) -> SyncResult:
+        """Synchronize a remediation task with its linked external system.
+
+        This is a placeholder implementation that updates the last_synced_at timestamp.
+        In a production environment, this would integrate with external APIs.
+
+        Args:
+            task_id: ID of the remediation task
+            organization_id: Organization ID for access control
+            user_id: ID of user performing the action (for audit)
+
+        Returns:
+            SyncResult with sync operation details
+        """
+        task = await self.get_task(task_id, organization_id)
+        if not task:
+            return SyncResult(
+                success=False,
+                task_id=task_id,
+                external_system="unknown",
+                external_id="unknown",
+                external_status=None,
+                synced_at=datetime.now(timezone.utc),
+                error="Task not found",
+            )
+
+        if not task.external_system or not task.external_id:
+            return SyncResult(
+                success=False,
+                task_id=task_id,
+                external_system=task.external_system or "none",
+                external_id=task.external_id or "none",
+                external_status=None,
+                synced_at=datetime.now(timezone.utc),
+                error="Task is not linked to an external system",
+            )
+
+        if not task.sync_enabled:
+            return SyncResult(
+                success=False,
+                task_id=task_id,
+                external_system=task.external_system,
+                external_id=task.external_id,
+                external_status=task.external_status,
+                synced_at=datetime.now(timezone.utc),
+                error="Synchronization is disabled for this task",
+            )
+
+        # In a real implementation, this would call the external system API
+        # For now, we just update the sync timestamp
+        changes_applied = []
+        sync_time = datetime.now(timezone.utc)
+
+        # Simulate sync - in production this would call external APIs
+        # based on task.sync_direction:
+        # - "outbound": push status to external system
+        # - "inbound": pull status from external system
+        # - "bidirectional": sync both ways with conflict resolution
+
+        task.last_synced_at = sync_time
+
+        # Create audit log
+        await self._create_audit_log(
+            task_id=task.id,
+            user_id=user_id,
+            action="external_sync",
+            notes=f"Synced with {task.external_system} ({task.sync_direction})",
+        )
+
+        await self.db.commit()
+        await self.db.refresh(task)
+
+        return SyncResult(
+            success=True,
+            task_id=task_id,
+            external_system=task.external_system,
+            external_id=task.external_id,
+            external_status=task.external_status,
+            synced_at=sync_time,
+            changes_applied=changes_applied,
+        )
+
+    async def unlink_external_ticket(
+        self,
+        task_id: str,
+        organization_id: str,
+        user_id: str | None = None,
+    ) -> RemediationTask | None:
+        """Remove the link between a remediation task and external system.
+
+        Args:
+            task_id: ID of the remediation task
+            organization_id: Organization ID for access control
+            user_id: ID of user performing the action (for audit)
+
+        Returns:
+            Updated RemediationTask or None if not found
+        """
+        task = await self.get_task(task_id, organization_id)
+        if not task:
+            return None
+
+        if not task.external_system:
+            return task  # Already unlinked
+
+        # Store old values for audit log
+        old_external_system = task.external_system
+        old_external_id = task.external_id
+
+        # Clear external link fields
+        task.external_system = None
+        task.external_id = None
+        task.external_url = None
+        task.external_status = None
+        task.sync_enabled = False
+        task.sync_direction = None
+        # Keep last_synced_at for historical reference
+
+        # Create audit log
+        await self._create_audit_log(
+            task_id=task.id,
+            user_id=user_id,
+            action="external_link_removed",
+            field_changed="external_system",
+            old_value=old_external_system,
+            new_value=None,
+            notes=f"Unlinked from {old_external_system} ticket: {old_external_id}",
+        )
+
+        await self.db.commit()
+        await self.db.refresh(task)
+        return task
+
+    async def get_external_sync_status(
+        self,
+        organization_id: str,
+        sync_enabled_only: bool = False,
+        external_system: str | None = None,
+    ) -> list[SyncStatusResponse]:
+        """Get sync status for all tasks with external links in an organization.
+
+        Args:
+            organization_id: Organization ID for filtering
+            sync_enabled_only: If True, only return tasks with sync enabled
+            external_system: Filter by specific external system type
+
+        Returns:
+            List of SyncStatusResponse for tasks with external links
+        """
+        query = select(RemediationTask).where(
+            and_(
+                RemediationTask.organization_id == organization_id,
+                RemediationTask.external_system.isnot(None),
+            )
+        )
+
+        if sync_enabled_only:
+            query = query.where(RemediationTask.sync_enabled == True)  # noqa: E712
+
+        if external_system:
+            query = query.where(RemediationTask.external_system == external_system)
+
+        query = query.order_by(RemediationTask.last_synced_at.desc().nullsfirst())
+
+        result = await self.db.execute(query)
+        tasks = result.scalars().all()
+
+        sync_statuses = []
+        for task in tasks:
+            # Determine if in sync (placeholder logic - would need external API check)
+            # For now, consider in sync if synced within last 24 hours
+            is_in_sync = True
+            if task.last_synced_at:
+                hours_since_sync = (
+                    datetime.now(timezone.utc) - task.last_synced_at
+                ).total_seconds() / 3600
+                if hours_since_sync > 24:
+                    is_in_sync = False
+
+            sync_statuses.append(
+                SyncStatusResponse(
+                    task_id=task.id,
+                    task_title=task.title,
+                    external_system=task.external_system,
+                    external_id=task.external_id,
+                    external_url=task.external_url,
+                    external_status=task.external_status,
+                    internal_status=task.status,
+                    last_synced_at=task.last_synced_at,
+                    sync_enabled=task.sync_enabled,
+                    sync_direction=task.sync_direction,
+                    is_in_sync=is_in_sync,
+                )
+            )
+
+        return sync_statuses
 
 
 def get_remediation_service(db: AsyncSession) -> RemediationService:

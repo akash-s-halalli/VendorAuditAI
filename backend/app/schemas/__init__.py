@@ -1,5 +1,26 @@
 """Pydantic schemas package."""
 
+from app.schemas.approved_vendor import (
+    ApprovalStatus,
+    ApprovedVendorCreate,
+    ApprovedVendorDetailResponse,
+    ApprovedVendorListResponse,
+    ApprovedVendorResponse,
+    ApprovedVendorStats,
+    ApprovedVendorUpdate,
+    DataClassification,
+    DeploymentCreate,
+    DeploymentListResponse,
+    DeploymentResponse,
+    DeploymentStatus,
+    RequestStatus,
+    ToolRequestCreate,
+    ToolRequestListResponse,
+    ToolRequestResponse,
+    ToolRequestUpdate,
+    UseCaseCreate,
+    UseCaseResponse,
+)
 from app.schemas.ai_classification import (
     AIClassificationCreate,
     AIClassificationDetailResponse,
@@ -124,6 +145,26 @@ from app.schemas.vendor import (
 )
 
 __all__ = [
+    # Approved Vendor Registry
+    "ApprovalStatus",
+    "ApprovedVendorCreate",
+    "ApprovedVendorDetailResponse",
+    "ApprovedVendorListResponse",
+    "ApprovedVendorResponse",
+    "ApprovedVendorStats",
+    "ApprovedVendorUpdate",
+    "DataClassification",
+    "DeploymentCreate",
+    "DeploymentListResponse",
+    "DeploymentResponse",
+    "DeploymentStatus",
+    "RequestStatus",
+    "ToolRequestCreate",
+    "ToolRequestListResponse",
+    "ToolRequestResponse",
+    "ToolRequestUpdate",
+    "UseCaseCreate",
+    "UseCaseResponse",
     # AI Classification
     "AIClassificationCreate",
     "AIClassificationDetailResponse",
