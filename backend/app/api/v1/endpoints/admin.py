@@ -334,106 +334,73 @@ async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
     return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v5-debug"}
 
 
-@router.post("/debug-seed")
+@router.get("/debug-seed")
 async def debug_seed(
-    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> dict:
-    """Debug seed endpoint - tests each step and reports failures."""
+    """Debug seed endpoint - tests each step using independent connections."""
     import logging
     from sqlalchemy import text
+    from app.db import async_session_factory
+
     logger = logging.getLogger(__name__)
     org_id = current_user.organization_id
     steps = {}
 
     # Step 1: Test basic query
     try:
-        result = await db.execute(text("SELECT 1"))
-        steps["1_basic_query"] = "OK"
+        async with async_session_factory() as session:
+            await session.execute(text("SELECT 1"))
+            steps["1_basic_query"] = "OK"
     except Exception as e:
         steps["1_basic_query"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
 
-    # Step 2: Delete vendors (simple)
+    # Step 2: Count vendors
     try:
-        await db.execute(text(f"DELETE FROM vendors WHERE organization_id = '{org_id}'"))
-        steps["2_delete_vendors"] = "OK"
-        await db.rollback()  # Don't actually delete
+        async with async_session_factory() as session:
+            result = await session.execute(text(f"SELECT COUNT(*) FROM vendors WHERE organization_id = '{org_id}'"))
+            count = result.scalar()
+            steps["2_count_vendors"] = f"OK: {count} vendors"
     except Exception as e:
-        steps["2_delete_vendors"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
+        steps["2_count_vendors"] = f"FAIL: {str(e)[:100]}"
 
-    # Step 3: Create a vendor
+    # Step 3: Count findings
     try:
-        vendor = Vendor(
-            id=str(uuid4()),
-            organization_id=org_id,
-            name="Test Vendor",
-            description="Test",
-            website="https://test.com",
-            tier="low",
-            status=VendorStatus.ACTIVE.value,
-            category="test",
-        )
-        db.add(vendor)
-        await db.flush()
-        steps["3_create_vendor"] = f"OK: {vendor.id}"
-        await db.rollback()  # Don't actually create
+        async with async_session_factory() as session:
+            result = await session.execute(text(f"SELECT COUNT(*) FROM findings WHERE organization_id = '{org_id}'"))
+            count = result.scalar()
+            steps["3_count_findings"] = f"OK: {count} findings"
     except Exception as e:
-        steps["3_create_vendor"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
+        steps["3_count_findings"] = f"FAIL: {str(e)[:100]}"
 
-    # Step 4: Test remediation_tasks table with raw SQL
+    # Step 4: Test remediation_tasks columns
     try:
-        await db.execute(text(f"SELECT id FROM remediation_tasks WHERE organization_id = '{org_id}' LIMIT 1"))
-        steps["4_query_remediation_raw"] = "OK"
+        async with async_session_factory() as session:
+            result = await session.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'remediation_tasks' ORDER BY ordinal_position"))
+            columns = [row[0] for row in result.fetchall()]
+            steps["4_remediation_columns"] = f"OK: {len(columns)} cols - {', '.join(columns[:10])}..."
     except Exception as e:
-        steps["4_query_remediation_raw"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
+        steps["4_remediation_columns"] = f"FAIL: {str(e)[:100]}"
 
-    # Step 5: Test SLAPolicy creation
+    # Step 5: Count playbooks
     try:
-        policy = SLAPolicy(
-            id=str(uuid4()),
-            organization_id=org_id,
-            name="Test Policy",
-            critical_sla_days=3,
-            high_sla_days=7,
-            medium_sla_days=30,
-            low_sla_days=90,
-            is_default=False,
-        )
-        db.add(policy)
-        await db.flush()
-        steps["5_create_sla_policy"] = f"OK: {policy.id}"
-        await db.rollback()
+        async with async_session_factory() as session:
+            result = await session.execute(text(f"SELECT COUNT(*) FROM ai_playbooks WHERE organization_id = '{org_id}'"))
+            count = result.scalar()
+            steps["5_count_playbooks"] = f"OK: {count} playbooks"
     except Exception as e:
-        steps["5_create_sla_policy"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
+        steps["5_count_playbooks"] = f"FAIL: {str(e)[:100]}"
 
-    # Step 6: Test AIPlaybook creation
+    # Step 6: Check if external columns exist in remediation_tasks
     try:
-        playbook = AIPlaybook(
-            id=str(uuid4()),
-            organization_id=org_id,
-            created_by_id=current_user.id,
-            name="Test Playbook",
-            description="Test",
-            phase="selection",
-            target_audience="all",
-            department="security",
-            is_active=True,
-            is_default=False,
-        )
-        db.add(playbook)
-        await db.flush()
-        steps["6_create_playbook"] = f"OK: {playbook.id}"
-        await db.rollback()
+        async with async_session_factory() as session:
+            result = await session.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'remediation_tasks' AND column_name IN ('external_system', 'external_id', 'sync_enabled')"))
+            found = [row[0] for row in result.fetchall()]
+            steps["6_external_columns"] = f"FOUND: {found}" if found else "MISSING: external_system, external_id, sync_enabled"
     except Exception as e:
-        steps["6_create_playbook"] = f"FAIL: {str(e)[:100]}"
-        await db.rollback()
+        steps["6_external_columns"] = f"FAIL: {str(e)[:100]}"
 
-    return {"org_id": org_id, "user_id": current_user.id, "steps": steps}
+    return {"org_id": org_id, "user_id": current_user.id, "steps": steps, "version": "v6-independent-sessions"}
 
 
 @router.post("/seed-demo-data", response_model=SeedResponse)
