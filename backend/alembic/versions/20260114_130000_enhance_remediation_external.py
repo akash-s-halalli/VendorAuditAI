@@ -14,58 +14,76 @@ depends_on = None
 
 
 def upgrade():
+    # Get connection to check existing columns
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("remediation_tasks")]
+
     # Add external system integration fields to remediation_tasks table
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("external_system", sa.String(50), nullable=True)
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("external_id", sa.String(255), nullable=True)
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("external_url", sa.String(500), nullable=True)
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("external_status", sa.String(100), nullable=True)
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("last_synced_at", sa.DateTime(timezone=True), nullable=True)
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("sync_enabled", sa.Boolean(), nullable=False, server_default="false")
-    )
-    op.add_column(
-        "remediation_tasks",
-        sa.Column("sync_direction", sa.String(20), nullable=True)
-    )
+    if "external_system" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("external_system", sa.String(50), nullable=True)
+        )
+    if "external_id" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("external_id", sa.String(255), nullable=True)
+        )
+    if "external_url" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("external_url", sa.String(500), nullable=True)
+        )
+    if "external_status" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("external_status", sa.String(100), nullable=True)
+        )
+    if "last_synced_at" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("last_synced_at", sa.DateTime(timezone=True), nullable=True)
+        )
+    if "sync_enabled" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("sync_enabled", sa.Boolean(), nullable=False, server_default="false")
+        )
+    if "sync_direction" not in existing_columns:
+        op.add_column(
+            "remediation_tasks",
+            sa.Column("sync_direction", sa.String(20), nullable=True)
+        )
 
     # Create indexes for efficient querying of external system data
-    op.create_index(
-        "ix_remediation_tasks_external_system",
-        "remediation_tasks",
-        ["external_system"]
-    )
-    op.create_index(
-        "ix_remediation_tasks_external_id",
-        "remediation_tasks",
-        ["external_id"]
-    )
-    op.create_index(
-        "ix_remediation_tasks_sync_enabled",
-        "remediation_tasks",
-        ["sync_enabled"]
-    )
-    # Composite index for external system lookups
-    op.create_index(
-        "ix_remediation_tasks_external_system_id",
-        "remediation_tasks",
-        ["external_system", "external_id"]
-    )
+    # Check for existing indexes
+    existing_indexes = [idx["name"] for idx in inspector.get_indexes("remediation_tasks")]
+
+    if "ix_remediation_tasks_external_system" not in existing_indexes:
+        op.create_index(
+            "ix_remediation_tasks_external_system",
+            "remediation_tasks",
+            ["external_system"]
+        )
+    if "ix_remediation_tasks_external_id" not in existing_indexes:
+        op.create_index(
+            "ix_remediation_tasks_external_id",
+            "remediation_tasks",
+            ["external_id"]
+        )
+    if "ix_remediation_tasks_sync_enabled" not in existing_indexes:
+        op.create_index(
+            "ix_remediation_tasks_sync_enabled",
+            "remediation_tasks",
+            ["sync_enabled"]
+        )
+    if "ix_remediation_tasks_external_system_id" not in existing_indexes:
+        op.create_index(
+            "ix_remediation_tasks_external_system_id",
+            "remediation_tasks",
+            ["external_system", "external_id"]
+        )
 
 
 def downgrade():
