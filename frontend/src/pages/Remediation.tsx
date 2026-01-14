@@ -70,7 +70,7 @@ type ExternalSystem = 'jira' | 'servicenow' | 'github';
 
 type SyncStatus = 'synced' | 'pending' | 'error';
 
-interface ExternalLink {
+interface ExternalTicketLink {
   system: ExternalSystem;
   ticket_id: string;
   ticket_url: string;
@@ -93,7 +93,7 @@ interface RemediationTask {
   sla_breached: boolean;
   created_at: string;
   updated_at: string;
-  external_link?: ExternalLink;
+  external_link?: ExternalTicketLink;
 }
 
 interface DashboardStats {
