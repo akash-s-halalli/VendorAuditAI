@@ -248,10 +248,10 @@ async def get_user_progress(
     total_result = await db.execute(count_query)
     total = total_result.scalar() or 0
 
-    # Fetch with pagination
+    # Fetch with pagination - include playbook.steps for total_steps calculation
     query = (
         query.options(
-            selectinload(PlaybookProgress.playbook),
+            selectinload(PlaybookProgress.playbook).selectinload(AIPlaybook.steps),
             selectinload(PlaybookProgress.vendor),
         )
         .offset(skip)
