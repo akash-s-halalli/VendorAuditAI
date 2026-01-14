@@ -290,14 +290,8 @@ async def receive_webhook(
     timestamp = request.headers.get("X-Webhook-Timestamp")
 
     try:
-        # Validate signature
-        if webhook.require_signature:
-            if not signature:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Missing webhook signature",
-                )
-
+        # Validate signature if provided
+        if signature:
             is_valid = await integration_service.verify_webhook_signature(
                 webhook=webhook,
                 payload=body,

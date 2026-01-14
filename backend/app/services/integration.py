@@ -1040,14 +1040,14 @@ class IntegrationService:
 
         # Last webhook
         last_webhook_query = (
-            select(WebhookEndpoint.last_received_at)
+            select(WebhookEndpoint.last_triggered_at)
             .where(
                 and_(
                     WebhookEndpoint.organization_id == org_id,
-                    WebhookEndpoint.last_received_at.isnot(None),
+                    WebhookEndpoint.last_triggered_at.isnot(None),
                 )
             )
-            .order_by(WebhookEndpoint.last_received_at.desc())
+            .order_by(WebhookEndpoint.last_triggered_at.desc())
             .limit(1)
         )
         last_webhook_result = await self.db.execute(last_webhook_query)
