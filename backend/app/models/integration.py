@@ -100,6 +100,11 @@ class Integration(Base, UUIDMixin, TimestampMixin):
 
     # Configuration (encrypted sensitive fields handled at application layer)
     config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    credentials: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    sync_settings: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
+    # Enable/disable toggle
+    is_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     # Status tracking
     status: Mapped[str] = mapped_column(
@@ -114,6 +119,7 @@ class Integration(Base, UUIDMixin, TimestampMixin):
     )
     last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
     error_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    sync_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     # Relationships
     organization: Mapped["Organization"] = relationship(

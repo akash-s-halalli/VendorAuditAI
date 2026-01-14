@@ -181,12 +181,7 @@ async def list_webhook_endpoints(
         integration_id=integration_id,
     )
 
-    return list[WebhookEndpointResponse](
-        data=[WebhookEndpointResponse.model_validate(w) for w in webhooks],
-        total=total,
-        page=page,
-        limit=limit,
-    )
+    return [WebhookEndpointResponse.model_validate(w) for w in webhooks]
 
 
 @router.post("/webhooks", response_model=WebhookEndpointResponse, status_code=status.HTTP_201_CREATED)
@@ -522,17 +517,16 @@ async def test_integration_connection(
         return IntegrationTestResult(
             success=result.success,
             message=result.message,
-            latency_ms=result.latency_ms,
-            details=result.details,
-            tested_at=result.tested_at,
+            response_time_ms=result.response_time_ms if hasattr(result, "response_time_ms") else None,
+            details=result.details if hasattr(result, "details") else {},
+            tested_at=result.tested_at if hasattr(result, "tested_at") else None,
         )
     except Exception as e:
         return IntegrationTestResult(
             success=False,
             message=f"Connection test failed: {str(e)}",
-            latency_ms=None,
+            response_time_ms=None,
             details={"error": str(e)},
-            tested_at=None,
         )
 
 
@@ -571,19 +565,15 @@ async def trigger_manual_sync(
         )
 
     try:
-        sync_job = await integration_service.trigger_sync(
+        result = await integration_service.trigger_sync(
             db=db,
             integration=integration,
             user_id=current_user.id,
             full_sync=full_sync,
         )
 
-        return SyncResult(
-            sync_id=sync_job.id,
-            status=sync_job.status,
-            message=f"Sync {'full' if full_sync else 'incremental'} job started",
-            started_at=sync_job.started_at,
-        )
+        # Service returns a SyncResult-compatible object
+        return SyncResult.model_validate(result) if hasattr(result, "model_validate") else result
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -630,12 +620,7 @@ async def list_field_mappings(
         limit=limit,
     )
 
-    return list[IntegrationMappingResponse](
-        data=[IntegrationMappingResponse.model_validate(m) for m in mappings],
-        total=total,
-        page=page,
-        limit=limit,
-    )
+    return [IntegrationMappingResponse.model_validate(m) for m in mappings]
 
 
 @router.post("/{integration_id}/mappings", response_model=IntegrationMappingResponse, status_code=status.HTTP_201_CREATED)

@@ -358,7 +358,7 @@ async def get_progress(
     )
 
 
-@router.post("/progress/{progress_id}/complete-step", response_model=PlaybookProgressResponse)
+@router.post("/progress/{progress_id}/complete-step/{step_id}", response_model=PlaybookProgressResponse)
 async def complete_step(
     progress_id: str,
     step_id: str,
@@ -403,9 +403,9 @@ async def complete_step(
         progress_percentage=updated.progress_percentage,
         created_at=updated.created_at,
         updated_at=updated.updated_at,
-        playbook_name=None,
-        vendor_name=None,
-        total_steps=0,
+        playbook_name=updated.playbook.name if updated.playbook else None,
+        vendor_name=updated.vendor.name if updated.vendor else None,
+        total_steps=len(updated.playbook.steps) if updated.playbook and updated.playbook.steps else 0,
     )
 
 
