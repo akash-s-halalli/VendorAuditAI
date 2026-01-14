@@ -105,25 +105,6 @@ export function Dashboard() {
     },
   });
 
-  // Debug seed mutation to test each step
-  const [debugResult, setDebugResult] = useState<string | null>(null);
-  const debugSeedMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiClient.get('/admin/debug-seed');
-      return response.data;
-    },
-    onSuccess: (data) => {
-      console.log('[DebugSeed] Result:', data);
-      setDebugResult(JSON.stringify(data.steps, null, 2));
-      setTimeout(() => setDebugResult(null), 30000);
-    },
-    onError: (error: unknown) => {
-      console.error('[DebugSeed] Error:', error);
-      setDebugResult(`Error: ${getApiErrorMessage(error)}`);
-      setTimeout(() => setDebugResult(null), 10000);
-    },
-  });
-
   // Reseed demo data mutation - increased timeout since this operation takes a while
   const reseedMutation = useMutation({
     mutationFn: async () => {
@@ -246,25 +227,8 @@ export function Dashboard() {
               )}
               Reseed Demo Data
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => debugSeedMutation.mutate()}
-              disabled={debugSeedMutation.isPending}
-              className="ml-2 border-yellow-500/50 text-yellow-500"
-            >
-              {debugSeedMutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <AlertTriangle className="h-4 w-4 mr-2" />
-              )}
-              Debug
-            </Button>
             {seedMessage && (
               <span className="ml-2 text-xs text-obsidian-teal">{seedMessage}</span>
-            )}
-            {debugResult && (
-              <pre className="ml-2 text-xs text-yellow-400 bg-black/50 p-2 rounded max-w-md overflow-auto">{debugResult}</pre>
             )}
           </div>
         </div>
