@@ -69,12 +69,14 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
 
-    # CORS
+    # CORS - Include all known production and development origins
     cors_origins: list[str] = [
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
         "https://vendor-audit-ai.netlify.app",
+        "https://vendorauditai.netlify.app",
+        "https://vendorauditai-production.up.railway.app",
     ]
     cors_allow_credentials: bool = True
     cors_allow_methods: list[str] = ["*"]
