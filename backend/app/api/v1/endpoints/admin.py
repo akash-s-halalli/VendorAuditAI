@@ -358,6 +358,7 @@ async def seed_demo_data(
             await db.delete(q)
     except Exception as e:
         logger.warning(f"Could not delete QueryHistory: {e}")
+        await db.rollback()
 
     # Delete conversation threads
     try:
@@ -366,6 +367,7 @@ async def seed_demo_data(
             await db.delete(conv)
     except Exception as e:
         logger.warning(f"Could not delete ConversationThread: {e}")
+        await db.rollback()
 
     # Delete agent logs and tasks
     try:
@@ -381,6 +383,7 @@ async def seed_demo_data(
                 await db.delete(task)
     except Exception as e:
         logger.warning(f"Could not delete Agent data: {e}")
+        await db.rollback()
 
     # Delete audit logs
     try:
@@ -389,6 +392,7 @@ async def seed_demo_data(
             await db.delete(log)
     except Exception as e:
         logger.warning(f"Could not delete AuditLog: {e}")
+        await db.rollback()
 
     # Delete playbooks (steps will cascade)
     try:
@@ -397,6 +401,7 @@ async def seed_demo_data(
             await db.delete(playbook)
     except Exception as e:
         logger.warning(f"Could not delete AIPlaybook: {e}")
+        await db.rollback()
 
     # Delete notification channels
     try:
@@ -405,6 +410,7 @@ async def seed_demo_data(
             await db.delete(channel)
     except Exception as e:
         logger.warning(f"Could not delete NotificationChannel: {e}")
+        await db.rollback()
 
     # Delete alerts
     try:
@@ -413,6 +419,7 @@ async def seed_demo_data(
             await db.delete(alert)
     except Exception as e:
         logger.warning(f"Could not delete Alert: {e}")
+        await db.rollback()
 
     # Delete alert rules
     try:
@@ -421,6 +428,7 @@ async def seed_demo_data(
             await db.delete(rule)
     except Exception as e:
         logger.warning(f"Could not delete AlertRule: {e}")
+        await db.rollback()
 
     # Delete scheduled runs and monitoring schedules
     try:
@@ -434,6 +442,7 @@ async def seed_demo_data(
             await db.delete(schedule)
     except Exception as e:
         logger.warning(f"Could not delete MonitoringSchedule: {e}")
+        await db.rollback()
 
     # Delete remediation comments and tasks
     try:
@@ -447,6 +456,7 @@ async def seed_demo_data(
             await db.delete(task)
     except Exception as e:
         logger.warning(f"Could not delete RemediationTask: {e}")
+        await db.rollback()
 
     # Delete SLA policies
     try:
@@ -455,6 +465,7 @@ async def seed_demo_data(
             await db.delete(policy)
     except Exception as e:
         logger.warning(f"Could not delete SLAPolicy: {e}")
+        await db.rollback()
 
     # Delete findings
     try:
@@ -463,6 +474,7 @@ async def seed_demo_data(
             await db.delete(finding)
     except Exception as e:
         logger.warning(f"Could not delete Finding: {e}")
+        await db.rollback()
 
     # Delete analysis runs
     try:
@@ -471,6 +483,7 @@ async def seed_demo_data(
             await db.delete(run)
     except Exception as e:
         logger.warning(f"Could not delete AnalysisRun: {e}")
+        await db.rollback()
 
     # Delete chunks and documents
     try:
@@ -484,6 +497,7 @@ async def seed_demo_data(
             await db.delete(doc)
     except Exception as e:
         logger.warning(f"Could not delete Document: {e}")
+        await db.rollback()
 
     # Delete vendors
     try:
@@ -492,6 +506,7 @@ async def seed_demo_data(
             await db.delete(vendor)
     except Exception as e:
         logger.warning(f"Could not delete Vendor: {e}")
+        await db.rollback()
 
     await db.commit()
 
@@ -984,8 +999,9 @@ async def seed_demo_data(
             agent_logs_created += 1
 
         await db.commit()
-    except Exception:
-        pass  # Agent tables may not exist yet
+    except Exception as e:
+        logger.warning(f"Could not seed Agent data: {e}")
+        await db.rollback()
 
     # Create Conversation Threads
     conversations_created = 0
