@@ -105,11 +105,22 @@ export function Dashboard() {
     },
   });
 
-  // Reseed demo data mutation
+  // Reseed demo data mutation - increased timeout since this operation takes a while
   const reseedMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiClient.post('/admin/seed-demo-data');
-      return response.data;
+      const token = localStorage.getItem('access_token');
+      console.log('[Reseed] Token present:', !!token, 'Token preview:', token?.substring(0, 20));
+      console.log('[Reseed] Making request to /admin/seed-demo-data');
+      try {
+        const response = await apiClient.post('/admin/seed-demo-data', {}, {
+          timeout: 120000, // 2 minute timeout for seed operation
+        });
+        console.log('[Reseed] Success:', response.data);
+        return response.data;
+      } catch (err) {
+        console.error('[Reseed] Error:', err);
+        throw err;
+      }
     },
     onSuccess: (data) => {
       setSeedMessage(`Seeded: ${data.vendors_created} vendors, ${data.playbooks_created} playbooks, ${data.findings_created} findings`);
@@ -117,9 +128,19 @@ export function Dashboard() {
       queryClient.invalidateQueries();
       setTimeout(() => setSeedMessage(null), 5000);
     },
-    onError: (error) => {
-      setSeedMessage(`Error: ${getApiErrorMessage(error)}`);
-      setTimeout(() => setSeedMessage(null), 5000);
+    onError: (error: unknown) => {
+      // More detailed error message for debugging
+      let errorMsg = getApiErrorMessage(error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { detail?: string } }; code?: string };
+        if (axiosError.response?.status) {
+          errorMsg = `HTTP ${axiosError.response.status}: ${axiosError.response.data?.detail || errorMsg}`;
+        } else if (axiosError.code === 'ECONNABORTED') {
+          errorMsg = 'Request timed out - server may be processing. Try refreshing in 30s.';
+        }
+      }
+      setSeedMessage(`Error: ${errorMsg}`);
+      setTimeout(() => setSeedMessage(null), 10000);
     },
   });
 

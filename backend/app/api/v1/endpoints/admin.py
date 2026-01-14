@@ -345,10 +345,13 @@ async def seed_demo_data(
     for log in result.scalars().all():
         await db.delete(log)
 
-    # Delete playbooks (steps will cascade)
-    result = await db.execute(select(AIPlaybook).where(AIPlaybook.organization_id == org_id))
-    for playbook in result.scalars().all():
-        await db.delete(playbook)
+    # Delete playbooks (steps will cascade) - wrapped in try-except for missing tables
+    try:
+        result = await db.execute(select(AIPlaybook).where(AIPlaybook.organization_id == org_id))
+        for playbook in result.scalars().all():
+            await db.delete(playbook)
+    except Exception:
+        pass  # Table may not exist yet
 
     # Delete notification channels
     result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
