@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout, AuthLayout } from '@/components/layout';
 import { Landing, Login, Register, Dashboard, Vendors, VendorDetail, Documents, Query, Analysis, Remediation, Monitoring, Agents, Risk, Analytics, Competition, Playbooks, ApprovedVendors, BPO, Integrations } from '@/pages';
 import { useAuthStore } from '@/stores/authStore';
+import { ToastProvider } from '@/components/ui/toast';
 
 /**
  * Protected Route wrapper - redirects to login if not authenticated
@@ -38,8 +39,9 @@ function App() {
   }, [init]);
 
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
-      <Routes>
+    <ToastProvider>
+      <div className="min-h-screen bg-background font-sans antialiased">
+        <Routes>
         {/* Public routes (auth) */}
         <Route
           element={
@@ -87,8 +89,9 @@ function App() {
 
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </div>
+        </Routes>
+      </div>
+    </ToastProvider>
   );
 }
 
