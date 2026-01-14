@@ -1,7 +1,7 @@
 """Add AI Governance Playbook tables.
 
 Revision ID: e7a2b3c4d5f6
-Revises: d958a47cf3c8
+Revises: e4f7a91d2b5c
 Create Date: 2026-01-13 10:00:00.000000
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'e7a2b3c4d5f6'
-down_revision: Union[str, None] = 'd958a47cf3c8'
+down_revision: Union[str, None] = 'e4f7a91d2b5c'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -1,14 +1,14 @@
 """Add approved vendor registry tables.
 
 Revision ID: 20260114_100000
-Revises: 20260113_110000
+Revises: f8b3c4d5e6a7
 Create Date: 2026-01-14
 """
 from alembic import op
 import sqlalchemy as sa
 
 revision = "20260114_100000"
-down_revision = "20260113_110000"
+down_revision = "f8b3c4d5e6a7"
 branch_labels = None
 depends_on = None
 
