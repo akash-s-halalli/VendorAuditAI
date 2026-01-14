@@ -175,7 +175,7 @@ export function Playbooks() {
       if (phaseFilter !== 'all') {
         params.append('phase', phaseFilter);
       }
-      const response = await apiClient.get(`/playbooks?${params}`);
+      const response = await apiClient.get(`/playbooks/?${params}`);
       return response.data;
     },
   });
