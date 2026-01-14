@@ -302,6 +302,42 @@ DEMO_FINDINGS = [
 ]
 
 
+@router.get("/debug-tables")
+async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
+    """Debug endpoint to check which tables exist (no auth required for debugging)."""
+    import logging
+    logger = logging.getLogger(__name__)
+    results = {}
+
+    tables_to_check = [
+        ("vendors", Vendor),
+        ("documents", Document),
+        ("findings", Finding),
+        ("analysis_runs", AnalysisRun),
+        ("agents", Agent),
+        ("agent_tasks", AgentTask),
+        ("agent_logs", AgentLog),
+        ("ai_playbooks", AIPlaybook),
+        ("playbook_steps", PlaybookStep),
+        ("monitoring_schedules", MonitoringSchedule),
+        ("alerts", Alert),
+        ("alert_rules", AlertRule),
+        ("remediation_tasks", RemediationTask),
+        ("audit_logs", AuditLog),
+        ("query_history", QueryHistory),
+        ("conversation_threads", ConversationThread),
+    ]
+
+    for name, model in tables_to_check:
+        try:
+            result = await db.execute(select(model).limit(1))
+            results[name] = "OK"
+        except Exception as e:
+            results[name] = f"ERROR: {str(e)[:100]}"
+
+    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0}
+
+
 @router.post("/seed-demo-data", response_model=SeedResponse)
 async def seed_demo_data(
     db: AsyncSession = Depends(get_db),
