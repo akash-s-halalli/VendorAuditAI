@@ -13,3 +13,4 @@ export { Query } from './Query';
 export { Analysis } from './Analysis';
 export { Remediation } from './Remediation';
 export { Monitoring } from './Monitoring';
+export { Playbooks } from './Playbooks';

@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     documents,
     export,
     monitoring,
+    playbooks,
     query,
     remediation,
     risk,
@@ -87,6 +88,11 @@ api_router.include_router(risk.router, prefix="/risk", tags=["Risk Scoring"])
 # Include admin router
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 
+# Include playbooks router
+api_router.include_router(
+    playbooks.router, prefix="/playbooks", tags=["AI Governance Playbooks"]
+)
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -108,6 +114,7 @@ async def api_status() -> dict:
             "export": "/api/v1/export",
             "frameworks": "/api/v1/frameworks",
             "monitoring": "/api/v1/monitoring",
+            "playbooks": "/api/v1/playbooks",
             "query": "/api/v1/query",
             "remediation": "/api/v1/remediation",
             "risk": "/api/v1/risk",

@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.finding import AnalysisRun, Finding
     from app.models.monitoring import Alert, AlertRule, MonitoringSchedule, NotificationChannel
+    from app.models.playbook import AIPlaybook
     from app.models.query import ConversationThread, QueryHistory
     from app.models.remediation import RemediationTask, SLAPolicy
     from app.models.user import User
@@ -106,6 +107,11 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     )
     agents: Mapped[list["Agent"]] = relationship(
         "Agent",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+    playbooks: Mapped[list["AIPlaybook"]] = relationship(
+        "AIPlaybook",
         back_populates="organization",
         cascade="all, delete-orphan",
     )

@@ -14,6 +14,7 @@ import {
   TrendingUp,
   BarChart3,
   Target,
+  BookOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
@@ -29,6 +30,7 @@ const navigation: NavItem[] = [
   { name: 'Agents', href: '/agents', icon: Cpu },
   { name: 'Risk', href: '/risk', icon: TrendingUp },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
   { name: 'Competition', href: '/competition', icon: Target },
   { name: 'Vendors', href: '/vendors', icon: Building2 },
   { name: 'Documents', href: '/documents', icon: FileText },
