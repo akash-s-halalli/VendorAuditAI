@@ -14,6 +14,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        // Add hash to force cache bust
+        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash]-${Date.now()}.[ext]`,
         manualChunks: {
           // Core React dependencies
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
