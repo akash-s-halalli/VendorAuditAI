@@ -108,6 +108,11 @@ interface PlaybookProgress {
   started_at: string;
   completed_at?: string;
   playbook?: Playbook;
+  // Flat fields from backend response
+  playbook_name?: string;
+  vendor_name?: string;
+  total_steps?: number;
+  progress_percentage?: number;
 }
 
 interface PlaybookListResponse {
@@ -251,8 +256,21 @@ export function Playbooks() {
     setShowStartModal(true);
   };
 
-  const handleContinuePlaybook = (progress: PlaybookProgress) => {
-    setSelectedProgress(progress);
+  const handleContinuePlaybook = async (progress: PlaybookProgress) => {
+    // If we don't have the full playbook with steps, fetch it
+    if (!progress.playbook?.steps) {
+      try {
+        const response = await apiClient.get(`/playbooks/${progress.playbook_id}`);
+        const fullPlaybook = response.data;
+        // Merge the full playbook into the progress
+        setSelectedProgress({ ...progress, playbook: fullPlaybook });
+      } catch {
+        // Fall back to just using what we have
+        setSelectedProgress(progress);
+      }
+    } else {
+      setSelectedProgress(progress);
+    }
     setShowWizardModal(true);
   };
 
@@ -453,9 +471,9 @@ export function Playbooks() {
                   </span>
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <h3 className="font-medium mb-1">{progress.playbook?.name || 'Loading...'}</h3>
+                <h3 className="font-medium mb-1">{progress.playbook_name || progress.playbook?.name || 'Loading...'}</h3>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>Step {progress.current_step} of {progress.playbook?.steps?.length || '?'}</span>
+                  <span>Step {progress.current_step} of {progress.total_steps || progress.playbook?.steps?.length || '?'}</span>
                 </div>
                 {/* Progress bar */}
                 <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -463,7 +481,7 @@ export function Playbooks() {
                     className="h-full bg-obsidian-teal"
                     initial={{ width: 0 }}
                     animate={{
-                      width: `${((progress.current_step - 1) / (progress.playbook?.steps?.length || 1)) * 100}%`,
+                      width: `${((progress.current_step - 1) / (progress.total_steps || progress.playbook?.steps?.length || 1)) * 100}%`,
                     }}
                     transition={{ duration: 0.5 }}
                   />
