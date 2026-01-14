@@ -1,5 +1,19 @@
 """Pydantic schemas package."""
 
+from app.schemas.ai_classification import (
+    AIClassificationCreate,
+    AIClassificationDetailResponse,
+    AIClassificationListResponse,
+    AIClassificationResponse,
+    AIClassificationUpdate,
+    AIToolCapabilityCreate,
+    AIToolCapabilityResponse,
+    ClassifyVendorRequest,
+    RiskMatrixEntry,
+    RiskMatrixResponse,
+    StackTypeDefinition,
+    StackTypeListResponse,
+)
 from app.schemas.agent import (
     AgentBase,
     AgentConfigUpdate,
@@ -110,6 +124,19 @@ from app.schemas.vendor import (
 )
 
 __all__ = [
+    # AI Classification
+    "AIClassificationCreate",
+    "AIClassificationDetailResponse",
+    "AIClassificationListResponse",
+    "AIClassificationResponse",
+    "AIClassificationUpdate",
+    "AIToolCapabilityCreate",
+    "AIToolCapabilityResponse",
+    "ClassifyVendorRequest",
+    "RiskMatrixEntry",
+    "RiskMatrixResponse",
+    "StackTypeDefinition",
+    "StackTypeListResponse",
     # Agents
     "AgentBase",
     "AgentConfigUpdate",

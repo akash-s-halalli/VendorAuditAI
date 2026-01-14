@@ -1,5 +1,13 @@
 """Database models package."""
 
+from app.models.ai_classification import (
+    AIStackType,
+    AIToolCapability,
+    AIToolClassification,
+    AutonomyLevel,
+    BlastRadius,
+    ClassificationMethod,
+)
 from app.models.agent import (
     Agent,
     AgentLog,
@@ -60,6 +68,12 @@ __all__ = [
     "AgentTask",
     "AgentType",
     "AIPlaybook",
+    "AIStackType",
+    "AIToolCapability",
+    "AIToolClassification",
+    "AutonomyLevel",
+    "BlastRadius",
+    "ClassificationMethod",
     "Alert",
     "AlertRule",
     "AlertSeverity",

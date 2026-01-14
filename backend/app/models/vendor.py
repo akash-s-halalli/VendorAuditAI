@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
+    from app.models.ai_classification import AIToolClassification
     from app.models.document import Document
     from app.models.monitoring import MonitoringSchedule
     from app.models.organization import Organization
@@ -104,6 +105,11 @@ class Vendor(Base, UUIDMixin, TimestampMixin):
     monitoring_schedules: Mapped[list["MonitoringSchedule"]] = relationship(
         "MonitoringSchedule",
         back_populates="vendor",
+    )
+    ai_classification: Mapped["AIToolClassification"] = relationship(
+        "AIToolClassification",
+        back_populates="vendor",
+        uselist=False,
     )
 
     def __repr__(self) -> str:

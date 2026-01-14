@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     admin,
     agents,
+    ai_classification,
     analysis,
     analytics,
     audit,
@@ -93,6 +94,11 @@ api_router.include_router(
     playbooks.router, prefix="/playbooks", tags=["AI Governance Playbooks"]
 )
 
+# Include AI classification router
+api_router.include_router(
+    ai_classification.router, prefix="/ai-classification", tags=["AI Tool Classification"]
+)
+
 
 @api_router.get("/status", tags=["Status"])
 async def api_status() -> dict:
@@ -121,5 +127,6 @@ async def api_status() -> dict:
             "search": "/api/v1/search",
             "sso": "/api/v1/sso",
             "vendors": "/api/v1/vendors",
+            "ai_classification": "/api/v1/ai-classification",
         },
     }

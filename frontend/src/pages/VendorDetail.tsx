@@ -34,6 +34,7 @@ import {
   DialogFooter,
 } from '@/components/ui';
 import apiClient, { getApiErrorMessage } from '@/lib/api';
+import { AIClassificationPanel } from '@/components/vendors/AIClassificationPanel';
 import type { Vendor, VendorTier, VendorStatus, Document, Finding, UpdateVendorRequest } from '@/types/api';
 
 // Extended vendor type with categorization fields from backend
@@ -521,6 +522,9 @@ export function VendorDetail() {
 
         {/* Right Column - Findings Summary */}
         <div className="space-y-6">
+          {/* AI Classification Panel */}
+          <AIClassificationPanel vendorId={vendor.id} vendorName={vendor.name} />
+
           {/* Findings Summary Card */}
           <Card>
             <CardHeader>
