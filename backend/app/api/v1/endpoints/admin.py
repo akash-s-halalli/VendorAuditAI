@@ -331,7 +331,7 @@ async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
             # Rollback after each check to clear any failed transaction state
             await db.rollback()
 
-    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0}
+    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v4-rollback-fix"}
 
 
 @router.post("/seed-demo-data", response_model=SeedResponse)
@@ -444,16 +444,13 @@ async def seed_demo_data(
         logger.warning(f"Could not delete MonitoringSchedule: {e}")
         await db.rollback()
 
-    # Delete remediation comments and tasks
+    # Delete remediation comments and tasks - use raw SQL to avoid ORM column mapping issues
     try:
-        result = await db.execute(select(RemediationTask).where(RemediationTask.organization_id == org_id))
-        tasks = result.scalars().all()
-        for task in tasks:
-            comment_result = await db.execute(select(RemediationComment).where(RemediationComment.task_id == task.id))
-            for comment in comment_result.scalars().all():
-                await db.delete(comment)
-        for task in tasks:
-            await db.delete(task)
+        from sqlalchemy import text
+        # Delete comments first (FK constraint)
+        await db.execute(text(f"DELETE FROM remediation_comments WHERE task_id IN (SELECT id FROM remediation_tasks WHERE organization_id = '{org_id}')"))
+        # Then delete tasks
+        await db.execute(text(f"DELETE FROM remediation_tasks WHERE organization_id = '{org_id}'"))
     except Exception as e:
         logger.warning(f"Could not delete RemediationTask: {e}")
         await db.rollback()
@@ -508,7 +505,12 @@ async def seed_demo_data(
         logger.warning(f"Could not delete Vendor: {e}")
         await db.rollback()
 
-    await db.commit()
+    # Commit any successful deletions (may be empty if all failed)
+    try:
+        await db.commit()
+    except Exception as e:
+        logger.warning(f"Could not commit deletions: {e}")
+        await db.rollback()
 
     # Create vendors
     vendor_map = {}
@@ -750,8 +752,15 @@ async def seed_demo_data(
 
         await db.commit()
     except Exception as e:
-        logger.warning(f"Could not seed remediation data (schema mismatch?): {e}")
+        logger.error(f"Could not seed remediation data (schema mismatch?): {e}")
         await db.rollback()
+        # Reset counters since we rolled back
+        sla_policies_created = 0
+        remediation_tasks_created = 0
+        remediation_comments_created = 0
+        task_objects = []
+
+    logger.info(f"After remediation seeding: sla={sla_policies_created}, tasks={remediation_tasks_created}")
 
     # Create Monitoring Schedules
     schedules_created = 0
