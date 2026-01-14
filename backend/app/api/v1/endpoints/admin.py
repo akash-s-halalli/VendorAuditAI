@@ -313,20 +313,29 @@ async def seed_demo_data(
     document, and finding data for demonstration purposes.
     """
     org_id = current_user.organization_id
+    import logging
+    logger = logging.getLogger(__name__)
 
     # Clear ALL existing data in reverse FK order
+    # Each section wrapped in try-except to handle missing tables gracefully
 
     # Delete query history first (FK to conversations)
-    result = await db.execute(select(QueryHistory).where(QueryHistory.organization_id == org_id))
-    for q in result.scalars().all():
-        await db.delete(q)
+    try:
+        result = await db.execute(select(QueryHistory).where(QueryHistory.organization_id == org_id))
+        for q in result.scalars().all():
+            await db.delete(q)
+    except Exception as e:
+        logger.warning(f"Could not delete QueryHistory: {e}")
 
     # Delete conversation threads
-    result = await db.execute(select(ConversationThread).where(ConversationThread.organization_id == org_id))
-    for conv in result.scalars().all():
-        await db.delete(conv)
+    try:
+        result = await db.execute(select(ConversationThread).where(ConversationThread.organization_id == org_id))
+        for conv in result.scalars().all():
+            await db.delete(conv)
+    except Exception as e:
+        logger.warning(f"Could not delete ConversationThread: {e}")
 
-    # Delete agent logs and tasks - wrapped in try-except for missing tables
+    # Delete agent logs and tasks
     try:
         result = await db.execute(select(Agent).where(Agent.organization_id == org_id))
         agents = result.scalars().all()
@@ -334,98 +343,123 @@ async def seed_demo_data(
             log_result = await db.execute(select(AgentLog).where(AgentLog.agent_id == agent.id))
             for log in log_result.scalars().all():
                 await db.delete(log)
-
-        # Delete agent tasks
         for agent in agents:
             task_result = await db.execute(select(AgentTask).where(AgentTask.agent_id == agent.id))
             for task in task_result.scalars().all():
                 await db.delete(task)
-    except Exception:
-        pass  # Agent tables may not exist yet
+    except Exception as e:
+        logger.warning(f"Could not delete Agent data: {e}")
 
     # Delete audit logs
-    result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
-    for log in result.scalars().all():
-        await db.delete(log)
+    try:
+        result = await db.execute(select(AuditLog).where(AuditLog.organization_id == org_id))
+        for log in result.scalars().all():
+            await db.delete(log)
+    except Exception as e:
+        logger.warning(f"Could not delete AuditLog: {e}")
 
-    # Delete playbooks (steps will cascade) - wrapped in try-except for missing tables
+    # Delete playbooks (steps will cascade)
     try:
         result = await db.execute(select(AIPlaybook).where(AIPlaybook.organization_id == org_id))
         for playbook in result.scalars().all():
             await db.delete(playbook)
-    except Exception:
-        pass  # Table may not exist yet
+    except Exception as e:
+        logger.warning(f"Could not delete AIPlaybook: {e}")
 
     # Delete notification channels
-    result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
-    for channel in result.scalars().all():
-        await db.delete(channel)
+    try:
+        result = await db.execute(select(NotificationChannel).where(NotificationChannel.organization_id == org_id))
+        for channel in result.scalars().all():
+            await db.delete(channel)
+    except Exception as e:
+        logger.warning(f"Could not delete NotificationChannel: {e}")
 
     # Delete alerts
-    result = await db.execute(select(Alert).where(Alert.organization_id == org_id))
-    for alert in result.scalars().all():
-        await db.delete(alert)
+    try:
+        result = await db.execute(select(Alert).where(Alert.organization_id == org_id))
+        for alert in result.scalars().all():
+            await db.delete(alert)
+    except Exception as e:
+        logger.warning(f"Could not delete Alert: {e}")
 
     # Delete alert rules
-    result = await db.execute(select(AlertRule).where(AlertRule.organization_id == org_id))
-    for rule in result.scalars().all():
-        await db.delete(rule)
+    try:
+        result = await db.execute(select(AlertRule).where(AlertRule.organization_id == org_id))
+        for rule in result.scalars().all():
+            await db.delete(rule)
+    except Exception as e:
+        logger.warning(f"Could not delete AlertRule: {e}")
 
-    # Delete scheduled runs (FK to schedules)
-    result = await db.execute(select(MonitoringSchedule).where(MonitoringSchedule.organization_id == org_id))
-    schedules = result.scalars().all()
-    for schedule in schedules:
-        run_result = await db.execute(select(ScheduledRun).where(ScheduledRun.schedule_id == schedule.id))
-        for run in run_result.scalars().all():
-            await db.delete(run)
+    # Delete scheduled runs and monitoring schedules
+    try:
+        result = await db.execute(select(MonitoringSchedule).where(MonitoringSchedule.organization_id == org_id))
+        schedules = result.scalars().all()
+        for schedule in schedules:
+            run_result = await db.execute(select(ScheduledRun).where(ScheduledRun.schedule_id == schedule.id))
+            for run in run_result.scalars().all():
+                await db.delete(run)
+        for schedule in schedules:
+            await db.delete(schedule)
+    except Exception as e:
+        logger.warning(f"Could not delete MonitoringSchedule: {e}")
 
-    # Delete monitoring schedules
-    for schedule in schedules:
-        await db.delete(schedule)
-
-    # Delete remediation comments (FK to tasks)
-    result = await db.execute(select(RemediationTask).where(RemediationTask.organization_id == org_id))
-    tasks = result.scalars().all()
-    for task in tasks:
-        comment_result = await db.execute(select(RemediationComment).where(RemediationComment.task_id == task.id))
-        for comment in comment_result.scalars().all():
-            await db.delete(comment)
-
-    # Delete remediation tasks
-    for task in tasks:
-        await db.delete(task)
+    # Delete remediation comments and tasks
+    try:
+        result = await db.execute(select(RemediationTask).where(RemediationTask.organization_id == org_id))
+        tasks = result.scalars().all()
+        for task in tasks:
+            comment_result = await db.execute(select(RemediationComment).where(RemediationComment.task_id == task.id))
+            for comment in comment_result.scalars().all():
+                await db.delete(comment)
+        for task in tasks:
+            await db.delete(task)
+    except Exception as e:
+        logger.warning(f"Could not delete RemediationTask: {e}")
 
     # Delete SLA policies
-    result = await db.execute(select(SLAPolicy).where(SLAPolicy.organization_id == org_id))
-    for policy in result.scalars().all():
-        await db.delete(policy)
+    try:
+        result = await db.execute(select(SLAPolicy).where(SLAPolicy.organization_id == org_id))
+        for policy in result.scalars().all():
+            await db.delete(policy)
+    except Exception as e:
+        logger.warning(f"Could not delete SLAPolicy: {e}")
 
     # Delete findings
-    result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
-    for finding in result.scalars().all():
-        await db.delete(finding)
+    try:
+        result = await db.execute(select(Finding).where(Finding.organization_id == org_id))
+        for finding in result.scalars().all():
+            await db.delete(finding)
+    except Exception as e:
+        logger.warning(f"Could not delete Finding: {e}")
 
     # Delete analysis runs
-    result = await db.execute(select(AnalysisRun).where(AnalysisRun.organization_id == org_id))
-    for run in result.scalars().all():
-        await db.delete(run)
+    try:
+        result = await db.execute(select(AnalysisRun).where(AnalysisRun.organization_id == org_id))
+        for run in result.scalars().all():
+            await db.delete(run)
+    except Exception as e:
+        logger.warning(f"Could not delete AnalysisRun: {e}")
 
-    # Delete chunks (FK to documents)
-    result = await db.execute(select(Document).where(Document.organization_id == org_id))
-    docs_to_delete = result.scalars().all()
-    for doc in docs_to_delete:
-        chunk_result = await db.execute(select(DocumentChunk).where(DocumentChunk.document_id == doc.id))
-        for chunk in chunk_result.scalars().all():
-            await db.delete(chunk)
-
-    # Delete documents
-    for doc in docs_to_delete:
-        await db.delete(doc)
+    # Delete chunks and documents
+    try:
+        result = await db.execute(select(Document).where(Document.organization_id == org_id))
+        docs_to_delete = result.scalars().all()
+        for doc in docs_to_delete:
+            chunk_result = await db.execute(select(DocumentChunk).where(DocumentChunk.document_id == doc.id))
+            for chunk in chunk_result.scalars().all():
+                await db.delete(chunk)
+        for doc in docs_to_delete:
+            await db.delete(doc)
+    except Exception as e:
+        logger.warning(f"Could not delete Document: {e}")
 
     # Delete vendors
-    result = await db.execute(select(Vendor).where(Vendor.organization_id == org_id))
-    for vendor in result.scalars().all():
-        await db.delete(vendor)
+    try:
+        result = await db.execute(select(Vendor).where(Vendor.organization_id == org_id))
+        for vendor in result.scalars().all():
+            await db.delete(vendor)
+    except Exception as e:
+        logger.warning(f"Could not delete Vendor: {e}")
 
     await db.commit()
 
