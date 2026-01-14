@@ -331,7 +331,7 @@ async def debug_tables(db: AsyncSession = Depends(get_db)) -> dict:
             # Rollback after each check to clear any failed transaction state
             await db.rollback()
 
-    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v5-debug"}
+    return {"tables": results, "default_playbooks_count": len(DEFAULT_PLAYBOOKS) if DEFAULT_PLAYBOOKS else 0, "version": "v7-raw-sql-remediation"}
 
 
 @router.get("/debug-seed")
@@ -746,77 +746,85 @@ async def seed_demo_data(
     all_findings = result.scalars().all()
 
     # Create SLA Policies and Remediation Tasks - wrapped in try-except for schema mismatches
+    # Use raw SQL to avoid ORM column mapping issues with missing columns
+    from sqlalchemy import text as sql_text
     sla_policies_created = 0
     remediation_tasks_created = 0
     remediation_comments_created = 0
-    task_objects = []
+    task_ids = []  # Store task IDs for comments
     try:
-        sla_policy_map = {}
+        # Create SLA policies using raw SQL
         for policy_data in DEMO_SLA_POLICIES:
-            policy = SLAPolicy(
-                id=str(uuid4()),
-                organization_id=org_id,
-                name=policy_data["name"],
-                critical_sla_days=policy_data["critical_days"],
-                high_sla_days=policy_data["high_days"],
-                medium_sla_days=policy_data["medium_days"],
-                low_sla_days=policy_data["low_days"],
-                is_default=policy_data["is_default"],
-            )
-            db.add(policy)
-            sla_policy_map[policy_data["name"]] = policy
+            policy_id = str(uuid4())
+            await db.execute(sql_text("""
+                INSERT INTO sla_policies (id, organization_id, name, critical_sla_days, high_sla_days, medium_sla_days, low_sla_days, is_default, created_at, updated_at)
+                VALUES (:id, :org_id, :name, :critical, :high, :medium, :low, :is_default, NOW(), NOW())
+            """), {
+                "id": policy_id,
+                "org_id": org_id,
+                "name": policy_data["name"],
+                "critical": policy_data["critical_days"],
+                "high": policy_data["high_days"],
+                "medium": policy_data["medium_days"],
+                "low": policy_data["low_days"],
+                "is_default": policy_data["is_default"],
+            })
             sla_policies_created += 1
 
         await db.commit()
 
-        # Create Remediation Tasks (only if we have findings)
+        # Create Remediation Tasks using raw SQL (only columns that exist in production)
         if all_findings:
             for i, task_data in enumerate(DEMO_REMEDIATION_TASKS):
-                # Link to a finding (required FK)
                 finding = all_findings[i % len(all_findings)]
                 vendor = random.choice(list(vendor_map.values()))
-
+                task_id = str(uuid4())
                 due_date = datetime.now(timezone.utc) + timedelta(days=task_data["sla_days"])
-                created_at = datetime.now(timezone.utc) - timedelta(days=random.randint(1, 14))
-
-                # Check if SLA is breached (for some older tasks)
                 sla_breached = task_data["status"] in ["in_progress", "pending_review"] and random.random() < 0.3
+                assignee = current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None
 
-                task = RemediationTask(
-                    id=str(uuid4()),
-                    organization_id=org_id,
-                    finding_id=finding.id,
-                    vendor_id=vendor.id,
-                    assignee_id=current_user.id if task_data["status"] not in ["draft", "pending_assignment"] else None,
-                    created_by_id=current_user.id,
-                    title=task_data["title"],
-                    description=f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
-                    status=task_data["status"],
-                    priority=task_data["priority"],
-                    due_date=due_date,
-                    sla_days=task_data["sla_days"],
-                    sla_breached=sla_breached,
-                )
-                db.add(task)
-                task_objects.append(task)
+                await db.execute(sql_text("""
+                    INSERT INTO remediation_tasks (id, organization_id, finding_id, vendor_id, assignee_id, created_by_id,
+                        title, description, status, priority, due_date, sla_days, sla_breached, created_at, updated_at)
+                    VALUES (:id, :org_id, :finding_id, :vendor_id, :assignee_id, :created_by_id,
+                        :title, :description, :status, :priority, :due_date, :sla_days, :sla_breached, NOW(), NOW())
+                """), {
+                    "id": task_id,
+                    "org_id": org_id,
+                    "finding_id": finding.id,
+                    "vendor_id": vendor.id,
+                    "assignee_id": assignee,
+                    "created_by_id": current_user.id,
+                    "title": task_data["title"],
+                    "description": f"Remediation required: {task_data['title']}. This task addresses a {task_data['priority']} priority security concern.",
+                    "status": task_data["status"],
+                    "priority": task_data["priority"],
+                    "due_date": due_date,
+                    "sla_days": task_data["sla_days"],
+                    "sla_breached": sla_breached,
+                })
+                task_ids.append(task_id)
                 remediation_tasks_created += 1
 
             await db.commit()
 
-        # Create Remediation Comments
-        for task in task_objects:
-            # Add 2-3 comments per task
+        # Create Remediation Comments using raw SQL
+        for task_id in task_ids:
             num_comments = random.randint(2, 3)
-            for i in range(num_comments):
+            for _ in range(num_comments):
                 comment_text = random.choice(DEMO_TASK_COMMENTS)
-                comment = RemediationComment(
-                    id=str(uuid4()),
-                    task_id=task.id,
-                    user_id=current_user.id,
-                    content=comment_text,
-                    created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23)),
-                )
-                db.add(comment)
+                comment_id = str(uuid4())
+                created = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23))
+                await db.execute(sql_text("""
+                    INSERT INTO remediation_comments (id, task_id, user_id, content, is_internal, created_at, updated_at)
+                    VALUES (:id, :task_id, :user_id, :content, true, :created, NOW())
+                """), {
+                    "id": comment_id,
+                    "task_id": task_id,
+                    "user_id": current_user.id,
+                    "content": comment_text,
+                    "created": created,
+                })
                 remediation_comments_created += 1
 
         await db.commit()
@@ -827,7 +835,6 @@ async def seed_demo_data(
         sla_policies_created = 0
         remediation_tasks_created = 0
         remediation_comments_created = 0
-        task_objects = []
 
     logger.info(f"After remediation seeding: sla={sla_policies_created}, tasks={remediation_tasks_created}")
 
