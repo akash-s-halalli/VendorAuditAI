@@ -35,7 +35,11 @@
 
 ---
 
-## Live Demo
+<table>
+<tr>
+<td width="40%" valign="top">
+
+**Live Demo**
 
 | | |
 |:--|:--|
@@ -43,20 +47,16 @@
 | **Email** | `newdemo@vendorauditai.com` |
 | **Password** | `Demo12345` |
 
----
+</td>
+<td width="60%" valign="top">
 
-## Table of Contents
+**Quick Navigation**
 
-1. [Overview](#overview)
-2. [Key Features](#key-features)
-3. [Platform Modules](#platform-modules)
-4. [AI Agent Network](#ai-agent-network)
-5. [Compliance Frameworks](#compliance-frameworks)
-6. [Architecture](#architecture)
-7. [API Reference](#api-reference)
-8. [Quick Start](#quick-start)
-9. [Project Structure](#project-structure)
-10. [Roadmap](#roadmap)
+[Overview](#overview) | [Key Features](#key-features) | [Platform Modules](#platform-modules) | [AI Agents](#ai-agent-network) | [Compliance](#compliance-frameworks) | [Architecture](#architecture) | [API](#api-reference) | [Quick Start](#quick-start) | [Structure](#project-structure) | [Roadmap](#roadmap)
+
+</td>
+</tr>
+</table>
 
 ---
 
