@@ -112,39 +112,31 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                    AI-POWERED ASSESSMENT PIPELINE                       |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   DOCUMENT INTAKE                                                      |
-|   +------------------------------------------------------------------+ |
-|   |  Upload SOC 2, ISO 27001, SIG, questionnaires                    | |
-|   |  - PDF/DOCX parsing with OCR for scanned docs                    | |
-|   |  - Automatic document type classification                        | |
-|   |  - Semantic chunking for optimal AI processing                   | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   AI ANALYSIS ENGINE                                                   |
-|   +------------------------------------------------------------------+ |
-|   |  Claude Opus 4.5 + RAG Architecture                              | |
-|   |  - Extract controls, findings, exceptions                        | |
-|   |  - Map to 12 compliance frameworks simultaneously                | |
-|   |  - Generate risk scores with confidence levels                   | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   ANALYST REVIEW                                                       |
-|   +------------------------------------------------------------------+ |
-|   |  AI does 90% of work, analyst validates 10%                      | |
-|   |  - Pre-populated findings with citations                         | |
-|   |  - One-click approval or adjustment                              | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   RESULT: 6-8 hours --> 15 minutes per assessment                      |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph Stage1["Stage 1: Document Intake"]
+        A[Upload SOC 2, ISO 27001, SIG] --> B[PDF/DOCX Parsing + OCR]
+        B --> C[Auto Classification]
+        C --> D[Semantic Chunking]
+    end
+
+    subgraph Stage2["Stage 2: AI Analysis"]
+        E[Claude Opus 4.5 + RAG]
+        F[Extract Controls & Findings]
+        G[Map to 12 Frameworks]
+        H[Generate Risk Scores]
+        E --> F --> G --> H
+    end
+
+    subgraph Stage3["Stage 3: Analyst Review"]
+        I[Pre-populated Findings]
+        J[One-click Approval]
+        I --> J
+    end
+
+    D --> E
+    H --> I
+    J --> K[Assessment Complete]
 ```
 
 | Metric | Impact |
@@ -173,37 +165,27 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                   INTELLIGENT VENDOR CLASSIFICATION                     |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   INPUT: Vendor name, website, business description                    |
-|                                    |                                   |
-|                                    v                                   |
-|   AI CLASSIFICATION ENGINE                                             |
-|   +------------------------------------------------------------------+ |
-|   |  25 Enterprise Categories:                                       | |
-|   |  - Cloud Infrastructure (AWS, Azure, GCP)                        | |
-|   |  - Payment Processing (Stripe, Square, Adyen)                    | |
-|   |  - AI/ML Platforms (OpenAI, Anthropic, Cohere)                   | |
-|   |  - Identity & Access (Okta, Auth0, Ping)                         | |
-|   |  - Security Tools (CrowdStrike, Splunk, Palo Alto)               | |
-|   |  - Data Analytics, HR Systems, CRM, ERP, + 16 more               | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   RISK TIER ASSIGNMENT (Based on data access + business criticality)  |
-|   +------------------------------------------------------------------+ |
-|   |  Tier 1 (Critical)  : Quarterly review   | Payment, Cloud, IAM   | |
-|   |  Tier 2 (High)      : Semi-annual review | Security, Analytics   | |
-|   |  Tier 3 (Medium)    : Annual review      | HR, CRM, Collaboration| |
-|   |  Tier 4 (Low)       : Biennial review    | Marketing, Office     | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   RESULT: Right-sized assessment frequency based on actual risk        |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    A[Vendor Name + Website] --> B[AI Classification Engine]
+
+    subgraph Categories["25 Enterprise Categories"]
+        C1[Cloud Infrastructure]
+        C2[Payment Processing]
+        C3[AI/ML Platforms]
+        C4[Identity & Access]
+        C5[Security Tools]
+        C6[+ 20 More]
+    end
+
+    B --> Categories
+
+    Categories --> D{Risk Tier Assignment}
+
+    D --> T1["Tier 1 Critical<br/>Quarterly Review"]
+    D --> T2["Tier 2 High<br/>Semi-annual Review"]
+    D --> T3["Tier 3 Medium<br/>Annual Review"]
+    D --> T4["Tier 4 Low<br/>Biennial Review"]
 ```
 
 </div>
@@ -227,38 +209,70 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                     AI VENDOR RISK CLASSIFICATION                       |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   STACK TYPE CLASSIFICATION (What kind of AI is this?)                 |
-|   +------------------------------------------------------------------+ |
-|   |  - Foundation Model Provider (HIGH RISK)    | OpenAI, Anthropic  | |
-|   |  - GenAI Application                        | ChatGPT, Claude    | |
-|   |  - Autonomous Agent (HIGH RISK)             | AutoGPT, AgentGPT  | |
-|   |  - Fine-Tuning Platform                     | Replicate, Modal   | |
-|   |  - Embedding/Vector Service                 | Pinecone, Weaviate | |
-|   |  - MLOps Platform                           | Weights & Biases   | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   DATA TRAINING PRACTICES (Does your data train their models?)         |
-|   +------------------------------------------------------------------+ |
-|   |  [ ] No customer data used for training           (LOW RISK)     | |
-|   |  [ ] Opt-in only with explicit consent            (MEDIUM RISK)  | |
-|   |  [ ] All data used by default                     (HIGH RISK)    | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   AUTONOMOUS ACTION SCOPE (What can the AI do without human approval?) |
-|   +------------------------------------------------------------------+ |
-|   |  [ ] Read-only / Analysis only                    (LOW RISK)     | |
-|   |  [ ] Actions require human approval               (MEDIUM RISK)  | |
-|   |  [ ] Fully autonomous execution                   (HIGH RISK)    | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   FRAMEWORK: NIST AI RMF (70+ controls) + Custom AI Governance         |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TB
+    subgraph TITLE[" "]
+        direction TB
+        T["AI VENDOR RISK CLASSIFICATION"]
+    end
+
+    subgraph STACK["STACK TYPE CLASSIFICATION"]
+        direction TB
+        S1["Foundation Model Provider<br/>OpenAI, Anthropic"]
+        S2["GenAI Application<br/>ChatGPT, Claude"]
+        S3["Autonomous Agent<br/>AutoGPT, AgentGPT"]
+        S4["Fine-Tuning Platform<br/>Replicate, Modal"]
+        S5["Embedding/Vector Service<br/>Pinecone, Weaviate"]
+        S6["MLOps Platform<br/>Weights & Biases"]
+    end
+
+    subgraph DATA["DATA TRAINING PRACTICES"]
+        direction TB
+        D1["No customer data used for training"]
+        D2["Opt-in only with explicit consent"]
+        D3["All data used by default"]
+    end
+
+    subgraph ACTION["AUTONOMOUS ACTION SCOPE"]
+        direction TB
+        A1["Read-only / Analysis only"]
+        A2["Actions require human approval"]
+        A3["Fully autonomous execution"]
+    end
+
+    subgraph FRAMEWORK["COMPLIANCE FRAMEWORK"]
+        direction TB
+        F1["NIST AI RMF<br/>70+ Controls"]
+        F2["Custom AI Governance"]
+    end
+
+    T --> STACK
+    T --> DATA
+    T --> ACTION
+    STACK --> FRAMEWORK
+    DATA --> FRAMEWORK
+    ACTION --> FRAMEWORK
+
+    style T fill:#1a1a2e,stroke:#B026FF,stroke-width:2px,color:#fff
+    style S1 fill:#dc3545,stroke:#dc3545,color:#fff
+    style S2 fill:#6c757d,stroke:#6c757d,color:#fff
+    style S3 fill:#dc3545,stroke:#dc3545,color:#fff
+    style S4 fill:#6c757d,stroke:#6c757d,color:#fff
+    style S5 fill:#6c757d,stroke:#6c757d,color:#fff
+    style S6 fill:#6c757d,stroke:#6c757d,color:#fff
+    style D1 fill:#28a745,stroke:#28a745,color:#fff
+    style D2 fill:#ffc107,stroke:#ffc107,color:#000
+    style D3 fill:#dc3545,stroke:#dc3545,color:#fff
+    style A1 fill:#28a745,stroke:#28a745,color:#fff
+    style A2 fill:#ffc107,stroke:#ffc107,color:#000
+    style A3 fill:#dc3545,stroke:#dc3545,color:#fff
+    style F1 fill:#B026FF,stroke:#B026FF,color:#fff
+    style F2 fill:#B026FF,stroke:#B026FF,color:#fff
+    style TITLE fill:none,stroke:none
+    style STACK fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
+    style DATA fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
+    style ACTION fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
+    style FRAMEWORK fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
 ```
 
 </div>
@@ -282,44 +296,34 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                      AI AGENT MONITORING NETWORK                        |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   +------------------+  +------------------+  +------------------+      |
-|   |  SENTINEL PRIME  |  |  VECTOR ANALYST  |  |  WATCHDOG ZERO   |      |
-|   +------------------+  +------------------+  +------------------+      |
-|   |                  |  |                  |  |                  |      |
-|   | Threat Detection |  | Risk Scoring     |  | Vuln Scanning    |      |
-|   | - Security risks |  | - Score findings |  | - Security gaps  |      |
-|   | - Anomaly detect |  | - History trends |  | - Expired certs  |      |
-|   | - Emerging CVEs  |  | - Confidence lvl |  | - Missing ctrl   |      |
-|   |                  |  |                  |  |                  |      |
-|   +--------+---------+  +--------+---------+  +--------+---------+      |
-|            |                     |                     |               |
-|            +---------------------+---------------------+               |
-|                                  |                                     |
-|                                  v                                     |
-|   +------------------------------------------------------------------+ |
-|   |                         AUDIT CORE                               | |
-|   +------------------------------------------------------------------+ |
-|   |  - Framework coverage analysis (12 frameworks, 2500+ controls)   | |
-|   |  - Continuous control monitoring and drift detection             | |
-|   |  - Certificate expiration tracking and alerts                    | |
-|   |  - Compliance score calculation and trending                     | |
-|   +------------------------------------------------------------------+ |
-|                                  |                                     |
-|                                  v                                     |
-|   +------------------------------------------------------------------+ |
-|   |                    ALERT & REMEDIATION                           | |
-|   +------------------------------------------------------------------+ |
-|   |  Jira         |  ServiceNow    |  Slack        |  Email          | |
-|   |  Auto-create  |  Incident mgmt |  Real-time    |  Digest         | |
-|   |  tickets      |  integration   |  alerts       |  reports        | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TB
+    subgraph agents["AI AGENT MONITORING NETWORK"]
+        subgraph detection["Detection Layer"]
+            sentinel["SENTINEL PRIME<br/>Threat Detection<br/>- Security risks<br/>- Anomaly detect<br/>- Emerging CVEs"]
+            vector["VECTOR ANALYST<br/>Risk Scoring<br/>- Score findings<br/>- History trends<br/>- Confidence lvl"]
+            watchdog["WATCHDOG ZERO<br/>Vuln Scanning<br/>- Security gaps<br/>- Expired certs<br/>- Missing ctrl"]
+        end
+
+        subgraph core["Processing Layer"]
+            audit["AUDIT CORE<br/>- Framework coverage analysis (12 frameworks, 2500+ controls)<br/>- Continuous control monitoring and drift detection<br/>- Certificate expiration tracking and alerts<br/>- Compliance score calculation and trending"]
+        end
+
+        subgraph remediation["Alert & Remediation Layer"]
+            jira["Jira<br/>Auto-create tickets"]
+            servicenow["ServiceNow<br/>Incident mgmt"]
+            slack["Slack<br/>Real-time alerts"]
+            email["Email<br/>Digest reports"]
+        end
+    end
+
+    sentinel --> audit
+    vector --> audit
+    watchdog --> audit
+    audit --> jira
+    audit --> servicenow
+    audit --> slack
+    audit --> email
 ```
 
 </div>
@@ -342,44 +346,44 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                       BPO RISK MANAGEMENT                               |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   YOUR COMPANY -----> PRIMARY VENDOR -----> BPO PROVIDER (4th Party)   |
-|                                                                        |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   LAYER 1: PROVIDER TRACKING                                           |
-|   +------------------------------------------------------------------+ |
-|   |  Company Profile       | Legal name, HQ location, office sites   | |
-|   |  Contract Terms        | SLAs, liability caps, termination       | |
-|   |  Data Access Levels    | What data do they touch? PII? Financial?| |
-|   |  Subcontractor Disclosure | Who do THEY outsource to?            | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   LAYER 2: PROCESS-SPECIFIC RISK                                       |
-|   +------------------------------------------------------------------+ |
-|   |  Financial Processing  (Tier 1)  | Payments, accounting, audit   | |
-|   |  Customer Support      (Tier 2)  | Help desk, chat, phone        | |
-|   |  IT Support            (Tier 2)  | Infrastructure, dev, ops      | |
-|   |  Data Entry            (Tier 3)  | Document processing, input    | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   LAYER 3: GEOGRAPHIC RISK                                             |
-|   +------------------------------------------------------------------+ |
-|   |  Data Residency        | GDPR (EU), CCPA (CA), PDPA (SG), etc.   | |
-|   |  Political Stability   | Country risk scores, sanctions          | |
-|   |  Regulatory Jurisdiction| Which laws apply? Cross-border transfer | |
-|   |  Business Continuity   | Natural disasters, infrastructure       | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   RESULT: Full visibility into fourth-party risk chain                 |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TB
+    subgraph Chain["Fourth-Party Risk Chain"]
+        direction LR
+        A["Your Company"] --> B["Primary Vendor"] --> C["BPO Provider<br/>(4th Party)"]
+    end
+
+    Chain --> Layer1
+
+    subgraph Layer1["Layer 1: Provider Tracking"]
+        direction TB
+        L1A["Company Profile<br/>Legal name, HQ location, office sites"]
+        L1B["Contract Terms<br/>SLAs, liability caps, termination"]
+        L1C["Data Access Levels<br/>What data do they touch? PII? Financial?"]
+        L1D["Subcontractor Disclosure<br/>Who do THEY outsource to?"]
+    end
+
+    Layer1 --> Layer2
+
+    subgraph Layer2["Layer 2: Process-Specific Risk"]
+        direction TB
+        L2A["Financial Processing - Tier 1<br/>Payments, accounting, audit"]
+        L2B["Customer Support - Tier 2<br/>Help desk, chat, phone"]
+        L2C["IT Support - Tier 2<br/>Infrastructure, dev, ops"]
+        L2D["Data Entry - Tier 3<br/>Document processing, input"]
+    end
+
+    Layer2 --> Layer3
+
+    subgraph Layer3["Layer 3: Geographic Risk"]
+        direction TB
+        L3A["Data Residency<br/>GDPR, CCPA, PDPA, etc."]
+        L3B["Political Stability<br/>Country risk scores, sanctions"]
+        L3C["Regulatory Jurisdiction<br/>Which laws apply? Cross-border transfer"]
+        L3D["Business Continuity<br/>Natural disasters, infrastructure"]
+    end
+
+    Layer3 --> Result["RESULT: Full visibility into fourth-party risk chain"]
 ```
 
 </div>
@@ -403,41 +407,46 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Solution Architecture:**
 
-```
-+------------------------------------------------------------------------+
-|                     EXECUTIVE DASHBOARD METRICS                         |
-+------------------------------------------------------------------------+
-|                                                                        |
-|   RISK POSTURE (Board-Level Summary)                                   |
-|   +------------------------------------------------------------------+ |
-|   |  Overall Risk Score:  72/100 (Moderate)                          | |
-|   |  90-Day Trend:        +8 points (Improving)                      | |
-|   |                                                                  | |
-|   |  Risk Distribution:                                              | |
-|   |  Critical: 3  |  High: 12  |  Medium: 45  |  Low: 140           | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   OPERATIONAL EFFICIENCY (ROI Metrics)                                 |
-|   +------------------------------------------------------------------+ |
-|   |  Assessments Completed (YTD):     127 vendors                    | |
-|   |  Average Assessment Time:         18 minutes (was 6 hours)       | |
-|   |  Annual Cost Savings:             $380,000+                      | |
-|   |  Framework Coverage:              12 frameworks, 2500+ controls  | |
-|   +------------------------------------------------------------------+ |
-|                                    |                                   |
-|                                    v                                   |
-|   COMPLIANCE & REMEDIATION STATUS                                      |
-|   +------------------------------------------------------------------+ |
-|   |  SOC 2 Type II:      94% of vendors compliant                    | |
-|   |  ISO 27001:          67% of vendors certified                    | |
-|   |  Open Findings:      47 (down from 89 last quarter)              | |
-|   |  Remediation SLA:    89% on-time completion                      | |
-|   +------------------------------------------------------------------+ |
-|                                                                        |
-|   EXPORT: PDF Report | CSV Data | Board Presentation Deck              |
-|                                                                        |
-+------------------------------------------------------------------------+
+```mermaid
+flowchart TB
+    subgraph DASHBOARD["EXECUTIVE DASHBOARD METRICS"]
+        direction TB
+
+        subgraph RISK["RISK POSTURE - Board-Level Summary"]
+            R1["Overall Risk Score: 72/100 - Moderate"]
+            R2["90-Day Trend: +8 points - Improving"]
+            subgraph DIST["Risk Distribution"]
+                D1["Critical: 3"]
+                D2["High: 12"]
+                D3["Medium: 45"]
+                D4["Low: 140"]
+            end
+        end
+
+        subgraph OPS["OPERATIONAL EFFICIENCY - ROI Metrics"]
+            O1["Assessments Completed YTD: 127 vendors"]
+            O2["Average Assessment Time: 18 min - was 6 hours"]
+            O3["Annual Cost Savings: $380,000+"]
+            O4["Framework Coverage: 12 frameworks, 2500+ controls"]
+        end
+
+        subgraph COMPLIANCE["COMPLIANCE and REMEDIATION STATUS"]
+            C1["SOC 2 Type II: 94% of vendors compliant"]
+            C2["ISO 27001: 67% of vendors certified"]
+            C3["Open Findings: 47 - down from 89 last quarter"]
+            C4["Remediation SLA: 89% on-time completion"]
+        end
+
+        subgraph EXPORT["EXPORT OPTIONS"]
+            E1["PDF Report"]
+            E2["CSV Data"]
+            E3["Board Presentation Deck"]
+        end
+
+        RISK --> OPS
+        OPS --> COMPLIANCE
+        COMPLIANCE --> EXPORT
+    end
 ```
 
 </div>
