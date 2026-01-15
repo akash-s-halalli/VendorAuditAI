@@ -67,9 +67,9 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 ---
 
-## Overview
-
 <div align="center">
+
+## Overview
 
 ### The Problem
 
@@ -459,9 +459,9 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 ---
 
-## Key Features
-
 <div align="center">
+
+## Key Features
 
 ### Core Capabilities
 
@@ -491,9 +491,9 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 ---
 
-## Platform Modules
-
 <div align="center">
+
+## Platform Modules
 
 | # | Module | Description |
 |:-:|:------:|:-----------:|
@@ -514,9 +514,9 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 ---
 
-## AI Agent Network
-
 <div align="center">
+
+## AI Agent Network
 
 Four autonomous AI agents continuously monitor your vendor ecosystem.
 
@@ -533,9 +533,9 @@ Four autonomous AI agents continuously monitor your vendor ecosystem.
 
 ---
 
-## Compliance Frameworks
-
 <div align="center">
+
+## Compliance Frameworks
 
 VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
@@ -615,9 +615,9 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
 ---
 
-## API Reference
-
 <div align="center">
+
+## API Reference
 
 **100+ REST API Endpoints** | [Swagger UI](https://vendorauditai-production.up.railway.app/docs) | [ReDoc](https://vendorauditai-production.up.railway.app/redoc)
 
@@ -734,9 +734,9 @@ VendorAuditAI/
 
 ---
 
-## Roadmap
-
 <div align="center">
+
+## Roadmap
 
 ### Completed
 
@@ -759,9 +759,9 @@ VendorAuditAI/
 
 ---
 
-## Technology Stack
-
 <div align="center">
+
+## Technology Stack
 
 | Category | Technologies |
 |:--------:|:------------:|
@@ -776,9 +776,9 @@ VendorAuditAI/
 
 ---
 
-## Author
-
 <div align="center">
+
+## Author
 
 **Dominic M. Hoang**
 
@@ -788,9 +788,9 @@ GitHub: [@MikeDominic92](https://github.com/MikeDominic92)
 
 ---
 
-## Related Projects
-
 <div align="center">
+
+## Related Projects
 
 | Project | Description |
 |:-------:|:-----------:|
