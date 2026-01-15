@@ -113,6 +113,7 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TD
     subgraph Stage1["Stage 1: Document Intake"]
         A[Upload SOC 2, ISO 27001, SIG] --> B[PDF/DOCX Parsing + OCR]
@@ -166,6 +167,7 @@ flowchart TD
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TD
     A[Vendor Name + Website] --> B[AI Classification Engine]
 
@@ -210,6 +212,7 @@ flowchart TD
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TD
     A["AI VENDOR RISK CLASSIFICATION"] --> B["Stack Type"]
     A --> C["Data Training"]
@@ -242,6 +245,7 @@ flowchart TD
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TB
     subgraph agents["AI AGENT MONITORING NETWORK"]
         subgraph detection["Detection Layer"]
@@ -292,6 +296,7 @@ flowchart TB
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TB
     subgraph Chain["Fourth-Party Risk Chain"]
         direction LR
@@ -353,6 +358,7 @@ flowchart TB
 **Solution Architecture:**
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart LR
     subgraph RISK["Risk Posture"]
         R["72/100 Moderate<br/>+8 pts trend"]
@@ -492,6 +498,7 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 ## Architecture
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart TD
     subgraph Client
         A[User Browser]
@@ -536,6 +543,7 @@ flowchart TD
 ### Document Processing Pipeline
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#00ff88', 'lineColor': '#00ff88', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460', 'background': '#0a0a0a', 'mainBkg': '#1a1a2e', 'nodeBorder': '#00ff88', 'clusterBkg': '#16213e', 'clusterBorder': '#00ff88', 'titleColor': '#ffffff', 'edgeLabelBackground': '#1a1a2e'}}}%%
 flowchart LR
     A[Upload PDF/DOCX] --> B[Parse Text]
     B --> C[Semantic Chunking]
