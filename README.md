@@ -80,6 +80,63 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 <div align="center">
 
+## Platform Screenshots
+
+**Experience the sleek, cybersecurity-inspired interface**
+
+### Executive Dashboard
+Real-time vendor risk posture with animated metrics and threat intelligence
+
+<img src="assets/dashboard_module.png" alt="Executive Dashboard" width="800">
+
+---
+
+### AI Agent Network
+Four autonomous agents continuously monitoring your vendor ecosystem
+
+<img src="assets/agents_module.png" alt="AI Agent Network" width="800">
+
+---
+
+### Analytics Hub
+Comprehensive risk analytics with compliance coverage and activity tracking
+
+<img src="assets/analytics_module.png" alt="Analytics Hub" width="800">
+
+---
+
+### Vendor Management
+25-category enterprise taxonomy with risk tiering and status tracking
+
+<img src="assets/vendors_module.png" alt="Vendor Management" width="800">
+
+---
+
+### AI Governance Playbooks
+Guided workflows for AI tool adoption and compliance
+
+<img src="assets/playbooks_module.png" alt="AI Governance Playbooks" width="800">
+
+---
+
+### Integration Hub
+Connect with Jira, ServiceNow, Slack, and more
+
+<img src="assets/integrations_module.png" alt="Integration Hub" width="800">
+
+---
+
+### Remediation Workflow
+Task management with SLA tracking and priority handling
+
+<img src="assets/remediation_module.png" alt="Remediation Workflow" width="800">
+
+</div>
+
+---
+
+<div align="center">
+
 ## Overview
 
 ### The Problem
@@ -528,6 +585,12 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 | **AI Risk** | 50+ | 1.0 | AI vendor assessment |
 | **PCI-DSS** | 300+ | 4.0 | Payment processing |
 | **HIPAA** | 150+ | 2013 | Healthcare vendors |
+
+<br>
+
+<div align="center">
+  <img src="assets/compliance_frameworks_demo.png" alt="Compliance Frameworks Dashboard" width="800" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+</div>
 
 </div>
 
