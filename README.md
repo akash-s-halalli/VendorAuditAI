@@ -131,6 +131,48 @@ Task management with SLA tracking and priority handling
 
 <img src="assets/remediation_module.png" alt="Remediation Workflow" width="800">
 
+---
+
+### BPO Risk Management
+Track and assess Business Process Outsourcing providers with fourth-party risk visibility, geographic risk mapping, and subcontractor disclosure tracking
+
+<img src="assets/bpo_module.png" alt="BPO Risk Management" width="800">
+
+---
+
+### Document Management
+Upload and process SOC 2 reports, ISO certifications, and security questionnaires with AI-powered semantic chunking and automatic classification
+
+<img src="assets/documents_module.png" alt="Document Management" width="800">
+
+---
+
+### Natural Language Query
+Ask questions about vendor documents in plain English and receive AI-generated answers with exact page citations and confidence scores
+
+<img src="assets/query_module.png" alt="Natural Language Query" width="800">
+
+---
+
+### Analysis Engine
+Run AI-powered compliance analysis against 12 frameworks simultaneously, extracting controls and identifying security gaps automatically
+
+<img src="assets/analysis_module.png" alt="Analysis Engine" width="800">
+
+---
+
+### Risk Dashboard
+Visualize vendor risk distribution, severity breakdowns, and compliance trends with interactive charts and real-time scoring
+
+<img src="assets/risk_module.png" alt="Risk Dashboard" width="800">
+
+---
+
+### Continuous Monitoring
+Configure automated assessment schedules, alert thresholds, and notification channels for 24/7 vendor ecosystem surveillance
+
+<img src="assets/monitoring_module.png" alt="Continuous Monitoring" width="800">
+
 </div>
 
 ---
