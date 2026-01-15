@@ -210,69 +210,14 @@ flowchart TD
 **Solution Architecture:**
 
 ```mermaid
-flowchart TB
-    subgraph TITLE[" "]
-        direction TB
-        T["AI VENDOR RISK CLASSIFICATION"]
-    end
+flowchart TD
+    A["AI VENDOR RISK CLASSIFICATION"] --> B["Stack Type"]
+    A --> C["Data Training"]
+    A --> D["Autonomy"]
 
-    subgraph STACK["STACK TYPE CLASSIFICATION"]
-        direction TB
-        S1["Foundation Model Provider<br/>OpenAI, Anthropic"]
-        S2["GenAI Application<br/>ChatGPT, Claude"]
-        S3["Autonomous Agent<br/>AutoGPT, AgentGPT"]
-        S4["Fine-Tuning Platform<br/>Replicate, Modal"]
-        S5["Embedding/Vector Service<br/>Pinecone, Weaviate"]
-        S6["MLOps Platform<br/>Weights & Biases"]
-    end
-
-    subgraph DATA["DATA TRAINING PRACTICES"]
-        direction TB
-        D1["No customer data used for training"]
-        D2["Opt-in only with explicit consent"]
-        D3["All data used by default"]
-    end
-
-    subgraph ACTION["AUTONOMOUS ACTION SCOPE"]
-        direction TB
-        A1["Read-only / Analysis only"]
-        A2["Actions require human approval"]
-        A3["Fully autonomous execution"]
-    end
-
-    subgraph FRAMEWORK["COMPLIANCE FRAMEWORK"]
-        direction TB
-        F1["NIST AI RMF<br/>70+ Controls"]
-        F2["Custom AI Governance"]
-    end
-
-    T --> STACK
-    T --> DATA
-    T --> ACTION
-    STACK --> FRAMEWORK
-    DATA --> FRAMEWORK
-    ACTION --> FRAMEWORK
-
-    style T fill:#1a1a2e,stroke:#B026FF,stroke-width:2px,color:#fff
-    style S1 fill:#dc3545,stroke:#dc3545,color:#fff
-    style S2 fill:#6c757d,stroke:#6c757d,color:#fff
-    style S3 fill:#dc3545,stroke:#dc3545,color:#fff
-    style S4 fill:#6c757d,stroke:#6c757d,color:#fff
-    style S5 fill:#6c757d,stroke:#6c757d,color:#fff
-    style S6 fill:#6c757d,stroke:#6c757d,color:#fff
-    style D1 fill:#28a745,stroke:#28a745,color:#fff
-    style D2 fill:#ffc107,stroke:#ffc107,color:#000
-    style D3 fill:#dc3545,stroke:#dc3545,color:#fff
-    style A1 fill:#28a745,stroke:#28a745,color:#fff
-    style A2 fill:#ffc107,stroke:#ffc107,color:#000
-    style A3 fill:#dc3545,stroke:#dc3545,color:#fff
-    style F1 fill:#B026FF,stroke:#B026FF,color:#fff
-    style F2 fill:#B026FF,stroke:#B026FF,color:#fff
-    style TITLE fill:none,stroke:none
-    style STACK fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
-    style DATA fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
-    style ACTION fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
-    style FRAMEWORK fill:#f8f9fa,stroke:#dee2e6,stroke-width:1px
+    B --> E["NIST AI RMF + Custom"]
+    C --> E
+    D --> E
 ```
 
 </div>
@@ -408,45 +353,20 @@ flowchart TB
 **Solution Architecture:**
 
 ```mermaid
-flowchart TB
-    subgraph DASHBOARD["EXECUTIVE DASHBOARD METRICS"]
-        direction TB
-
-        subgraph RISK["RISK POSTURE - Board-Level Summary"]
-            R1["Overall Risk Score: 72/100 - Moderate"]
-            R2["90-Day Trend: +8 points - Improving"]
-            subgraph DIST["Risk Distribution"]
-                D1["Critical: 3"]
-                D2["High: 12"]
-                D3["Medium: 45"]
-                D4["Low: 140"]
-            end
-        end
-
-        subgraph OPS["OPERATIONAL EFFICIENCY - ROI Metrics"]
-            O1["Assessments Completed YTD: 127 vendors"]
-            O2["Average Assessment Time: 18 min - was 6 hours"]
-            O3["Annual Cost Savings: $380,000+"]
-            O4["Framework Coverage: 12 frameworks, 2500+ controls"]
-        end
-
-        subgraph COMPLIANCE["COMPLIANCE and REMEDIATION STATUS"]
-            C1["SOC 2 Type II: 94% of vendors compliant"]
-            C2["ISO 27001: 67% of vendors certified"]
-            C3["Open Findings: 47 - down from 89 last quarter"]
-            C4["Remediation SLA: 89% on-time completion"]
-        end
-
-        subgraph EXPORT["EXPORT OPTIONS"]
-            E1["PDF Report"]
-            E2["CSV Data"]
-            E3["Board Presentation Deck"]
-        end
-
-        RISK --> OPS
-        OPS --> COMPLIANCE
-        COMPLIANCE --> EXPORT
+flowchart LR
+    subgraph RISK["Risk Posture"]
+        R["72/100 Moderate<br/>+8 pts trend"]
     end
+    subgraph OPS["ROI Metrics"]
+        O["127 assessments<br/>18 min avg<br/>$380K saved"]
+    end
+    subgraph COMP["Compliance"]
+        C["SOC 2: 94%<br/>ISO: 67%<br/>89% SLA"]
+    end
+    subgraph EXP["Export"]
+        E["PDF | CSV | Deck"]
+    end
+    RISK --> OPS --> COMP --> EXP
 ```
 
 </div>
