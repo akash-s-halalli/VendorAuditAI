@@ -574,15 +574,12 @@ flowchart LR
 
 ---
 
-<div align="center">
+<h2 align="center">Quick Start</h2>
 
-## Quick Start
+<h3 align="center">Prerequisites</h3>
 
-### Prerequisites
-
-Python 3.12+ | Node.js 18+ | PostgreSQL 16+
-
-API Keys: Anthropic (Claude), OpenAI (embeddings)
+<p align="center">Python 3.12+ | Node.js 18+ | PostgreSQL 16+</p>
+<p align="center">API Keys: Anthropic (Claude), OpenAI (embeddings)</p>
 
 ### Installation
 
@@ -630,8 +627,6 @@ ANTHROPIC_API_KEY=sk-ant-...
 # Embeddings
 OPENAI_API_KEY=sk-...
 ```
-
-</div>
 
 ---
 
