@@ -142,23 +142,34 @@ against multiple frameworks. Manual review doesn't scale: hire more analysts (ex
 
 <h4 align="center">Solution Architecture</h4>
 
-<div align="center">
+```mermaid
+flowchart TD
+    subgraph INPUT["1. DOCUMENT INTAKE"]
+        A[Upload SOC 2, ISO 27001, SIG] --> B[PDF/DOCX Parsing + OCR]
+        B --> C[Auto Classification]
+        C --> D[Semantic Chunking]
+    end
 
-| Stage | Process | Details |
-|:-----:|:-------:|:--------|
-| **1. Document Intake** | Upload | SOC 2, ISO 27001, SIG, questionnaires |
-| | Parsing | PDF/DOCX with OCR for scanned docs |
-| | Classification | Automatic document type detection |
-| | Processing | Semantic chunking for AI optimization |
-| **2. AI Analysis** | Engine | Claude Opus 4.5 + RAG Architecture |
-| | Extraction | Controls, findings, exceptions |
-| | Mapping | 12 compliance frameworks simultaneously |
-| | Scoring | Risk scores with confidence levels |
-| **3. Analyst Review** | Workload | AI handles 90%, analyst validates 10% |
-| | Output | Pre-populated findings with citations |
-| | Action | One-click approval or adjustment |
+    subgraph AI["2. AI ANALYSIS ENGINE"]
+        D --> E[Claude Opus 4.5 + RAG]
+        E --> F[Extract Controls & Findings]
+        F --> G[Map to 12 Frameworks]
+        G --> H[Generate Risk Scores]
+    end
 
-</div>
+    subgraph REVIEW["3. ANALYST REVIEW"]
+        H --> I[AI: 90% Complete]
+        I --> J[Analyst: 10% Validation]
+        J --> K[One-Click Approval]
+    end
+
+    K --> L((Assessment Complete))
+
+    style INPUT fill:#1a1a2e,stroke:#00D4AA,color:#fff
+    style AI fill:#1a1a2e,stroke:#B026FF,color:#fff
+    style REVIEW fill:#1a1a2e,stroke:#0066FF,color:#fff
+    style L fill:#00D4AA,stroke:#00D4AA,color:#000
+```
 
 <p align="center">
 <strong>Result: 6-8 hours reduced to 15 minutes per assessment</strong>
@@ -195,37 +206,34 @@ against multiple frameworks. Manual review doesn't scale: hire more analysts (ex
 
 <h4 align="center">Solution Architecture</h4>
 
-<p align="center">
-<strong>AI Classification Engine: 25 Categories</strong>
-</p>
+```mermaid
+flowchart LR
+    subgraph CLASSIFY["AI CLASSIFICATION ENGINE"]
+        direction TB
+        V[New Vendor] --> AI{AI Analyzes}
+        AI --> C1[Infrastructure]
+        AI --> C2[Business Apps]
+        AI --> C3[Identity]
+        AI --> C4[AI/ML]
+    end
 
-<div align="center">
+    subgraph TIER["RISK TIER ASSIGNMENT"]
+        direction TB
+        C1 & C2 & C3 & C4 --> T{Data Access?}
+        T -->|Critical Data| T1[Tier 1: Quarterly]
+        T -->|Sensitive| T2[Tier 2: Semi-Annual]
+        T -->|Internal| T3[Tier 3: Annual]
+        T -->|Public| T4[Tier 4: Biennial]
+    end
 
-| Category Group | Examples |
-|:--------------:|:---------|
-| Infrastructure | Cloud Infrastructure, Data Warehouse, Security Tools |
-| Business Apps | Payment Processing, Customer Support, Analytics & BI |
-| Identity | Identity & Access Management, SSO Providers |
-| AI/ML | AI/ML Platforms, LLM Providers, Model Hosting |
+    T1 --> E1[Executive Review]
+    T2 --> E2[Manager Approval]
+    T3 --> E3[Standard Review]
+    T4 --> E4[Self-Attestation]
 
-</div>
-
-<br>
-
-<p align="center">
-<strong>Risk Tier Assignment</strong>
-</p>
-
-<div align="center">
-
-| Tier | Risk Level | Assessment Frequency | Approval |
-|:----:|:----------:|:--------------------:|:--------:|
-| Tier 1 | Critical | Quarterly | Executive Review |
-| Tier 2 | High | Semi-Annual | Manager Approval |
-| Tier 3 | Medium | Annual | Standard Review |
-| Tier 4 | Low | Biennial | Self-Attestation |
-
-</div>
+    style CLASSIFY fill:#1a1a2e,stroke:#B026FF,color:#fff
+    style TIER fill:#1a1a2e,stroke:#00D4AA,color:#fff
+```
 
 <br>
 
@@ -283,33 +291,33 @@ against multiple frameworks. Manual review doesn't scale: hire more analysts (ex
 
 <h4 align="center">AI Agent Monitoring Network</h4>
 
-<div align="center">
+```mermaid
+flowchart TB
+    subgraph AGENTS["AUTONOMOUS AI AGENTS"]
+        direction LR
+        S["Sentinel Prime<br/>Threat Detection"]
+        V["Vector Analyst<br/>Risk Scoring"]
+        W["Watchdog Zero<br/>Vuln Scanning"]
+    end
 
-| Agent | Function | Capability |
-|:-----:|:--------:|:-----------|
-| **Sentinel Prime** | Threat Detection | Scans for security risks and emerging threats |
-| **Vector Analyst** | Risk Scoring | Calculates risk based on findings and history |
-| **Watchdog Zero** | Vulnerability Scanning | Identifies security gaps and missing controls |
+    subgraph CORE["AUDIT CORE"]
+        direction TB
+        S & V & W --> AC[Compliance Verification]
+        AC --> TR[Tracking & Reporting]
+    end
 
-</div>
+    subgraph ALERTS["ALERT & REMEDIATION"]
+        direction LR
+        TR --> J[Jira]
+        TR --> SN[ServiceNow]
+        TR --> SL[Slack]
+        TR --> E[Email]
+    end
 
-<br>
-
-<p align="center">
-<strong>Central Coordination: Audit Core</strong><br>
-<em>Compliance Verification and Tracking</em>
-</p>
-
-<br>
-
-<div align="center">
-
-| Integration | Alert & Remediation |
-|:-----------:|:-------------------:|
-| Jira | ServiceNow |
-| Slack | Email |
-
-</div>
+    style AGENTS fill:#1a1a2e,stroke:#B026FF,color:#fff
+    style CORE fill:#1a1a2e,stroke:#00D4AA,color:#fff
+    style ALERTS fill:#1a1a2e,stroke:#0066FF,color:#fff
+```
 
 <br>
 
@@ -375,16 +383,43 @@ against multiple frameworks. Manual review doesn't scale: hire more analysts (ex
 
 <br>
 
-<div align="center">
+```mermaid
+flowchart LR
+    subgraph SENTINEL["SENTINEL PRIME"]
+        S1[Threat Detection]
+        S2[Anomaly Scanning]
+        S3[Emerging Threats]
+    end
 
-| Agent | Role | Capabilities |
-|:-----:|:----:|:-------------|
-| **Sentinel Prime** | Threat Detection | Scans documents for security risks, anomalies, emerging threats |
-| **Vector Analyst** | Risk Assessment | Calculates risk scores based on findings, compliance, history |
-| **Watchdog Zero** | Vulnerability Scanner | Identifies security gaps, missing controls, expired certs |
-| **Audit Core** | Compliance Verification | Maps documents to frameworks, calculates coverage |
+    subgraph VECTOR["VECTOR ANALYST"]
+        V1[Risk Scoring]
+        V2[Compliance Analysis]
+        V3[Historical Trends]
+    end
 
-</div>
+    subgraph WATCHDOG["WATCHDOG ZERO"]
+        W1[Vuln Scanning]
+        W2[Control Gaps]
+        W3[Cert Expiry]
+    end
+
+    subgraph AUDIT["AUDIT CORE"]
+        A1[Framework Mapping]
+        A2[Coverage Calc]
+        A3[Evidence Collection]
+    end
+
+    SENTINEL --> CENTRAL((Vendor<br/>Ecosystem))
+    VECTOR --> CENTRAL
+    WATCHDOG --> CENTRAL
+    AUDIT --> CENTRAL
+
+    style SENTINEL fill:#FF6B6B,stroke:#FF6B6B,color:#fff
+    style VECTOR fill:#4ECDC4,stroke:#4ECDC4,color:#fff
+    style WATCHDOG fill:#FFE66D,stroke:#FFE66D,color:#000
+    style AUDIT fill:#95E1D3,stroke:#95E1D3,color:#000
+    style CENTRAL fill:#B026FF,stroke:#B026FF,color:#fff
+```
 
 <br>
 
@@ -428,19 +463,43 @@ against multiple frameworks. Manual review doesn't scale: hire more analysts (ex
 
 <br>
 
-<div align="center">
+```mermaid
+flowchart TB
+    subgraph CLIENT["CLIENT LAYER"]
+        U[User Browser]
+    end
 
-| Layer | Technology |
-|:-----:|:-----------|
-| **Client** | User Browser |
-| **Frontend** | React 18, TypeScript, TailwindCSS, Shadcn/UI, Framer Motion |
-| **Hosting** | Netlify (Frontend), Railway (Backend) |
-| **API** | FastAPI, Python 3.12, SQLAlchemy 2.0, Pydantic, Async Workers |
-| **Database** | PostgreSQL 16 (Documents, Vendors, Findings) |
-| **Cache** | Redis (Sessions, Rate Limiting) |
-| **AI Services** | Claude Opus 4.5, OpenAI Embeddings, Gemini 3.0 |
+    subgraph FRONTEND["FRONTEND - Netlify"]
+        U --> F[React 18 + TypeScript]
+        F --> F1[TailwindCSS]
+        F --> F2[Shadcn/UI]
+        F --> F3[Framer Motion]
+    end
 
-</div>
+    subgraph BACKEND["BACKEND - Railway"]
+        F1 & F2 & F3 -->|HTTPS/REST| API[FastAPI]
+        API --> P[Python 3.12]
+        P --> S[SQLAlchemy 2.0]
+        P --> PY[Pydantic v2]
+    end
+
+    subgraph DATA["DATA LAYER"]
+        S --> PG[(PostgreSQL 16)]
+        API --> RD[(Redis Cache)]
+    end
+
+    subgraph AI["AI SERVICES"]
+        API --> CL[Claude Opus 4.5]
+        API --> OA[OpenAI Embeddings]
+        API --> GM[Gemini 3.0]
+    end
+
+    style CLIENT fill:#1a1a2e,stroke:#fff,color:#fff
+    style FRONTEND fill:#1a1a2e,stroke:#61DAFB,color:#fff
+    style BACKEND fill:#1a1a2e,stroke:#009688,color:#fff
+    style DATA fill:#1a1a2e,stroke:#4169E1,color:#fff
+    style AI fill:#1a1a2e,stroke:#B026FF,color:#fff
+```
 
 <br>
 
