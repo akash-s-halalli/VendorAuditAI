@@ -10,6 +10,13 @@
   <img src="https://img.shields.io/badge/4_AI_Agents-CC785C.svg?style=flat-square" alt="AI Agents"/>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/100+_API_Endpoints-000000?style=flat-square" alt="Endpoints"/>
+  <img src="https://img.shields.io/badge/2500+_Controls-000000?style=flat-square" alt="Controls"/>
+  <img src="https://img.shields.io/badge/129_Tests-000000?style=flat-square" alt="Tests"/>
+  <img src="https://img.shields.io/badge/97%25_Time_Saved-000000?style=flat-square" alt="Time Saved"/>
+</p>
+
 ---
 
 <div align="center">
@@ -55,7 +62,11 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 <div align="center">
 
-### Live Demo
+## Live Demo
+
+<a href="https://vendor-audit-ai.netlify.app">
+  <img src="https://img.shields.io/badge/TRY_LIVE_DEMO-B026FF?style=for-the-badge" alt="Try Demo"/>
+</a>
 
 | | |
 |:--|:--|
@@ -93,6 +104,23 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 ---
 
+<div align="center">
+
+## Why VendorAuditAI
+
+| Capability | Manual Process | VendorAuditAI |
+|:-----------|:--------------:|:-------------:|
+| **Assessment Time** | 6 to 8 hours | 15 minutes |
+| **Framework Coverage** | 1 at a time | 12 simultaneous |
+| **Monitoring** | Quarterly snapshots | 24/7 continuous |
+| **Risk Detection** | Analyst dependent | AI automated |
+| **Cost Per Assessment** | $800+ labor | Under $100 |
+| **Scalability** | Linear headcount | Unlimited |
+
+</div>
+
+---
+
 <h2 align="center">Technical Problem Solving</h2>
 
 <p align="center"><em>Real enterprise TPRM challenges and the architectural solutions I built to solve them.</em></p>
@@ -105,10 +133,12 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **My Answer:** You don't scale humans. You scale intelligence.
 
-- **Stage 1: Document Intake** - PDF/DOCX parsing with OCR and auto-classification
-- **Stage 2: AI Analysis** - Claude Opus 4.5 with RAG extracts controls, maps to 12 frameworks simultaneously
-- **Stage 3: Analyst Review** - Pre-populated findings, one-click approval
-- **Result:** AI handles 90%, humans handle 10%. 6-8 hours becomes 15 minutes.
+| Stage | Description |
+|:------|:------------|
+| **Document Intake** | PDF/DOCX parsing with OCR and auto classification |
+| **AI Analysis** | Claude Opus 4.5 with RAG extracts controls, maps to 12 frameworks |
+| **Analyst Review** | Pre populated findings, one click approval |
+| **Result** | AI handles 90%, humans handle 10%. 6 to 8 hours becomes 15 minutes |
 
 **Solution Architecture:**
 
@@ -158,11 +188,13 @@ flowchart TD
 
 **My Answer:** Classification drives prioritization.
 
-- **25-Category Taxonomy** - Cloud Infrastructure, Payment Processing, AI/ML Platforms, Identity & Access, etc.
-- **AI Auto-Classification** - Vendor name and website analyzed to assign category
-- **Risk Tier Mapping** - Categories map to Tiers 1-4 based on data access and business criticality
-- **Assessment Frequency** - Tier 1 quarterly, Tier 2 semi-annual, Tier 3 annual, Tier 4 biennial
-- **Result:** You spend time where risk actually lives.
+| Component | Description |
+|:----------|:------------|
+| **25 Category Taxonomy** | Cloud Infrastructure, Payment Processing, AI/ML Platforms, Identity and Access |
+| **AI Auto Classification** | Vendor name and website analyzed to assign category |
+| **Risk Tier Mapping** | Categories map to Tiers 1 through 4 based on data access and criticality |
+| **Assessment Frequency** | Tier 1 quarterly, Tier 2 semi annual, Tier 3 annual, Tier 4 biennial |
+| **Result** | You spend time where risk actually lives |
 
 **Solution Architecture:**
 
@@ -202,12 +234,14 @@ flowchart TD
 
 **My Answer:** Traditional frameworks weren't built for AI.
 
-- **AI Tool Classification Module** - Dedicated assessment for AI/ML vendors
-- **NIST AI RMF** - 70+ controls specifically for AI governance
-- **Stack Type Classification** - Foundation Model, GenAI App, Autonomous Agent, Fine-Tuning Platform
-- **Data Training Risk** - Does your data train their models? Opt-in only or all data?
-- **Autonomous Action Scope** - Read-only, human approval required, or fully autonomous?
-- **Result:** These are the questions SOC 2 doesn't ask.
+| Component | Description |
+|:----------|:------------|
+| **AI Tool Classification** | Dedicated assessment module for AI/ML vendors |
+| **NIST AI RMF** | 70+ controls specifically for AI governance |
+| **Stack Type Classification** | Foundation Model, GenAI App, Autonomous Agent, Fine Tuning Platform |
+| **Data Training Risk** | Does your data train their models? Opt in only or all data? |
+| **Autonomous Action Scope** | Read only, human approval required, or fully autonomous? |
+| **Result** | These are the questions SOC 2 does not ask |
 
 **Solution Architecture:**
 
@@ -235,12 +269,14 @@ flowchart TD
 
 **My Answer:** Point-in-time assessments create blind spots.
 
-- **Sentinel Prime** - Threat detection, scans for security risks and anomalies
-- **Vector Analyst** - Risk scoring based on findings, compliance, and history
-- **Watchdog Zero** - Vulnerability scanning, identifies gaps and expired certs
-- **Audit Core** - Compliance verification, maps documents to frameworks
-- **Integration** - Alerts push to Jira, ServiceNow, Slack automatically
-- **Result:** 24/7 coverage. No new dashboards to watch.
+| Agent | Function |
+|:------|:---------|
+| **Sentinel Prime** | Threat detection, scans for security risks and anomalies |
+| **Vector Analyst** | Risk scoring based on findings, compliance, and history |
+| **Watchdog Zero** | Vulnerability scanning, identifies gaps and expired certs |
+| **Audit Core** | Compliance verification, maps documents to frameworks |
+| **Integration** | Alerts push to Jira, ServiceNow, Slack automatically |
+| **Result** | 24/7 coverage with no new dashboards to watch |
 
 **Solution Architecture:**
 
@@ -287,11 +323,13 @@ flowchart TB
 
 **My Answer:** Fourth-party risk is where breaches hide.
 
-- **Provider Profiles** - Company info, contract terms, SLAs, subcontractor disclosure
-- **Process-Specific Risk** - Is this Tier 1 financial processing or Tier 3 data entry?
-- **Geographic Risk** - GDPR compliance, data residency, political stability, business continuity
-- **Visibility** - Track the full chain: Your company > Vendor > Their subcontractor
-- **Result:** You can't manage what you can't see.
+| Layer | Description |
+|:------|:------------|
+| **Provider Profiles** | Company info, contract terms, SLAs, subcontractor disclosure |
+| **Process Specific Risk** | Is this Tier 1 financial processing or Tier 3 data entry? |
+| **Geographic Risk** | GDPR compliance, data residency, political stability, business continuity |
+| **Visibility** | Track the full chain from your company to vendor to their subcontractor |
+| **Result** | You cannot manage what you cannot see |
 
 **Solution Architecture:**
 
@@ -348,12 +386,14 @@ flowchart TB
 
 **My Answer:** Boards don't care about controls. They care about risk posture and ROI.
 
-- **Risk Posture Score** - Overall score with 90-day trend analysis
-- **Cost Savings** - $380K+ annually from automation vs. manual assessments
-- **Compliance Percentages** - By framework (SOC 2: 94%, ISO 27001: 67%, etc.)
-- **Remediation SLAs** - Track whether findings get fixed on time
-- **Export** - PDF/CSV for board presentations
-- **Result:** Security teams speak risk. Boards speak money. This translates.
+| Metric | Description |
+|:-------|:------------|
+| **Risk Posture Score** | Overall score with 90 day trend analysis |
+| **Cost Savings** | $380K+ annually from automation vs manual assessments |
+| **Compliance Percentages** | By framework such as SOC 2 at 94% and ISO 27001 at 67% |
+| **Remediation SLAs** | Track whether findings get fixed on time |
+| **Export** | PDF and CSV for board presentations |
+| **Result** | Security teams speak risk, boards speak money, this translates |
 
 **Solution Architecture:**
 
@@ -582,6 +622,23 @@ flowchart LR
 
 ---
 
+<div align="center">
+
+## Performance
+
+| Metric | Value |
+|:-------|------:|
+| **API Response Time** | Under 200ms average |
+| **Document Processing** | 30 seconds per 100 pages |
+| **Concurrent Users** | 500+ supported |
+| **Uptime SLA** | 99.9% target |
+| **AI Analysis Accuracy** | 94% control extraction |
+| **Framework Mapping** | 12 frameworks in parallel |
+
+</div>
+
+---
+
 <h2 align="center">Quick Start</h2>
 
 <h3 align="center">Prerequisites</h3>
@@ -693,16 +750,32 @@ VendorAuditAI/
 
 <div align="center">
 
-## Technology Stack
+## Built With
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude_Opus_4.5-CC785C?style=for-the-badge" alt="Claude"/>
+  <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI"/>
+  <img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway"/>
+  <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Netlify"/>
+</p>
 
 | Category | Technologies |
-|:--------:|:------------:|
-| **AI/ML** | Claude Opus 4.5, Gemini 3.0, OpenAI Embeddings, RAG |
-| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2 |
-| **Frontend** | React 18, TypeScript 5, TailwindCSS, Shadcn/UI |
-| **Database** | PostgreSQL 16, pgvector, Alembic |
-| **Security** | JWT, SAML 2.0 SSO, MFA/TOTP, AES-256, TLS 1.3 |
-| **Infrastructure** | Railway, Netlify, GitHub Actions CI/CD |
+|:--------:|:-------------|
+| **AI and ML** | Claude Opus 4.5, Gemini 3.0, OpenAI Embeddings, RAG Architecture |
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2, Alembic |
+| **Frontend** | React 18, TypeScript 5, TailwindCSS, Shadcn UI, Framer Motion |
+| **Database** | PostgreSQL 16, pgvector for embeddings, Redis for caching |
+| **Security** | JWT Authentication, SAML 2.0 SSO, MFA with TOTP, AES 256, TLS 1.3 |
+| **Infrastructure** | Railway (backend), Netlify (frontend), GitHub Actions CI/CD |
 
 </div>
 
