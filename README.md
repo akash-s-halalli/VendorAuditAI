@@ -84,6 +84,20 @@ VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor s
 
 **Experience the sleek, cybersecurity-inspired interface**
 
+### Landing Page
+The public-facing marketing page showcasing VendorAuditAI's AI-powered vendor risk management capabilities
+
+<img src="assets/landing_page.png" alt="Landing Page" width="800">
+
+---
+
+### Login Experience
+Secure authentication portal with AI-themed design and enterprise SSO support
+
+<img src="assets/login_page.png" alt="Login Page" width="800">
+
+---
+
 ### Executive Dashboard
 Real-time vendor risk posture with animated metrics and threat intelligence
 
@@ -116,6 +130,13 @@ Comprehensive risk analytics with compliance coverage and activity tracking
 Guided workflows for AI tool adoption and compliance
 
 <img src="assets/playbooks_module.png" alt="AI Governance Playbooks" width="800">
+
+---
+
+### Approved AI Registry
+Self-service catalog of pre-approved AI tools with deployment status, risk ratings, and one-click provisioning for enterprise teams
+
+<img src="assets/approved_vendors_module.png" alt="Approved AI Registry" width="800">
 
 ---
 
