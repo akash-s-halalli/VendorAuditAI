@@ -1,6 +1,5 @@
 <h1 align="center">VendorAuditAI</h1>
-<h3 align="center">Enterprise TPRM AI Platform | 2026</h3>
-<p align="center"><em>Demonstrating how to architect AI-driven solutions for the hardest problems in vendor risk management</em></p>
+<h3 align="center">Enterprise Third-Party Risk Management Platform</h3>
 
 <p align="center">
   <a href="https://vendor-audit-ai.netlify.app"><img src="https://img.shields.io/badge/Live_Demo-Available-B026FF?style=flat-square" alt="Demo"/></a>
@@ -11,9 +10,35 @@
   <img src="https://img.shields.io/badge/4_AI_Agents-CC785C.svg?style=flat-square" alt="AI Agents"/>
 </p>
 
-<p align="center">
-  <strong>Transform vendor security assessments from 8 hours to 15 minutes using AI-powered document analysis, multi-framework compliance mapping, and autonomous agent monitoring</strong>
-</p>
+---
+
+<div align="center">
+
+### What is VendorAuditAI?
+
+**VendorAuditAI is an AI-powered platform that automates third-party vendor security assessments.**
+
+</div>
+
+<div align="center">
+
+### The Problem It Solves
+
+Organizations spend **6-8 hours manually reviewing** each vendor's SOC 2 report, ISO certification, or security questionnaire. With hundreds of vendors to assess annually, security teams are overwhelmed. Critical risks get buried in 200+ page documents. Point-in-time assessments create blind spots between reviews.
+
+</div>
+
+<div align="center">
+
+### The Solution
+
+VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor security documents in minutes, not hours. Upload a SOC 2 report, and AI extracts controls, identifies gaps, and maps findings to 12 compliance frameworks simultaneously. Four autonomous agents continuously monitor your vendor ecosystem for emerging risks, expired certifications, and compliance drift.
+
+**Result: 97% reduction in assessment time. $380K+ annual cost savings. 24/7 continuous monitoring.**
+
+</div>
+
+---
 
 <p align="center">
   <a href="#overview">Overview</a> |
