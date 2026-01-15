@@ -2,9 +2,9 @@
   <img src="https://img.shields.io/badge/VENDORAUDITAI-000000?style=for-the-badge&logoColor=white" alt="VendorAuditAI" height="80"/>
 </p>
 
-<h1 align="center">VendorAuditAI</h1>
+<h1 align="center">Third Party Risk Management with AI</h1>
 
-<h3 align="center">Enterprise AI-Powered Third-Party Risk Management Platform</h3>
+<h3 align="center">VendorAuditAI - Enterprise TPRM Platform | 2026</h3>
 
 <p align="center">
   <a href="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml"><img src="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml/badge.svg" alt="CI/CD"/></a>
