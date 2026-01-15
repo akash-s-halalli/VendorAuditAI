@@ -105,37 +105,41 @@
 - **Stage 3: Analyst Review** - Pre-populated findings, one-click approval
 - **Result:** AI handles 90%, humans handle 10%. 6-8 hours becomes 15 minutes.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│   AI-POWERED ASSESSMENT PIPELINE   │
-├────────────────────────────────────┤
-│                                    │
-│  DOCUMENT INTAKE                   │
-│  ┌──────────────────────────────┐  │
-│  │ Upload SOC 2, ISO, SIG docs  │  │
-│  │ PDF/DOCX parsing + OCR       │  │
-│  │ Auto classification          │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  AI ANALYSIS ENGINE                │
-│  ┌──────────────────────────────┐  │
-│  │ Claude Opus 4.5 + RAG        │  │
-│  │ Extract controls/findings    │  │
-│  │ Map to 12 frameworks         │  │
-│  │ Generate risk scores         │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  ANALYST REVIEW                    │
-│  ┌──────────────────────────────┐  │
-│  │ AI: 90% | Analyst: 10%       │  │
-│  │ Pre-populated findings       │  │
-│  │ One-click approval           │  │
-│  └──────────────────────────────┘  │
-│                                    │
-│  6-8 hours → 15 minutes            │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                    AI-POWERED ASSESSMENT PIPELINE                       |
++------------------------------------------------------------------------+
+|                                                                        |
+|   DOCUMENT INTAKE                                                      |
+|   +------------------------------------------------------------------+ |
+|   |  Upload SOC 2, ISO 27001, SIG, questionnaires                    | |
+|   |  - PDF/DOCX parsing with OCR for scanned docs                    | |
+|   |  - Automatic document type classification                        | |
+|   |  - Semantic chunking for optimal AI processing                   | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   AI ANALYSIS ENGINE                                                   |
+|   +------------------------------------------------------------------+ |
+|   |  Claude Opus 4.5 + RAG Architecture                              | |
+|   |  - Extract controls, findings, exceptions                        | |
+|   |  - Map to 12 compliance frameworks simultaneously                | |
+|   |  - Generate risk scores with confidence levels                   | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   ANALYST REVIEW                                                       |
+|   +------------------------------------------------------------------+ |
+|   |  AI does 90% of work, analyst validates 10%                      | |
+|   |  - Pre-populated findings with citations                         | |
+|   |  - One-click approval or adjustment                              | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   RESULT: 6-8 hours --> 15 minutes per assessment                      |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 | Metric | Impact |
@@ -158,35 +162,39 @@
 - **Assessment Frequency** - Tier 1 quarterly, Tier 2 semi-annual, Tier 3 annual, Tier 4 biennial
 - **Result:** You spend time where risk actually lives.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│  INTELLIGENT VENDOR CLASSIFICATION │
-├────────────────────────────────────┤
-│                                    │
-│  INPUT: Vendor name, website       │
-│               │                    │
-│               ▼                    │
-│  AI CLASSIFICATION ENGINE          │
-│  ┌──────────────────────────────┐  │
-│  │ 25 Categories:               │  │
-│  │ - Cloud Infrastructure       │  │
-│  │ - Payment Processing         │  │
-│  │ - AI/ML Platforms            │  │
-│  │ - Identity & Access          │  │
-│  │ - Security Tools             │  │
-│  │ + 20 more                    │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  RISK TIER ASSIGNMENT              │
-│  ┌──────────────────────────────┐  │
-│  │ Tier 1: Quarterly review     │  │
-│  │ Tier 2: Semi-annual          │  │
-│  │ Tier 3: Annual               │  │
-│  │ Tier 4: Biennial             │  │
-│  └──────────────────────────────┘  │
-│                                    │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                   INTELLIGENT VENDOR CLASSIFICATION                     |
++------------------------------------------------------------------------+
+|                                                                        |
+|   INPUT: Vendor name, website, business description                    |
+|                                    |                                   |
+|                                    v                                   |
+|   AI CLASSIFICATION ENGINE                                             |
+|   +------------------------------------------------------------------+ |
+|   |  25 Enterprise Categories:                                       | |
+|   |  - Cloud Infrastructure (AWS, Azure, GCP)                        | |
+|   |  - Payment Processing (Stripe, Square, Adyen)                    | |
+|   |  - AI/ML Platforms (OpenAI, Anthropic, Cohere)                   | |
+|   |  - Identity & Access (Okta, Auth0, Ping)                         | |
+|   |  - Security Tools (CrowdStrike, Splunk, Palo Alto)               | |
+|   |  - Data Analytics, HR Systems, CRM, ERP, + 16 more               | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   RISK TIER ASSIGNMENT (Based on data access + business criticality)  |
+|   +------------------------------------------------------------------+ |
+|   |  Tier 1 (Critical)  : Quarterly review   | Payment, Cloud, IAM   | |
+|   |  Tier 2 (High)      : Semi-annual review | Security, Analytics   | |
+|   |  Tier 3 (Medium)    : Annual review      | HR, CRM, Collaboration| |
+|   |  Tier 4 (Low)       : Biennial review    | Marketing, Office     | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   RESULT: Right-sized assessment frequency based on actual risk        |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 ---
@@ -204,36 +212,40 @@
 - **Autonomous Action Scope** - Read-only, human approval required, or fully autonomous?
 - **Result:** These are the questions SOC 2 doesn't ask.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│    AI VENDOR RISK CLASSIFICATION   │
-├────────────────────────────────────┤
-│                                    │
-│  STACK TYPE CLASSIFICATION         │
-│  ┌──────────────────────────────┐  │
-│  │ - Foundation Model (HIGH)    │  │
-│  │ - GenAI Application          │  │
-│  │ - Autonomous Agent (HIGH)    │  │
-│  │ - Fine-Tuning Platform       │  │
-│  │ - Embedding Service          │  │
-│  │ - MLOps Platform             │  │
-│  └──────────────────────────────┘  │
-│                                    │
-│  AI-SPECIFIC RISK FACTORS          │
-│  ┌──────────────────────────────┐  │
-│  │ Data Training:               │  │
-│  │ □ No customer data           │  │
-│  │ □ Opt-in only                │  │
-│  │ □ All data (HIGH RISK)       │  │
-│  │                              │  │
-│  │ Autonomous Actions:          │  │
-│  │ □ Read-only                  │  │
-│  │ □ Human approval             │  │
-│  │ □ Fully autonomous (HIGH)    │  │
-│  └──────────────────────────────┘  │
-│                                    │
-│  NIST AI RMF + Custom Controls     │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                     AI VENDOR RISK CLASSIFICATION                       |
++------------------------------------------------------------------------+
+|                                                                        |
+|   STACK TYPE CLASSIFICATION (What kind of AI is this?)                 |
+|   +------------------------------------------------------------------+ |
+|   |  - Foundation Model Provider (HIGH RISK)    | OpenAI, Anthropic  | |
+|   |  - GenAI Application                        | ChatGPT, Claude    | |
+|   |  - Autonomous Agent (HIGH RISK)             | AutoGPT, AgentGPT  | |
+|   |  - Fine-Tuning Platform                     | Replicate, Modal   | |
+|   |  - Embedding/Vector Service                 | Pinecone, Weaviate | |
+|   |  - MLOps Platform                           | Weights & Biases   | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   DATA TRAINING PRACTICES (Does your data train their models?)         |
+|   +------------------------------------------------------------------+ |
+|   |  [ ] No customer data used for training           (LOW RISK)     | |
+|   |  [ ] Opt-in only with explicit consent            (MEDIUM RISK)  | |
+|   |  [ ] All data used by default                     (HIGH RISK)    | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   AUTONOMOUS ACTION SCOPE (What can the AI do without human approval?) |
+|   +------------------------------------------------------------------+ |
+|   |  [ ] Read-only / Analysis only                    (LOW RISK)     | |
+|   |  [ ] Actions require human approval               (MEDIUM RISK)  | |
+|   |  [ ] Fully autonomous execution                   (HIGH RISK)    | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   FRAMEWORK: NIST AI RMF (70+ controls) + Custom AI Governance         |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 ---
@@ -251,37 +263,46 @@
 - **Integration** - Alerts push to Jira, ServiceNow, Slack automatically
 - **Result:** 24/7 coverage. No new dashboards to watch.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│    AI AGENT MONITORING NETWORK     │
-├────────────────────────────────────┤
-│                                    │
-│  ┌────────┐ ┌────────┐ ┌────────┐  │
-│  │SENTINEL│ │ VECTOR │ │WATCHDOG│  │
-│  │ PRIME  │ │ANALYST │ │  ZERO  │  │
-│  │        │ │        │ │        │  │
-│  │ Threat │ │  Risk  │ │  Vuln  │  │
-│  │ Detect │ │ Score  │ │  Scan  │  │
-│  └───┬────┘ └───┬────┘ └───┬────┘  │
-│      │          │          │       │
-│      └──────────┼──────────┘       │
-│                 │                  │
-│                 ▼                  │
-│  ┌──────────────────────────────┐  │
-│  │         AUDIT CORE           │  │
-│  │                              │  │
-│  │ - Framework coverage         │  │
-│  │ - Control monitoring         │  │
-│  │ - Cert expiration alerts     │  │
-│  └──────────────────────────────┘  │
-│                 │                  │
-│                 ▼                  │
-│  ┌──────────────────────────────┐  │
-│  │    ALERT & REMEDIATION       │  │
-│  │ Jira | ServiceNow | Slack    │  │
-│  └──────────────────────────────┘  │
-│                                    │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                      AI AGENT MONITORING NETWORK                        |
++------------------------------------------------------------------------+
+|                                                                        |
+|   +------------------+  +------------------+  +------------------+      |
+|   |  SENTINEL PRIME  |  |  VECTOR ANALYST  |  |  WATCHDOG ZERO   |      |
+|   +------------------+  +------------------+  +------------------+      |
+|   |                  |  |                  |  |                  |      |
+|   | Threat Detection |  | Risk Scoring     |  | Vuln Scanning    |      |
+|   | - Security risks |  | - Score findings |  | - Security gaps  |      |
+|   | - Anomaly detect |  | - History trends |  | - Expired certs  |      |
+|   | - Emerging CVEs  |  | - Confidence lvl |  | - Missing ctrl   |      |
+|   |                  |  |                  |  |                  |      |
+|   +--------+---------+  +--------+---------+  +--------+---------+      |
+|            |                     |                     |               |
+|            +---------------------+---------------------+               |
+|                                  |                                     |
+|                                  v                                     |
+|   +------------------------------------------------------------------+ |
+|   |                         AUDIT CORE                               | |
+|   +------------------------------------------------------------------+ |
+|   |  - Framework coverage analysis (12 frameworks, 2500+ controls)   | |
+|   |  - Continuous control monitoring and drift detection             | |
+|   |  - Certificate expiration tracking and alerts                    | |
+|   |  - Compliance score calculation and trending                     | |
+|   +------------------------------------------------------------------+ |
+|                                  |                                     |
+|                                  v                                     |
+|   +------------------------------------------------------------------+ |
+|   |                    ALERT & REMEDIATION                           | |
+|   +------------------------------------------------------------------+ |
+|   |  Jira         |  ServiceNow    |  Slack        |  Email          | |
+|   |  Auto-create  |  Incident mgmt |  Real-time    |  Digest         | |
+|   |  tickets      |  integration   |  alerts       |  reports        | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 ---
@@ -298,38 +319,46 @@
 - **Visibility** - Track the full chain: Your company > Vendor > Their subcontractor
 - **Result:** You can't manage what you can't see.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│      BPO RISK MANAGEMENT           │
-├────────────────────────────────────┤
-│                                    │
-│  PROVIDER TRACKING                 │
-│  ┌──────────────────────────────┐  │
-│  │ Company profile + locations  │  │
-│  │ Contract terms + SLAs        │  │
-│  │ Data access levels           │  │
-│  │ Subcontractor disclosure     │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  PROCESS-SPECIFIC RISK             │
-│  ┌──────────────────────────────┐  │
-│  │ Customer Support (Tier 2)    │  │
-│  │ Data Entry (Tier 3)          │  │
-│  │ Financial Processing (T1)    │  │
-│  │ IT Support (Tier 2)          │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  GEOGRAPHIC RISK                   │
-│  ┌──────────────────────────────┐  │
-│  │ Data residency (GDPR/CCPA)   │  │
-│  │ Political stability          │  │
-│  │ Regulatory jurisdiction      │  │
-│  │ Business continuity          │  │
-│  └──────────────────────────────┘  │
-│                                    │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                       BPO RISK MANAGEMENT                               |
++------------------------------------------------------------------------+
+|                                                                        |
+|   YOUR COMPANY -----> PRIMARY VENDOR -----> BPO PROVIDER (4th Party)   |
+|                                                                        |
++------------------------------------------------------------------------+
+|                                                                        |
+|   LAYER 1: PROVIDER TRACKING                                           |
+|   +------------------------------------------------------------------+ |
+|   |  Company Profile       | Legal name, HQ location, office sites   | |
+|   |  Contract Terms        | SLAs, liability caps, termination       | |
+|   |  Data Access Levels    | What data do they touch? PII? Financial?| |
+|   |  Subcontractor Disclosure | Who do THEY outsource to?            | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   LAYER 2: PROCESS-SPECIFIC RISK                                       |
+|   +------------------------------------------------------------------+ |
+|   |  Financial Processing  (Tier 1)  | Payments, accounting, audit   | |
+|   |  Customer Support      (Tier 2)  | Help desk, chat, phone        | |
+|   |  IT Support            (Tier 2)  | Infrastructure, dev, ops      | |
+|   |  Data Entry            (Tier 3)  | Document processing, input    | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   LAYER 3: GEOGRAPHIC RISK                                             |
+|   +------------------------------------------------------------------+ |
+|   |  Data Residency        | GDPR (EU), CCPA (CA), PDPA (SG), etc.   | |
+|   |  Political Stability   | Country risk scores, sanctions          | |
+|   |  Regulatory Jurisdiction| Which laws apply? Cross-border transfer | |
+|   |  Business Continuity   | Natural disasters, infrastructure       | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   RESULT: Full visibility into fourth-party risk chain                 |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 ---
@@ -347,38 +376,43 @@
 - **Export** - PDF/CSV for board presentations
 - **Result:** Security teams speak risk. Boards speak money. This translates.
 
+**Solution Architecture:**
+
 ```
-┌────────────────────────────────────┐
-│   EXECUTIVE DASHBOARD METRICS      │
-├────────────────────────────────────┤
-│                                    │
-│  RISK POSTURE                      │
-│  ┌──────────────────────────────┐  │
-│  │ Score: 72/100 (Moderate)     │  │
-│  │ Trend: +8 pts (90 days)      │  │
-│  │ Critical: 3 | High: 12       │  │
-│  │ Medium: 45 | Low: 140        │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  OPERATIONAL EFFICIENCY            │
-│  ┌──────────────────────────────┐  │
-│  │ Assessments: 127 (YTD)       │  │
-│  │ Avg Time: 18 min vs 6 hrs    │  │
-│  │ Cost Savings: $380K          │  │
-│  │ Frameworks: 12 (2500+ ctrl)  │  │
-│  └──────────────────────────────┘  │
-│               │                    │
-│               ▼                    │
-│  COMPLIANCE & REMEDIATION          │
-│  ┌──────────────────────────────┐  │
-│  │ SOC 2: 94% compliant         │  │
-│  │ ISO 27001: 67% certified     │  │
-│  │ Open Findings: 47            │  │
-│  │ SLA Compliance: 89%          │  │
-│  └──────────────────────────────┘  │
-│                                    │
-└────────────────────────────────────┘
++------------------------------------------------------------------------+
+|                     EXECUTIVE DASHBOARD METRICS                         |
++------------------------------------------------------------------------+
+|                                                                        |
+|   RISK POSTURE (Board-Level Summary)                                   |
+|   +------------------------------------------------------------------+ |
+|   |  Overall Risk Score:  72/100 (Moderate)                          | |
+|   |  90-Day Trend:        +8 points (Improving)                      | |
+|   |                                                                  | |
+|   |  Risk Distribution:                                              | |
+|   |  Critical: 3  |  High: 12  |  Medium: 45  |  Low: 140           | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   OPERATIONAL EFFICIENCY (ROI Metrics)                                 |
+|   +------------------------------------------------------------------+ |
+|   |  Assessments Completed (YTD):     127 vendors                    | |
+|   |  Average Assessment Time:         18 minutes (was 6 hours)       | |
+|   |  Annual Cost Savings:             $380,000+                      | |
+|   |  Framework Coverage:              12 frameworks, 2500+ controls  | |
+|   +------------------------------------------------------------------+ |
+|                                    |                                   |
+|                                    v                                   |
+|   COMPLIANCE & REMEDIATION STATUS                                      |
+|   +------------------------------------------------------------------+ |
+|   |  SOC 2 Type II:      94% of vendors compliant                    | |
+|   |  ISO 27001:          67% of vendors certified                    | |
+|   |  Open Findings:      47 (down from 89 last quarter)              | |
+|   |  Remediation SLA:    89% on-time completion                      | |
+|   +------------------------------------------------------------------+ |
+|                                                                        |
+|   EXPORT: PDF Report | CSV Data | Board Presentation Deck              |
+|                                                                        |
++------------------------------------------------------------------------+
 ```
 
 <div align="center">
