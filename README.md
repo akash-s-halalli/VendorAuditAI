@@ -630,9 +630,7 @@ OPENAI_API_KEY=sk-...
 
 ---
 
-<div align="center">
-
-## Project Structure
+<h2 align="center">Project Structure</h2>
 
 ```
 VendorAuditAI/
@@ -657,8 +655,6 @@ VendorAuditAI/
 |   `-- package.json
 `-- README.md
 ```
-
-</div>
 
 ---
 
