@@ -1,5 +1,5 @@
-<h1 align="center">Third Party Risk Management: Technical Problem Solving Portfolio</h1>
-<h3 align="center">VendorAuditAI | Enterprise TPRM AI Platform | 2026</h3>
+<h1 align="center">VendorAuditAI</h1>
+<h3 align="center">Enterprise TPRM AI Platform | 2026</h3>
 <p align="center"><em>Demonstrating how to architect AI-driven solutions for the hardest problems in vendor risk management</em></p>
 
 <p align="center">
