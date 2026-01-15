@@ -562,53 +562,57 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
 ## Architecture
 
+```mermaid
+flowchart TD
+    subgraph Client
+        A[User Browser]
+    end
+
+    subgraph Frontend["Frontend (Netlify)"]
+        B[React 18 + TypeScript]
+        C[TailwindCSS + Shadcn/UI]
+    end
+
+    subgraph Backend["Backend (Railway)"]
+        D[FastAPI + Python 3.12]
+        E[SQLAlchemy 2.0 + Pydantic]
+        F[Async Workers]
+    end
+
+    subgraph Data["Data Layer"]
+        G[(PostgreSQL 16)]
+        H[(pgvector)]
+        I[(Redis Cache)]
+    end
+
+    subgraph AI["AI Services"]
+        J[Claude Opus 4.5]
+        K[OpenAI Embeddings]
+        L[Gemini 3.0]
+    end
+
+    A --> B
+    B --> C
+    C -->|HTTPS/REST| D
+    D --> E
+    D --> F
+    E --> G
+    E --> H
+    F --> I
+    D --> J
+    D --> K
+    D --> L
 ```
-+-----------------------------------------------------------------------------+
-|                           VENDORAUDITAI ARCHITECTURE                         |
-+-----------------------------------------------------------------------------+
 
-                              +------------------+
-                              |   USER/BROWSER   |
-                              +--------+---------+
-                                       |
-                                       v
-+-----------------------------------------------------------------------------+
-|                              FRONTEND (Netlify)                              |
-|  +-------------+  +-------------+  +-------------+  +-------------+         |
-|  |   React 18  |  | TypeScript  |  | TailwindCSS |  |  Shadcn/UI  |         |
-|  +-------------+  +-------------+  +-------------+  +-------------+         |
-+----------------------------------+------+------------------------------------+
-                                   | HTTPS/REST API
-                                   v
-+-----------------------------------------------------------------------------+
-|                              BACKEND (Railway)                               |
-|  +-------------+  +-------------+  +-------------+  +-------------+         |
-|  |   FastAPI   |  | SQLAlchemy  |  |    Async    |  |  Pydantic   |         |
-|  |  Python 3.12|  |     2.0     |  |   Workers   |  |  Schemas    |         |
-|  +-------------+  +-------------+  +-------------+  +-------------+         |
-+----------+------------------+------------------+----------------------------+
-           |                  |                  |
-           v                  v                  v
-+------------------+ +------------------+ +----------------------------------+
-|   PostgreSQL     | |   Redis Cache    | |         AI SERVICES              |
-|   +----------+   | |   +----------+   | |  +------------+ +------------+   |
-|   | Documents|   | |   | Sessions |   | |  |Claude Opus | |  OpenAI    |   |
-|   | Chunks   |   | |   | Rate Lim |   | |  |   4.5      | | Embeddings |   |
-|   | Findings |   | |   +----------+   | |  +------------+ +------------+   |
-|   | Vendors  |   | +------------------+ |  +------------+                   |
-|   +----------+   |                      |  |  Gemini    |                   |
-+------------------+                      |  |    3.0     |                   |
-                                          |  +------------+                   |
-                                          +----------------------------------+
+### Document Processing Pipeline
 
-+-----------------------------------------------------------------------------+
-|                       DOCUMENT PROCESSING PIPELINE                           |
-|                                                                              |
-|   UPLOAD --> PARSE --> CHUNK --> EMBED --> INDEX --> READY FOR QUERY        |
-|     |          |         |         |         |            |                  |
-|   PDF/DOCX   Extract   Semantic  Vector   PostgreSQL   Natural Language     |
-|   Validation  Text     Splitting  Store   + pgvector   Q&A with Citations   |
-+-----------------------------------------------------------------------------+
+```mermaid
+flowchart LR
+    A[Upload PDF/DOCX] --> B[Parse Text]
+    B --> C[Semantic Chunking]
+    C --> D[Generate Embeddings]
+    D --> E[Index in pgvector]
+    E --> F[Ready for Q&A]
 ```
 
 </div>
