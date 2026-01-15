@@ -131,55 +131,42 @@
 
 <br>
 
-**The Problem:**
-
-Enterprise organizations onboard dozens of new vendors monthly. Each requires security assessment against multiple frameworks. Manual review doesn't scale - you either hire more analysts (expensive) or accept risk (dangerous).
-
-<br>
-
-**Solution Architecture:**
+<h4 align="center">The Problem</h4>
 
 <p align="center">
-
-```
-+-----------------------------------------------------------------------------+
-|                      AI-POWERED ASSESSMENT PIPELINE                          |
-+-----------------------------------------------------------------------------+
-|                                                                              |
-|   DOCUMENT INTAKE                                                            |
-|   +------------------------------------------------------------------------+ |
-|   |  Upload SOC 2, ISO 27001, SIG, questionnaires                          | |
-|   |  - PDF/DOCX parsing with OCR for scanned docs                          | |
-|   |  - Automatic document type classification                              | |
-|   |  - Semantic chunking for optimal AI processing                         | |
-|   +------------------------------------------------------------------------+ |
-|                                      |                                       |
-|                                      v                                       |
-|   AI ANALYSIS ENGINE                                                         |
-|   +------------------------------------------------------------------------+ |
-|   |  Claude Opus 4.5 + RAG Architecture                                    | |
-|   |  - Extract controls, findings, exceptions                              | |
-|   |  - Map to 12 compliance frameworks simultaneously                      | |
-|   |  - Generate risk scores with confidence levels                         | |
-|   +------------------------------------------------------------------------+ |
-|                                      |                                       |
-|                                      v                                       |
-|   ANALYST REVIEW                                                             |
-|   +------------------------------------------------------------------------+ |
-|   |  AI does 90% of work, analyst validates 10%                            | |
-|   |  - Pre-populated findings with citations                               | |
-|   |  - One-click approval or adjustment                                    | |
-|   +------------------------------------------------------------------------+ |
-|                                                                              |
-|   RESULT: 6-8 hours --> 15 minutes per assessment                            |
-+-----------------------------------------------------------------------------+
-```
-
+Enterprise organizations onboard dozens of new vendors monthly. Each requires security assessment<br>
+against multiple frameworks. Manual review doesn't scale: hire more analysts (expensive) or accept risk (dangerous).
 </p>
 
 <br>
 
-**Business Results:**
+<h4 align="center">Solution Architecture</h4>
+
+<div align="center">
+
+| Stage | Process | Details |
+|:-----:|:-------:|:--------|
+| **1. Document Intake** | Upload | SOC 2, ISO 27001, SIG, questionnaires |
+| | Parsing | PDF/DOCX with OCR for scanned docs |
+| | Classification | Automatic document type detection |
+| | Processing | Semantic chunking for AI optimization |
+| **2. AI Analysis** | Engine | Claude Opus 4.5 + RAG Architecture |
+| | Extraction | Controls, findings, exceptions |
+| | Mapping | 12 compliance frameworks simultaneously |
+| | Scoring | Risk scores with confidence levels |
+| **3. Analyst Review** | Workload | AI handles 90%, analyst validates 10% |
+| | Output | Pre-populated findings with citations |
+| | Action | One-click approval or adjustment |
+
+</div>
+
+<p align="center">
+<strong>Result: 6-8 hours reduced to 15 minutes per assessment</strong>
+</p>
+
+<br>
+
+<h4 align="center">Business Results</h4>
 
 <div align="center">
 
@@ -206,37 +193,39 @@ Enterprise organizations onboard dozens of new vendors monthly. Each requires se
 
 <br>
 
-**Solution Architecture:**
+<h4 align="center">Solution Architecture</h4>
 
 <p align="center">
-
-```
-+-----------------------------------------------------------------------------+
-|                    INTELLIGENT VENDOR CLASSIFICATION                         |
-+-----------------------------------------------------------------------------+
-|                                                                              |
-|   AI CLASSIFICATION ENGINE                                                   |
-|   +------------------------------------------------------------------------+ |
-|   |  25 Categories Including:                                              | |
-|   |  - Cloud Infrastructure       - Payment Processing                     | |
-|   |  - Data Warehouse             - Identity & Access                      | |
-|   |  - AI/ML Platforms            - Analytics & BI                         | |
-|   |  - Customer Support           - Security Tools                         | |
-|   +------------------------------------------------------------------------+ |
-|                                      |                                       |
-|                                      v                                       |
-|   RISK TIER ASSIGNMENT                                                       |
-|   +------------------------------------------------------------------------+ |
-|   |  Tier 1 (Critical): Quarterly assessment, executive review            | |
-|   |  Tier 2 (High): Semi-annual assessment, manager approval              | |
-|   |  Tier 3 (Medium): Annual assessment, standard review                  | |
-|   |  Tier 4 (Low): Biennial assessment, self-attestation                  | |
-|   +------------------------------------------------------------------------+ |
-|                                                                              |
-+-----------------------------------------------------------------------------+
-```
-
+<strong>AI Classification Engine: 25 Categories</strong>
 </p>
+
+<div align="center">
+
+| Category Group | Examples |
+|:--------------:|:---------|
+| Infrastructure | Cloud Infrastructure, Data Warehouse, Security Tools |
+| Business Apps | Payment Processing, Customer Support, Analytics & BI |
+| Identity | Identity & Access Management, SSO Providers |
+| AI/ML | AI/ML Platforms, LLM Providers, Model Hosting |
+
+</div>
+
+<br>
+
+<p align="center">
+<strong>Risk Tier Assignment</strong>
+</p>
+
+<div align="center">
+
+| Tier | Risk Level | Assessment Frequency | Approval |
+|:----:|:----------:|:--------------------:|:--------:|
+| Tier 1 | Critical | Quarterly | Executive Review |
+| Tier 2 | High | Semi-Annual | Manager Approval |
+| Tier 3 | Medium | Annual | Standard Review |
+| Tier 4 | Low | Biennial | Self-Attestation |
+
+</div>
 
 <br>
 
@@ -265,7 +254,7 @@ Enterprise organizations onboard dozens of new vendors monthly. Each requires se
 
 <br>
 
-**Platform Implementation:**
+<h4 align="center">Platform Implementation</h4>
 
 <div align="center">
 
@@ -292,41 +281,35 @@ Enterprise organizations onboard dozens of new vendors monthly. Each requires se
 
 <br>
 
-**AI Agent Monitoring Network:**
+<h4 align="center">AI Agent Monitoring Network</h4>
+
+<div align="center">
+
+| Agent | Function | Capability |
+|:-----:|:--------:|:-----------|
+| **Sentinel Prime** | Threat Detection | Scans for security risks and emerging threats |
+| **Vector Analyst** | Risk Scoring | Calculates risk based on findings and history |
+| **Watchdog Zero** | Vulnerability Scanning | Identifies security gaps and missing controls |
+
+</div>
+
+<br>
 
 <p align="center">
-
-```
-+-----------------------------------------------------------------------------+
-|                        AI AGENT MONITORING NETWORK                           |
-+-----------------------------------------------------------------------------+
-|                                                                              |
-|        +-----------+       +-----------+       +-----------+                 |
-|        | SENTINEL  |       |  VECTOR   |       | WATCHDOG  |                 |
-|        |   PRIME   |       | ANALYST   |       |   ZERO    |                 |
-|        |           |       |           |       |           |                 |
-|        |  Threat   |       |   Risk    |       |   Vuln    |                 |
-|        | Detection |       |  Scoring  |       | Scanning  |                 |
-|        +-----+-----+       +-----+-----+       +-----+-----+                 |
-|              |                   |                   |                       |
-|              +-------------------+-------------------+                       |
-|                                  |                                           |
-|                                  v                                           |
-|        +-----------------------------------------------------------+        |
-|        |                     AUDIT CORE                             |        |
-|        |         Compliance Verification & Tracking                 |        |
-|        +-----------------------------------------------------------+        |
-|                                  |                                           |
-|                                  v                                           |
-|        +-----------------------------------------------------------+        |
-|        |  ALERT & REMEDIATION                                       |        |
-|        |  Jira - ServiceNow - Slack - Email                         |        |
-|        +-----------------------------------------------------------+        |
-|                                                                              |
-+-----------------------------------------------------------------------------+
-```
-
+<strong>Central Coordination: Audit Core</strong><br>
+<em>Compliance Verification and Tracking</em>
 </p>
+
+<br>
+
+<div align="center">
+
+| Integration | Alert & Remediation |
+|:-----------:|:-------------------:|
+| Jira | ServiceNow |
+| Slack | Email |
+
+</div>
 
 <br>
 
@@ -445,41 +428,19 @@ Enterprise organizations onboard dozens of new vendors monthly. Each requires se
 
 <br>
 
-<p align="center">
+<div align="center">
 
-```
-+-----------------------------------------------------------------------------+
-|                          VENDORAUDITAI ARCHITECTURE                          |
-+-----------------------------------------------------------------------------+
-|                                                                              |
-|                             +------------------+                             |
-|                             |   USER/BROWSER   |                             |
-|                             +--------+---------+                             |
-|                                      |                                       |
-|                                      v                                       |
-|  +------------------------------------------------------------------------+  |
-|  |                         FRONTEND (Netlify)                              |  |
-|  |    React 18 - TypeScript - TailwindCSS - Shadcn/UI - Framer Motion     |  |
-|  +----------------------------------+-------------------------------------+  |
-|                                     | HTTPS/REST                             |
-|                                     v                                        |
-|  +------------------------------------------------------------------------+  |
-|  |                         BACKEND (Railway)                               |  |
-|  |    FastAPI - Python 3.12 - SQLAlchemy 2.0 - Pydantic - Async Workers   |  |
-|  +------------+-------------------+-------------------+-------------------+  |
-|               |                   |                   |                      |
-|               v                   v                   v                      |
-|  +------------------+  +------------------+  +---------------------------+   |
-|  |   PostgreSQL 16  |  |   Redis Cache    |  |       AI SERVICES         |   |
-|  |   - Documents    |  |   - Sessions     |  |   Claude Opus 4.5         |   |
-|  |   - Vendors      |  |   - Rate Limit   |  |   OpenAI Embeddings       |   |
-|  |   - Findings     |  |                  |  |   Gemini 3.0              |   |
-|  +------------------+  +------------------+  +---------------------------+   |
-|                                                                              |
-+-----------------------------------------------------------------------------+
-```
+| Layer | Technology |
+|:-----:|:-----------|
+| **Client** | User Browser |
+| **Frontend** | React 18, TypeScript, TailwindCSS, Shadcn/UI, Framer Motion |
+| **Hosting** | Netlify (Frontend), Railway (Backend) |
+| **API** | FastAPI, Python 3.12, SQLAlchemy 2.0, Pydantic, Async Workers |
+| **Database** | PostgreSQL 16 (Documents, Vendors, Findings) |
+| **Cache** | Redis (Sessions, Rate Limiting) |
+| **AI Services** | Claude Opus 4.5, OpenAI Embeddings, Gemini 3.0 |
 
-</p>
+</div>
 
 <br>
 
