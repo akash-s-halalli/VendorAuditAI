@@ -94,15 +94,16 @@
 
 </div>
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 ### Challenge 1: Scaling Vendor Assessments
 
 > *"How do you assess 500+ vendors annually when each SOC 2 report takes 6-8 hours?"*
 
-**My Answer:** You don't scale humans - you scale intelligence. I built a three-stage pipeline: (1) Document intake with PDF/DOCX parsing and auto-classification, (2) AI analysis using Claude Opus 4.5 with RAG to extract controls and map to 12 frameworks simultaneously, (3) Analyst review of pre-populated findings for approval. The AI handles 90%, humans handle 10%. Result: 6-8 hours becomes 15 minutes.
+**My Answer:** You don't scale humans. You scale intelligence.
+
+- **Stage 1: Document Intake** - PDF/DOCX parsing with OCR and auto-classification
+- **Stage 2: AI Analysis** - Claude Opus 4.5 with RAG extracts controls, maps to 12 frameworks simultaneously
+- **Stage 3: Analyst Review** - Pre-populated findings, one-click approval
+- **Result:** AI handles 90%, humans handle 10%. 6-8 hours becomes 15 minutes.
 
 ```
 ┌────────────────────────────────────┐
@@ -143,14 +144,19 @@
 | Analyst capacity | **+900%** |
 | Cost per assessment | **-87%** |
 
-</td>
-<td width="50%" valign="top">
+---
 
 ### Challenge 2: Vendor Risk Tiering
 
 > *"How do you categorize hundreds of vendors into meaningful risk tiers?"*
 
-**My Answer:** Classification drives prioritization. I built a 25-category taxonomy (Cloud Infrastructure, Payment Processing, AI/ML Platforms, etc.) with AI auto-classification from vendor metadata. Each category maps to risk tiers 1-4 based on data access and business criticality. Tier 1 (critical) gets quarterly reviews; Tier 4 gets biennial. This ensures you spend time where risk lives.
+**My Answer:** Classification drives prioritization.
+
+- **25-Category Taxonomy** - Cloud Infrastructure, Payment Processing, AI/ML Platforms, Identity & Access, etc.
+- **AI Auto-Classification** - Vendor name and website analyzed to assign category
+- **Risk Tier Mapping** - Categories map to Tiers 1-4 based on data access and business criticality
+- **Assessment Frequency** - Tier 1 quarterly, Tier 2 semi-annual, Tier 3 annual, Tier 4 biennial
+- **Result:** You spend time where risk actually lives.
 
 ```
 ┌────────────────────────────────────┐
@@ -183,25 +189,20 @@
 └────────────────────────────────────┘
 ```
 
-**Implementation:**
-- Auto-Classification by AI
-- Data Access Level tracking
-- Assessment Scheduling
-- Override Controls with audit
-
-</td>
-</tr>
-</table>
-
-<table>
-<tr>
-<td width="50%" valign="top">
+---
 
 ### Challenge 3: AI/ML Vendor Risk
 
 > *"How do you assess AI vendors when traditional frameworks don't cover autonomous systems?"*
 
-**My Answer:** Traditional frameworks weren't built for AI. I created a dedicated AI Tool Classification module implementing NIST AI RMF (70+ controls) plus custom risk factors: Stack Type (Foundation Model, GenAI App, Autonomous Agent), Data Training practices (does your data train their models?), and Autonomous Action scope (read-only vs. fully autonomous). These are the questions SOC 2 doesn't ask.
+**My Answer:** Traditional frameworks weren't built for AI.
+
+- **AI Tool Classification Module** - Dedicated assessment for AI/ML vendors
+- **NIST AI RMF** - 70+ controls specifically for AI governance
+- **Stack Type Classification** - Foundation Model, GenAI App, Autonomous Agent, Fine-Tuning Platform
+- **Data Training Risk** - Does your data train their models? Opt-in only or all data?
+- **Autonomous Action Scope** - Read-only, human approval required, or fully autonomous?
+- **Result:** These are the questions SOC 2 doesn't ask.
 
 ```
 ┌────────────────────────────────────┐
@@ -235,20 +236,20 @@
 └────────────────────────────────────┘
 ```
 
-**Implementation:**
-- AI Tool Classification module
-- NIST AI RMF (70+ controls)
-- AI Governance Playbooks
-- Approved AI Registry
-
-</td>
-<td width="50%" valign="top">
+---
 
 ### Challenge 4: Continuous Monitoring
 
 > *"A SOC 2 report is a snapshot. How do you know if security has degraded?"*
 
-**My Answer:** Point-in-time assessments create blind spots. I deployed four autonomous AI agents that run 24/7: Sentinel Prime (threat detection), Vector Analyst (risk scoring), Watchdog Zero (vulnerability scanning), and Audit Core (compliance verification). When they find issues, they push alerts to your existing tools - Jira, ServiceNow, Slack. No new dashboards to watch.
+**My Answer:** Point-in-time assessments create blind spots.
+
+- **Sentinel Prime** - Threat detection, scans for security risks and anomalies
+- **Vector Analyst** - Risk scoring based on findings, compliance, and history
+- **Watchdog Zero** - Vulnerability scanning, identifies gaps and expired certs
+- **Audit Core** - Compliance verification, maps documents to frameworks
+- **Integration** - Alerts push to Jira, ServiceNow, Slack automatically
+- **Result:** 24/7 coverage. No new dashboards to watch.
 
 ```
 ┌────────────────────────────────────┐
@@ -283,25 +284,19 @@
 └────────────────────────────────────┘
 ```
 
-**Implementation:**
-- 4 Autonomous AI Agents
-- Scheduled Assessments
-- Integration Hub
-- Custom Alert Rules
-
-</td>
-</tr>
-</table>
-
-<table>
-<tr>
-<td width="50%" valign="top">
+---
 
 ### Challenge 5: BPO and Fourth-Party Risk
 
 > *"Your vendor outsources to another vendor. How do you assess that layered risk?"*
 
-**My Answer:** Fourth-party risk is where breaches hide. The BPO Module I built tracks three layers: Provider profiles (who they are, contract terms, subcontractor disclosure), Process-specific risks (is this Tier 1 financial processing or Tier 3 data entry?), and Geographic risks (GDPR compliance, data residency, political stability). You can't manage what you can't see.
+**My Answer:** Fourth-party risk is where breaches hide.
+
+- **Provider Profiles** - Company info, contract terms, SLAs, subcontractor disclosure
+- **Process-Specific Risk** - Is this Tier 1 financial processing or Tier 3 data entry?
+- **Geographic Risk** - GDPR compliance, data residency, political stability, business continuity
+- **Visibility** - Track the full chain: Your company > Vendor > Their subcontractor
+- **Result:** You can't manage what you can't see.
 
 ```
 ┌────────────────────────────────────┐
@@ -337,20 +332,20 @@
 └────────────────────────────────────┘
 ```
 
-**Implementation:**
-- BPO Module for outsourcing
-- Process-level risk scoring
-- Geographic compliance mapping
-- Fourth-party visibility
-
-</td>
-<td width="50%" valign="top">
+---
 
 ### Challenge 6: Executive Reporting
 
 > *"How do you show the board that TPRM prevents breaches, not just generates paperwork?"*
 
-**My Answer:** Boards don't care about controls - they care about risk posture and ROI. The Executive Dashboard translates security work into business metrics: Overall risk score with 90-day trends, cost savings from automation ($380K+ annually), compliance percentages by framework, and remediation SLA compliance. All exportable to PDF/CSV. Security teams speak risk; boards speak money.
+**My Answer:** Boards don't care about controls. They care about risk posture and ROI.
+
+- **Risk Posture Score** - Overall score with 90-day trend analysis
+- **Cost Savings** - $380K+ annually from automation vs. manual assessments
+- **Compliance Percentages** - By framework (SOC 2: 94%, ISO 27001: 67%, etc.)
+- **Remediation SLAs** - Track whether findings get fixed on time
+- **Export** - PDF/CSV for board presentations
+- **Result:** Security teams speak risk. Boards speak money. This translates.
 
 ```
 ┌────────────────────────────────────┐
@@ -385,16 +380,6 @@
 │                                    │
 └────────────────────────────────────┘
 ```
-
-**Implementation:**
-- Executive Dashboard
-- Trend Analysis
-- PDF/CSV Reports
-- Complete Audit Trail
-
-</td>
-</tr>
-</table>
 
 <div align="center">
 
