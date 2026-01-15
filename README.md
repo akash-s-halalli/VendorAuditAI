@@ -2,9 +2,9 @@
   <img src="https://img.shields.io/badge/VENDORAUDITAI-000000?style=for-the-badge&logoColor=white" alt="VendorAuditAI" height="80"/>
 </p>
 
-<h1 align="center">Third Party Risk Management with AI</h1>
-
-<h3 align="center">VendorAuditAI - Enterprise TPRM Platform | 2026</h3>
+<h1 align="center">Third Party Risk Management: Technical Problem Solving Portfolio</h1>
+<h3 align="center">VendorAuditAI | Enterprise TPRM Platform | 2026</h3>
+<p align="center"><em>Demonstrating how to architect AI-driven solutions for the hardest problems in vendor risk management</em></p>
 
 <p align="center">
   <a href="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml"><img src="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml/badge.svg" alt="CI/CD"/></a>
@@ -33,13 +33,22 @@
   <strong>Transform vendor security assessments from 8 hours to 15 minutes using AI-powered document analysis, multi-framework compliance mapping, and autonomous agent monitoring</strong>
 </p>
 
+<p align="center">
+  <a href="#overview">Overview</a> |
+  <a href="#key-features">Features</a> |
+  <a href="#platform-modules">Modules</a> |
+  <a href="#ai-agent-network">AI Agents</a> |
+  <a href="#compliance-frameworks">Compliance</a> |
+  <a href="#architecture">Architecture</a> |
+  <a href="#api-reference">API</a> |
+  <a href="#quick-start">Quick Start</a>
+</p>
+
 ---
 
-<table>
-<tr>
-<td width="40%" valign="top">
+<div align="center">
 
-**Live Demo**
+### Live Demo
 
 | | |
 |:--|:--|
@@ -47,25 +56,18 @@
 | **Email** | `newdemo@vendorauditai.com` |
 | **Password** | `Demo12345` |
 
-</td>
-<td width="60%" valign="top">
-
-**Quick Navigation**
-
-[Overview](#overview) | [Key Features](#key-features) | [Platform Modules](#platform-modules) | [AI Agents](#ai-agent-network) | [Compliance](#compliance-frameworks) | [Architecture](#architecture) | [API](#api-reference) | [Quick Start](#quick-start) | [Structure](#project-structure) | [Roadmap](#roadmap)
-
-</td>
-</tr>
-</table>
+</div>
 
 ---
 
 ## Overview
 
+<div align="center">
+
 ### The Problem
 
 | Challenge | Impact |
-|-----------|--------|
+|:---------:|:------:|
 | **60% of data breaches** originate from third-party vendors | Ponemon Institute |
 | **$4.88M average cost** per data breach in 2024 | IBM Security |
 | **6-8 hours per vendor** to manually review SOC 2 reports | Industry average |
@@ -73,22 +75,24 @@
 
 ### The Solution
 
-VendorAuditAI transforms third-party risk management with:
-
 | Capability | Result |
-|------------|--------|
+|:----------:|:------:|
 | **AI Document Analysis** | 15-minute assessments vs 8 hours |
 | **Multi-Framework Mapping** | One document mapped to 12 frameworks |
 | **Autonomous Agents** | 24/7 threat detection and monitoring |
 | **Natural Language Q&A** | Ask questions, get cited answers |
 
----
-
-## Senior TPRM Analyst: Technical Problem-Solving Portfolio
-
-This platform was built to solve the hardest challenges facing enterprise third-party risk management teams. Below are real-world problems and how VendorAuditAI addresses them.
+</div>
 
 ---
+
+## The Six Hardest Problems in TPRM and How I Solved Them
+
+<div align="center">
+
+*Every challenge below represents a real problem that costs enterprises millions annually. Each solution demonstrates the architectural thinking required to solve it.*
+
+</div>
 
 <table>
 <tr>
@@ -97,6 +101,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Challenge 1: Scaling Vendor Assessments
 
 > *"How do you assess 500+ vendors annually when each SOC 2 report takes 6-8 hours?"*
+
+**My Answer:** You don't scale humans - you scale intelligence. I built a three-stage pipeline: (1) Document intake with PDF/DOCX parsing and auto-classification, (2) AI analysis using Claude Opus 4.5 with RAG to extract controls and map to 12 frameworks simultaneously, (3) Analyst review of pre-populated findings for approval. The AI handles 90%, humans handle 10%. Result: 6-8 hours becomes 15 minutes.
 
 ```
 ┌────────────────────────────────────┐
@@ -131,9 +137,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 └────────────────────────────────────┘
 ```
 
-**Results:**
 | Metric | Impact |
-|--------|--------|
+|:------:|:------:|
 | Assessment time | **-97%** |
 | Analyst capacity | **+900%** |
 | Cost per assessment | **-87%** |
@@ -144,6 +149,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Challenge 2: Vendor Risk Tiering
 
 > *"How do you categorize hundreds of vendors into meaningful risk tiers?"*
+
+**My Answer:** Classification drives prioritization. I built a 25-category taxonomy (Cloud Infrastructure, Payment Processing, AI/ML Platforms, etc.) with AI auto-classification from vendor metadata. Each category maps to risk tiers 1-4 based on data access and business criticality. Tier 1 (critical) gets quarterly reviews; Tier 4 gets biennial. This ensures you spend time where risk lives.
 
 ```
 ┌────────────────────────────────────┐
@@ -186,8 +193,6 @@ This platform was built to solve the hardest challenges facing enterprise third-
 </tr>
 </table>
 
----
-
 <table>
 <tr>
 <td width="50%" valign="top">
@@ -195,6 +200,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Challenge 3: AI/ML Vendor Risk
 
 > *"How do you assess AI vendors when traditional frameworks don't cover autonomous systems?"*
+
+**My Answer:** Traditional frameworks weren't built for AI. I created a dedicated AI Tool Classification module implementing NIST AI RMF (70+ controls) plus custom risk factors: Stack Type (Foundation Model, GenAI App, Autonomous Agent), Data Training practices (does your data train their models?), and Autonomous Action scope (read-only vs. fully autonomous). These are the questions SOC 2 doesn't ask.
 
 ```
 ┌────────────────────────────────────┐
@@ -222,11 +229,6 @@ This platform was built to solve the hardest challenges facing enterprise third-
 │  │ □ Read-only                  │  │
 │  │ □ Human approval             │  │
 │  │ □ Fully autonomous (HIGH)    │  │
-│  │                              │  │
-│  │ Blast Radius:                │  │
-│  │ □ Single user                │  │
-│  │ □ Team-wide                  │  │
-│  │ □ Org-wide (HIGH RISK)       │  │
 │  └──────────────────────────────┘  │
 │                                    │
 │  NIST AI RMF + Custom Controls     │
@@ -245,6 +247,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Challenge 4: Continuous Monitoring
 
 > *"A SOC 2 report is a snapshot. How do you know if security has degraded?"*
+
+**My Answer:** Point-in-time assessments create blind spots. I deployed four autonomous AI agents that run 24/7: Sentinel Prime (threat detection), Vector Analyst (risk scoring), Watchdog Zero (vulnerability scanning), and Audit Core (compliance verification). When they find issues, they push alerts to your existing tools - Jira, ServiceNow, Slack. No new dashboards to watch.
 
 ```
 ┌────────────────────────────────────┐
@@ -289,8 +293,6 @@ This platform was built to solve the hardest challenges facing enterprise third-
 </tr>
 </table>
 
----
-
 <table>
 <tr>
 <td width="50%" valign="top">
@@ -298,6 +300,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Challenge 5: BPO and Fourth-Party Risk
 
 > *"Your vendor outsources to another vendor. How do you assess that layered risk?"*
+
+**My Answer:** Fourth-party risk is where breaches hide. The BPO Module I built tracks three layers: Provider profiles (who they are, contract terms, subcontractor disclosure), Process-specific risks (is this Tier 1 financial processing or Tier 3 data entry?), and Geographic risks (GDPR compliance, data residency, political stability). You can't manage what you can't see.
 
 ```
 ┌────────────────────────────────────┐
@@ -346,6 +350,8 @@ This platform was built to solve the hardest challenges facing enterprise third-
 
 > *"How do you show the board that TPRM prevents breaches, not just generates paperwork?"*
 
+**My Answer:** Boards don't care about controls - they care about risk posture and ROI. The Executive Dashboard translates security work into business metrics: Overall risk score with 90-day trends, cost savings from automation ($380K+ annually), compliance percentages by framework, and remediation SLA compliance. All exportable to PDF/CSV. Security teams speak risk; boards speak money.
+
 ```
 ┌────────────────────────────────────┐
 │   EXECUTIVE DASHBOARD METRICS      │
@@ -390,27 +396,31 @@ This platform was built to solve the hardest challenges facing enterprise third-
 </tr>
 </table>
 
----
+<div align="center">
 
-### Technical Implementation Summary
+### Architecture Decisions Summary
 
-| Challenge | Solution | Module |
-|-----------|----------|--------|
-| Scale assessments | AI document analysis | Document Intelligence |
-| Categorize vendors | 25-category taxonomy | Vendor Management |
-| Assess AI vendors | NIST AI RMF + custom | AI Tool Classification |
-| Continuous monitoring | 4 autonomous agents | AI Agent Network |
-| BPO/fourth-party risk | Process-level tracking | BPO Module |
-| Executive reporting | Real-time dashboards | Risk Analytics |
+| Problem | My Solution | Why It Works |
+|:-------:|:-----------:|:------------:|
+| Scale assessments | 3-stage AI pipeline | 90% automation, 10% human review |
+| Categorize vendors | 25-category taxonomy | Risk-based assessment frequency |
+| Assess AI vendors | NIST AI RMF + custom controls | Covers what SOC 2 misses |
+| Continuous monitoring | 4 autonomous agents | 24/7 coverage, existing tool integration |
+| Fourth-party risk | 3-layer BPO tracking | Visibility into hidden risk |
+| Executive reporting | Business metrics dashboard | Risk posture + ROI in board language |
+
+</div>
 
 ---
 
 ## Key Features
 
+<div align="center">
+
 ### Core Capabilities
 
 | Feature | Description |
-|---------|-------------|
+|:-------:|:-----------:|
 | **Document Intelligence** | Upload PDF/DOCX, AI extracts and analyzes content with semantic chunking |
 | **Natural Language Query** | Ask questions about vendor documents, get cited answers with page references |
 | **Multi-Framework Compliance** | Map documents to SOC 2, NIST, ISO 27001, DORA, SIG, and 7 more frameworks |
@@ -423,7 +433,7 @@ This platform was built to solve the hardest challenges facing enterprise third-
 ### Enterprise Security
 
 | Feature | Implementation |
-|---------|----------------|
+|:-------:|:--------------:|
 | **Authentication** | JWT tokens, refresh tokens, session management |
 | **SSO/SAML 2.0** | Azure AD, Google, Okta, OneLogin support |
 | **MFA/TOTP** | Time-based one-time passwords with QR provisioning |
@@ -431,183 +441,60 @@ This platform was built to solve the hardest challenges facing enterprise third-
 | **Rate Limiting** | Configurable per-endpoint protection |
 | **Encryption** | AES-256 at rest, TLS 1.3 in transit |
 
+</div>
+
 ---
 
 ## Platform Modules
 
-### 1. Executive Dashboard
+<div align="center">
 
-Real-time overview of your vendor risk posture with animated metrics and visualizations.
+| # | Module | Description |
+|:-:|:------:|:-----------:|
+| 1 | **Executive Dashboard** | Real-time vendor risk posture with animated metrics |
+| 2 | **AI Governance Playbooks** | Guided workflows for AI tool adoption |
+| 3 | **Approved AI Registry** | Self-service registry for pre-approved AI tools |
+| 4 | **BPO Risk Management** | Business Process Outsourcing risk tracking |
+| 5 | **Integration Hub** | Jira, ServiceNow, Slack, Email, Webhooks |
+| 6 | **Vendor Management** | 25-category taxonomy with risk tiering |
+| 7 | **Document Management** | PDF/DOCX upload with semantic chunking |
+| 8 | **Compliance Analysis** | AI-powered multi-framework mapping |
+| 9 | **Remediation Workflow** | Task management with SLA tracking |
+| 10 | **Continuous Monitoring** | Scheduled assessments and alerts |
+| 11 | **AI Tool Classification** | Stack type and risk factor assessment |
+| 12 | **Risk Analytics** | Trends, comparisons, exportable reports |
 
-- Total vendors, documents, and findings
-- Risk distribution by severity
-- Assessment completion rates
-- Trending risk indicators
-
-### 2. AI Governance Playbooks
-
-Guided workflows for AI tool adoption across departments.
-
-| Playbook | Purpose |
-|----------|---------|
-| **Tool Selection** | 5-step evaluation process for new AI tools |
-| **Secure Deployment** | 5-step guide for safe AI tool deployment |
-| **Regression Protection** | 4-step ongoing monitoring checklist |
-
-- Step-by-step wizards with checklists
-- Multi-approver workflows
-- Progress tracking per vendor
-
-### 3. Approved AI Vendor Registry
-
-Self-service registry for pre-approved AI tools with deployment tracking.
-
-- **Browse Approved Tools** - Search and filter approved vendors
-- **Self-Service Deployment** - Deploy approved tools to your team
-- **Request New Tools** - Submit requests for security evaluation
-- **Department Restrictions** - Control which teams can use which tools
-- **Data Classification Limits** - Enforce data handling policies
-
-### 4. BPO Risk Management
-
-Business Process Outsourcing risk module for service provider management.
-
-- Provider onboarding and tracking
-- Process-specific risk assessments
-- Geographic location tracking
-- Contract and SLA management
-- Data access level controls
-
-### 5. Integration Hub
-
-Central hub for external system connections.
-
-| Integration | Capabilities |
-|-------------|--------------|
-| **Jira** | Create issues, sync status, bidirectional updates |
-| **ServiceNow** | Incident management, change requests |
-| **Slack** | Notifications, alerts, channel posting |
-| **Email** | SMTP notifications, digest reports |
-| **Webhooks** | Custom integrations, event triggers |
-
-- Test connections before enabling
-- View integration logs and history
-- Configure field mappings
-
-### 6. Vendor Management
-
-Complete vendor lifecycle management with enterprise categorization.
-
-**Risk Tiers:**
-
-| Tier | Risk Level | Assessment Frequency |
-|:----:|:----------:|:---------------------|
-| 1 | Critical | Quarterly |
-| 2 | High | Semi-annual |
-| 3 | Medium | Annual |
-| 4 | Low | Every 2-3 years |
-
-**25 Vendor Categories:**
-- Cloud Infrastructure, Data Warehouse, Payment Processing
-- Identity & Access, AI/ML Platforms, Analytics & BI
-- Customer Support, Security Tools, HR & Workforce
-- And 16 more...
-
-### 7. Document Management
-
-Upload, process, and analyze vendor security documents.
-
-- PDF, DOCX, and scanned document support
-- Semantic chunking for AI analysis
-- Vector embeddings for similarity search
-- Processing status tracking
-
-### 8. Compliance Analysis
-
-AI-powered analysis with multi-framework mapping.
-
-- Run analysis on any document
-- View findings by severity (Critical, High, Medium, Low)
-- Map to 12 compliance frameworks
-- Gap detection and recommendations
-
-### 9. Remediation Workflow
-
-Track and manage security findings to resolution.
-
-- Task creation from findings
-- Priority and SLA management
-- Status workflow (Open -> In Progress -> Resolved)
-- External issue tracker sync (Jira, ServiceNow)
-- Comment threads and attachments
-
-### 10. Continuous Monitoring
-
-Proactive vendor security monitoring.
-
-- Scheduled assessment runs
-- Alert rules and thresholds
-- Notification channels
-- Certificate expiration tracking
-- Compliance deadline alerts
-
-### 11. AI Tool Classification
-
-Classify AI tools by technical architecture and risk level.
-
-**Stack Types:**
-- Foundation Model
-- GenAI Application
-- Inference Optimization
-- Fine-Tuning Platform
-- Autonomous Agent
-- Horizontal Layer
-- Embedding Service
-- MLOps Platform
-
-**Risk Factors:**
-- Credential access level
-- Autonomous action capabilities
-- Data training permissions
-- Blast radius assessment
-
-### 12. Risk Analytics
-
-Advanced analytics and reporting.
-
-- Risk score trends over time
-- Vendor comparison charts
-- Framework coverage heatmaps
-- Exportable reports (CSV, PDF)
+</div>
 
 ---
 
 ## AI Agent Network
 
+<div align="center">
+
 Four autonomous AI agents continuously monitor your vendor ecosystem.
 
 | Agent | Role | Capabilities |
-|:------|:-----|:-------------|
+|:-----:|:----:|:------------:|
 | **Sentinel Prime** | Threat Detection | Scans documents for security risks, anomalies, and emerging threats |
 | **Vector Analyst** | Risk Assessment | Calculates risk scores based on findings, compliance, and history |
 | **Watchdog Zero** | Vulnerability Scanner | Identifies security gaps, missing controls, expired certifications |
 | **Audit Core** | Compliance Verification | Maps documents to frameworks, calculates compliance coverage |
 
-### Agent Features
+**Agent Features:** Autonomous Execution | Task Queue | Activity Logs | Status Dashboard
 
-- **Autonomous Execution** - Agents run on schedules or triggers
-- **Task Queue** - Submit tasks and track completion
-- **Activity Logs** - Full audit trail of agent actions
-- **Status Dashboard** - Real-time agent health monitoring
+</div>
 
 ---
 
 ## Compliance Frameworks
 
-VendorAuditAI supports 12 compliance frameworks with 2500+ controls.
+<div align="center">
+
+VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
 | Framework | Controls | Version | Best For |
-|:---------:|:--------:|:-------:|:---------|
+|:---------:|:--------:|:-------:|:--------:|
 | **SOC 2 TSC** | 64 | 2017 | SaaS vendors, cloud services |
 | **SIG 2026** | 800+ | 2026 | Industry gold standard |
 | **NIST CSF** | 108 | 2.0 | Critical infrastructure |
@@ -620,6 +507,8 @@ VendorAuditAI supports 12 compliance frameworks with 2500+ controls.
 | **AI Risk** | 50+ | 1.0 | AI vendor assessment |
 | **PCI-DSS** | 300+ | 4.0 | Payment processing |
 | **HIPAA** | 150+ | 2013 | Healthcare vendors |
+
+</div>
 
 ---
 
@@ -678,129 +567,27 @@ VendorAuditAI supports 12 compliance frameworks with 2500+ controls.
 
 ## API Reference
 
-### Authentication
+<div align="center">
 
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| POST | `/api/v1/auth/login` | User authentication |
-| POST | `/api/v1/auth/register` | User registration |
-| POST | `/api/v1/auth/refresh` | Refresh access token |
-| POST | `/api/v1/auth/mfa/enable` | Enable MFA |
-| POST | `/api/v1/auth/mfa/verify` | Verify MFA code |
+**100+ REST API Endpoints** | [Swagger UI](https://vendorauditai-production.up.railway.app/docs) | [ReDoc](https://vendorauditai-production.up.railway.app/redoc)
 
-### Vendors
+| Category | Endpoints | Description |
+|:--------:|:---------:|:-----------:|
+| **Auth** | 5 | Login, register, refresh, MFA enable/verify |
+| **Vendors** | 5 | CRUD operations for vendor management |
+| **Documents** | 4 | Upload, list, get, delete documents |
+| **Analysis** | 3 | Run AI analysis, list/get findings |
+| **Query** | 2 | Natural language Q&A, history |
+| **Agents** | 4 | List agents, get details, create tasks, view logs |
+| **Playbooks** | 4 | List, get, start, complete step |
+| **Approved Vendors** | 7 | Registry, deploy, request, stats |
+| **BPO** | 5 | Providers, processes, assessments, dashboard |
+| **Integrations** | 5 | CRUD, test connection, sync, logs |
+| **Compliance** | 3 | List frameworks, details, search controls |
+| **Remediation** | 4 | Tasks CRUD, external sync |
+| **Monitoring** | 3 | Alerts, schedules management |
 
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/vendors` | List all vendors |
-| POST | `/api/v1/vendors` | Create vendor |
-| GET | `/api/v1/vendors/{id}` | Get vendor details |
-| PUT | `/api/v1/vendors/{id}` | Update vendor |
-| DELETE | `/api/v1/vendors/{id}` | Delete vendor |
-
-### Documents
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| POST | `/api/v1/documents/upload` | Upload document |
-| GET | `/api/v1/documents` | List documents |
-| GET | `/api/v1/documents/{id}` | Get document details |
-| DELETE | `/api/v1/documents/{id}` | Delete document |
-
-### Analysis
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| POST | `/api/v1/analysis/documents/{id}/analyze` | Run AI analysis |
-| GET | `/api/v1/analysis/findings` | List findings |
-| GET | `/api/v1/analysis/findings/{id}` | Get finding details |
-
-### Query
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| POST | `/api/v1/query` | Natural language Q&A |
-| GET | `/api/v1/query/history` | Query history |
-
-### Agents
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/agents` | List AI agents |
-| GET | `/api/v1/agents/{id}` | Get agent details |
-| POST | `/api/v1/agents/{id}/tasks` | Create agent task |
-| GET | `/api/v1/agents/{id}/logs` | View agent logs |
-
-### Playbooks
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/playbooks` | List playbooks |
-| GET | `/api/v1/playbooks/{id}` | Get playbook details |
-| POST | `/api/v1/playbooks/{id}/start` | Start playbook |
-| POST | `/api/v1/playbooks/progress/{id}/complete-step` | Complete step |
-
-### Approved Vendors
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/approved-vendors` | List approved vendors |
-| POST | `/api/v1/approved-vendors` | Add approved vendor |
-| GET | `/api/v1/approved-vendors/stats` | Dashboard statistics |
-| POST | `/api/v1/approved-vendors/deploy` | Deploy to team |
-| POST | `/api/v1/approved-vendors/request` | Request new tool |
-| GET | `/api/v1/approved-vendors/my-deployments` | User deployments |
-| GET | `/api/v1/approved-vendors/my-requests` | User requests |
-
-### BPO
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/bpo/providers` | List BPO providers |
-| POST | `/api/v1/bpo/providers` | Create provider |
-| GET | `/api/v1/bpo/dashboard` | BPO dashboard stats |
-| GET | `/api/v1/bpo/providers/{id}/processes` | List processes |
-| POST | `/api/v1/bpo/assessments` | Create assessment |
-
-### Integrations
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/integrations` | List integrations |
-| POST | `/api/v1/integrations` | Create integration |
-| POST | `/api/v1/integrations/{id}/test` | Test connection |
-| POST | `/api/v1/integrations/{id}/sync` | Trigger sync |
-| GET | `/api/v1/integrations/{id}/logs` | View logs |
-
-### Compliance
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/frameworks` | List frameworks |
-| GET | `/api/v1/frameworks/{id}` | Get framework details |
-| GET | `/api/v1/frameworks/search` | Search controls |
-
-### Remediation
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/remediation/tasks` | List tasks |
-| POST | `/api/v1/remediation/tasks` | Create task |
-| PATCH | `/api/v1/remediation/tasks/{id}` | Update task |
-| POST | `/api/v1/remediation/tasks/{id}/create-external` | Create in Jira/ServiceNow |
-
-### Monitoring
-
-| Method | Endpoint | Description |
-|:------:|:---------|:------------|
-| GET | `/api/v1/monitoring/alerts` | List alerts |
-| GET | `/api/v1/monitoring/schedules` | List schedules |
-| POST | `/api/v1/monitoring/schedules` | Create schedule |
-
-### Full API Documentation
-
-- **Swagger UI:** [vendorauditai-production.up.railway.app/docs](https://vendorauditai-production.up.railway.app/docs)
-- **ReDoc:** [vendorauditai-production.up.railway.app/redoc](https://vendorauditai-production.up.railway.app/redoc)
+</div>
 
 ---
 
@@ -808,9 +595,7 @@ VendorAuditAI supports 12 compliance frameworks with 2500+ controls.
 
 ### Prerequisites
 
-- Python 3.12+
-- Node.js 18+
-- PostgreSQL 16+
+- Python 3.12+ | Node.js 18+ | PostgreSQL 16+
 - API Keys: Anthropic (Claude), OpenAI (embeddings)
 
 ### Installation
@@ -873,14 +658,6 @@ VendorAuditAI/
 |   |   |-- models/               # SQLAlchemy ORM models
 |   |   |-- schemas/              # Pydantic request/response schemas
 |   |   |-- services/             # Business logic and AI services
-|   |   |   |-- llm.py            # Claude/Gemini integration
-|   |   |   |-- embedding.py      # OpenAI embeddings
-|   |   |   |-- processing.py     # Document pipeline
-|   |   |   |-- compliance.py     # Framework management
-|   |   |   |-- approved_vendor.py # Approved AI registry
-|   |   |   |-- bpo.py            # BPO risk management
-|   |   |   |-- integrations/     # External system connectors
-|   |   |   `-- playbook.py       # AI governance playbooks
 |   |   `-- prompts/              # AI prompt templates
 |   |-- alembic/versions/         # Database migrations
 |   |-- tests/                    # 129 pytest tests
@@ -888,29 +665,11 @@ VendorAuditAI/
 |-- frontend/
 |   |-- src/
 |   |   |-- components/           # React components
-|   |   |   |-- layout/           # Sidebar, header, navigation
-|   |   |   `-- ui/               # Shadcn/UI components
-|   |   |-- pages/                # Route pages
-|   |   |   |-- Dashboard.tsx     # Executive dashboard
-|   |   |   |-- Playbooks.tsx     # AI governance playbooks
-|   |   |   |-- ApprovedVendors.tsx # Approved AI registry
-|   |   |   |-- BPO.tsx           # BPO risk management
-|   |   |   |-- Integrations.tsx  # Integration hub
-|   |   |   |-- Vendors.tsx       # Vendor management
-|   |   |   |-- Documents.tsx     # Document management
-|   |   |   |-- Analysis.tsx      # Compliance analysis
-|   |   |   |-- Remediation.tsx   # Remediation workflow
-|   |   |   |-- Monitoring.tsx    # Continuous monitoring
-|   |   |   |-- Risk.tsx          # Risk analytics
-|   |   |   |-- Agents.tsx        # AI agent network
-|   |   |   `-- Query.tsx         # Natural language Q&A
+|   |   |-- pages/                # Route pages (12 modules)
 |   |   |-- hooks/                # Custom React hooks
 |   |   |-- stores/               # State management
 |   |   `-- lib/                  # API client, utilities
 |   `-- package.json
-|-- docs/
-|   `-- PLATFORM_OVERVIEW.md
-|-- COMPETITIVE_ANALYSIS.md
 `-- README.md
 ```
 
@@ -918,57 +677,70 @@ VendorAuditAI/
 
 ## Roadmap
 
+<div align="center">
+
 ### Completed
 
-- [x] **v0.1.0** - Document upload, parsing, 9 frameworks, SSO/MFA
-- [x] **v0.2.0** - AI Query feature, multi-LLM support, production deployment
-- [x] **v0.3.0** - SIG 2026, DORA, HECVAT frameworks
-- [x] **v0.4.0** - Enterprise 25-category TPRM taxonomy
-- [x] **v0.5.0** - Full CRUD operations, remediation workflows, monitoring
-- [x] **v0.6.0** - AI Agent Network (4 agents), Vendor Detail pages
-- [x] **v0.7.0** - Risk scoring, analytics enhancements
-- [x] **v0.8.0** - Document Intelligence, Multi-Framework Compliance
-- [x] **v0.9.0** - NIST AI RMF, CSA CAIQ, Continuous Monitoring
-- [x] **v1.0.0** - Enterprise Security: SSO/SAML 2.0, MFA/TOTP, Audit Logging
-- [x] **v1.1.0** - AI Governance Playbooks, Approved AI Registry, BPO Management, Integration Hub
+| Version | Features |
+|:-------:|:--------:|
+| v0.1 - v0.5 | Document upload, 9 frameworks, SSO/MFA, AI Query, CRUD, remediation |
+| v0.6 - v0.9 | AI Agent Network, risk scoring, NIST AI RMF, continuous monitoring |
+| v1.0 | Enterprise Security: SSO/SAML 2.0, MFA/TOTP, Audit Logging |
+| v1.1 | AI Governance Playbooks, Approved AI Registry, BPO, Integration Hub |
 
 ### Upcoming
 
-- [ ] **v1.2.0** - Custom framework builder, advanced analytics
-- [ ] **v1.3.0** - Mobile responsive design, dark mode improvements
-- [ ] **v2.0.0** - GraphQL API, multi-tenant architecture
+| Version | Features |
+|:-------:|:--------:|
+| v1.2 | Custom framework builder, advanced analytics |
+| v1.3 | Mobile responsive design, dark mode improvements |
+| v2.0 | GraphQL API, multi-tenant architecture |
+
+</div>
 
 ---
 
 ## Technology Stack
 
+<div align="center">
+
 | Category | Technologies |
-|----------|-------------|
-| **AI/ML** | Claude Opus 4.5, Gemini 3.0, OpenAI Embeddings, RAG Architecture |
-| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2, Async/Await |
-| **Frontend** | React 18, TypeScript 5, TailwindCSS, Shadcn/UI, Framer Motion |
-| **Database** | PostgreSQL 16, pgvector, Alembic Migrations |
-| **Security** | JWT, SAML 2.0 SSO, MFA/TOTP, RBAC, AES-256, TLS 1.3 |
+|:--------:|:------------:|
+| **AI/ML** | Claude Opus 4.5, Gemini 3.0, OpenAI Embeddings, RAG |
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2 |
+| **Frontend** | React 18, TypeScript 5, TailwindCSS, Shadcn/UI |
+| **Database** | PostgreSQL 16, pgvector, Alembic |
+| **Security** | JWT, SAML 2.0 SSO, MFA/TOTP, AES-256, TLS 1.3 |
 | **Infrastructure** | Railway, Netlify, GitHub Actions CI/CD |
+
+</div>
 
 ---
 
 ## Author
 
+<div align="center">
+
 **Dominic M. Hoang**
 
 GitHub: [@MikeDominic92](https://github.com/MikeDominic92)
+
+</div>
 
 ---
 
 ## Related Projects
 
+<div align="center">
+
 | Project | Description |
-|---------|-------------|
+|:-------:|:-----------:|
 | [ai-access-sentinel](https://github.com/MikeDominic92/ai-access-sentinel) | ITDR platform with ML-powered anomaly detection |
 | [entra-id-governance](https://github.com/MikeDominic92/entra-id-governance) | Microsoft Entra ID governance toolkit |
 | [keyless-kingdom](https://github.com/MikeDominic92/keyless-kingdom) | Multi-cloud workload identity federation |
 | [okta-sso-hub](https://github.com/MikeDominic92/okta-sso-hub) | Enterprise SSO with SAML, OIDC, SCIM |
+
+</div>
 
 ---
 
