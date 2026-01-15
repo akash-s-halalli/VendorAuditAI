@@ -68,9 +68,9 @@
 
 ---
 
-<h2 align="center">The Six Hardest Problems in TPRM and How I Solved Them</h2>
+<h2 align="center">Technical Problem Solving</h2>
 
-<p align="center"><em>Every challenge below represents a real problem that costs enterprises millions annually. Each solution demonstrates the architectural thinking required to solve it.</em></p>
+<p align="center"><em>Real enterprise TPRM challenges and the architectural solutions I built to solve them.</em></p>
 
 <h3 align="center">Challenge 1: Scaling Vendor Assessments</h3>
 
