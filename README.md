@@ -72,7 +72,9 @@
 
 <p align="center"><em>Real enterprise TPRM challenges and the architectural solutions I built to solve them.</em></p>
 
-<h3 align="center">Challenge 1: Scaling Vendor Assessments</h3>
+<div align="center">
+
+<h3>Challenge 1: Scaling Vendor Assessments</h3>
 
 > *"How do you assess 500+ vendors annually when each SOC 2 report takes 6-8 hours?"*
 
@@ -126,9 +128,13 @@
 | Analyst capacity | **+900%** |
 | Cost per assessment | **-87%** |
 
+</div>
+
 ---
 
-<h3 align="center">Challenge 2: Vendor Risk Tiering</h3>
+<div align="center">
+
+<h3>Challenge 2: Vendor Risk Tiering</h3>
 
 > *"How do you categorize hundreds of vendors into meaningful risk tiers?"*
 
@@ -175,9 +181,13 @@
 +------------------------------------------------------------------------+
 ```
 
+</div>
+
 ---
 
-<h3 align="center">Challenge 3: AI/ML Vendor Risk</h3>
+<div align="center">
+
+<h3>Challenge 3: AI/ML Vendor Risk</h3>
 
 > *"How do you assess AI vendors when traditional frameworks don't cover autonomous systems?"*
 
@@ -226,9 +236,13 @@
 +------------------------------------------------------------------------+
 ```
 
+</div>
+
 ---
 
-<h3 align="center">Challenge 4: Continuous Monitoring</h3>
+<div align="center">
+
+<h3>Challenge 4: Continuous Monitoring</h3>
 
 > *"A SOC 2 report is a snapshot. How do you know if security has degraded?"*
 
@@ -283,9 +297,13 @@
 +------------------------------------------------------------------------+
 ```
 
+</div>
+
 ---
 
-<h3 align="center">Challenge 5: BPO and Fourth-Party Risk</h3>
+<div align="center">
+
+<h3>Challenge 5: BPO and Fourth-Party Risk</h3>
 
 > *"Your vendor outsources to another vendor. How do you assess that layered risk?"*
 
@@ -339,9 +357,13 @@
 +------------------------------------------------------------------------+
 ```
 
+</div>
+
 ---
 
-<h3 align="center">Challenge 6: Executive Reporting</h3>
+<div align="center">
+
+<h3>Challenge 6: Executive Reporting</h3>
 
 > *"How do you show the board that TPRM prevents breaches, not just generates paperwork?"*
 
@@ -392,6 +414,8 @@
 |                                                                        |
 +------------------------------------------------------------------------+
 ```
+
+</div>
 
 <div align="center">
 
@@ -509,6 +533,8 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
 ---
 
+<div align="center">
+
 ## Architecture
 
 ```
@@ -560,6 +586,8 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 +-----------------------------------------------------------------------------+
 ```
 
+</div>
+
 ---
 
 ## API Reference
@@ -588,12 +616,15 @@ VendorAuditAI supports **12 compliance frameworks** with **2500+ controls**.
 
 ---
 
+<div align="center">
+
 ## Quick Start
 
 ### Prerequisites
 
-- Python 3.12+ | Node.js 18+ | PostgreSQL 16+
-- API Keys: Anthropic (Claude), OpenAI (embeddings)
+Python 3.12+ | Node.js 18+ | PostgreSQL 16+
+
+API Keys: Anthropic (Claude), OpenAI (embeddings)
 
 ### Installation
 
@@ -642,7 +673,11 @@ ANTHROPIC_API_KEY=sk-ant-...
 OPENAI_API_KEY=sk-...
 ```
 
+</div>
+
 ---
+
+<div align="center">
 
 ## Project Structure
 
@@ -669,6 +704,8 @@ VendorAuditAI/
 |   `-- package.json
 `-- README.md
 ```
+
+</div>
 
 ---
 
