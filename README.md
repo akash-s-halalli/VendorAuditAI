@@ -1,9 +1,5 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/VENDORAUDITAI-000000?style=for-the-badge&logoColor=white" alt="VendorAuditAI" height="80"/>
-</p>
-
 <h1 align="center">Third Party Risk Management: Technical Problem Solving Portfolio</h1>
-<h3 align="center">VendorAuditAI | Enterprise TPRM Platform | 2026</h3>
+<h3 align="center">VendorAuditAI | Enterprise TPRM AI Platform | 2026</h3>
 <p align="center"><em>Demonstrating how to architect AI-driven solutions for the hardest problems in vendor risk management</em></p>
 
 <p align="center">
@@ -86,15 +82,11 @@
 
 ---
 
-## The Six Hardest Problems in TPRM and How I Solved Them
+<h2 align="center">The Six Hardest Problems in TPRM and How I Solved Them</h2>
 
-<div align="center">
+<p align="center"><em>Every challenge below represents a real problem that costs enterprises millions annually. Each solution demonstrates the architectural thinking required to solve it.</em></p>
 
-*Every challenge below represents a real problem that costs enterprises millions annually. Each solution demonstrates the architectural thinking required to solve it.*
-
-</div>
-
-### Challenge 1: Scaling Vendor Assessments
+<h3 align="center">Challenge 1: Scaling Vendor Assessments</h3>
 
 > *"How do you assess 500+ vendors annually when each SOC 2 report takes 6-8 hours?"*
 
@@ -150,7 +142,7 @@
 
 ---
 
-### Challenge 2: Vendor Risk Tiering
+<h3 align="center">Challenge 2: Vendor Risk Tiering</h3>
 
 > *"How do you categorize hundreds of vendors into meaningful risk tiers?"*
 
@@ -199,7 +191,7 @@
 
 ---
 
-### Challenge 3: AI/ML Vendor Risk
+<h3 align="center">Challenge 3: AI/ML Vendor Risk</h3>
 
 > *"How do you assess AI vendors when traditional frameworks don't cover autonomous systems?"*
 
@@ -250,7 +242,7 @@
 
 ---
 
-### Challenge 4: Continuous Monitoring
+<h3 align="center">Challenge 4: Continuous Monitoring</h3>
 
 > *"A SOC 2 report is a snapshot. How do you know if security has degraded?"*
 
@@ -307,7 +299,7 @@
 
 ---
 
-### Challenge 5: BPO and Fourth-Party Risk
+<h3 align="center">Challenge 5: BPO and Fourth-Party Risk</h3>
 
 > *"Your vendor outsources to another vendor. How do you assess that layered risk?"*
 
@@ -363,7 +355,7 @@
 
 ---
 
-### Challenge 6: Executive Reporting
+<h3 align="center">Challenge 6: Executive Reporting</h3>
 
 > *"How do you show the board that TPRM prevents breaches, not just generates paperwork?"*
 
