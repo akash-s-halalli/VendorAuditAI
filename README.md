@@ -3,26 +3,12 @@
 <p align="center"><em>Demonstrating how to architect AI-driven solutions for the hardest problems in vendor risk management</em></p>
 
 <p align="center">
-  <a href="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml"><img src="https://github.com/MikeDominic92/VendorAuditAI/actions/workflows/ci.yml/badge.svg" alt="CI/CD"/></a>
-  <a href="https://vendorauditai-production.up.railway.app/health"><img src="https://img.shields.io/badge/Backend-Live-00D4AA?style=flat-square" alt="Backend Status"/></a>
-  <a href="https://vendor-audit-ai.netlify.app"><img src="https://img.shields.io/badge/Demo-Available-B026FF?style=flat-square" alt="Demo"/></a>
-  <img src="https://img.shields.io/badge/Version-1.1.0-00D4AA.svg?style=flat-square" alt="Version"/>
-</p>
-
-<p align="center">
+  <a href="https://vendor-audit-ai.netlify.app"><img src="https://img.shields.io/badge/Live_Demo-Available-B026FF?style=flat-square" alt="Demo"/></a>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB.svg?style=flat-square&logo=python&logoColor=white" alt="Python"/>
-  <img src="https://img.shields.io/badge/FastAPI-0.115-009688.svg?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
   <img src="https://img.shields.io/badge/React-18-61DAFB.svg?style=flat-square&logo=react&logoColor=black" alt="React"/>
-  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/Claude-Opus_4.5-CC785C.svg?style=flat-square" alt="Claude"/>
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1.svg?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/API_Endpoints-100+-0066FF.svg?style=flat-square" alt="API Endpoints"/>
-  <img src="https://img.shields.io/badge/Tests-129_Passing-00D4AA.svg?style=flat-square" alt="Tests"/>
-  <img src="https://img.shields.io/badge/Frameworks-12_Supported-FFB800.svg?style=flat-square" alt="Frameworks"/>
-  <img src="https://img.shields.io/badge/AI_Agents-4_Active-CC785C.svg?style=flat-square" alt="AI Agents"/>
+  <img src="https://img.shields.io/badge/Claude_Opus_4.5-CC785C.svg?style=flat-square" alt="Claude"/>
+  <img src="https://img.shields.io/badge/12_Frameworks-FFB800.svg?style=flat-square" alt="Frameworks"/>
+  <img src="https://img.shields.io/badge/4_AI_Agents-CC785C.svg?style=flat-square" alt="AI Agents"/>
 </p>
 
 <p align="center">
