@@ -717,7 +717,7 @@ async def seed_analysis_runs(
             organization_id=organization_id,
             document_id=doc.id,
             framework=framework,
-            model_used="claude-3-5-sonnet-20241022",
+            model_used="gemini-1.5-flash",
             status=status,
             chunks_analyzed=random.randint(20, 80) if status == "completed" else 0,
             findings_count=random.randint(2, 8) if status == "completed" else 0,

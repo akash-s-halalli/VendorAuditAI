@@ -29,8 +29,8 @@ services:
       - CORS_ORIGINS=["http://localhost:8000","http://localhost:3000","http://localhost:5173"]
 
       # AI Providers
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-20250514}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - GEMINI_MODEL=gemini-3.0-flash

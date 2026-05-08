@@ -669,7 +669,7 @@ async def seed_demo_data(
             organization_id=org_id,
             document_id=doc.id,
             framework=random.choice(["soc2", "iso27001", "pci_dss"]),
-            model_used="claude-3-5-sonnet-20241022",
+            model_used="gemini-1.5-flash",
             status="completed",
             chunks_analyzed=random.randint(20, 80),
             findings_count=random.randint(2, 8),
