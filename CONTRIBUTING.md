@@ -46,9 +46,8 @@ By participating in this project, you agree to maintain a respectful and profess
 
 ### API Keys Required
 
-- **Anthropic API Key** - For Claude AI integration
+- **Google Gemini API Key** - For Gemini AI integration (get free key: https://aistudio.google.com/apikey)
 - **OpenAI API Key** - For embeddings generation
-- **Google API Key** (optional) - For Gemini integration
 
 ### Backend Setup
 
@@ -74,7 +73,7 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # Edit .env with your configuration
-# Required: DATABASE_URL, SECRET_KEY, JWT_SECRET_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY
+# Required: DATABASE_URL, SECRET_KEY, JWT_SECRET_KEY, GEMINI_API_KEY, OPENAI_API_KEY
 
 # Run database migrations (if using PostgreSQL)
 alembic upgrade head

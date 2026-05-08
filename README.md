@@ -5,7 +5,7 @@
   <a href="https://vendor-audit-ai.netlify.app"><img src="https://img.shields.io/badge/Live_Demo-Available-B026FF?style=flat-square" alt="Demo"/></a>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB.svg?style=flat-square&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/React-18-61DAFB.svg?style=flat-square&logo=react&logoColor=black" alt="React"/>
-  <img src="https://img.shields.io/badge/Claude_Opus_4.5-CC785C.svg?style=flat-square" alt="Claude"/>
+  <img src="https://img.shields.io/badge/Gemini_1.5_Flash-4285F4.svg?style=flat-square&logo=google&logoColor=white" alt="Gemini"/>
   <img src="https://img.shields.io/badge/12_Frameworks-FFB800.svg?style=flat-square" alt="Frameworks"/>
   <img src="https://img.shields.io/badge/4_AI_Agents-CC785C.svg?style=flat-square" alt="AI Agents"/>
 </p>
@@ -39,7 +39,7 @@ Organizations spend **6-8 hours manually reviewing** each vendor's SOC 2 report,
 
 ### The Solution
 
-VendorAuditAI uses **Claude Opus 4.5 with RAG architecture** to analyze vendor security documents in minutes, not hours. Upload a SOC 2 report, and AI extracts controls, identifies gaps, and maps findings to 12 compliance frameworks simultaneously. Four autonomous agents continuously monitor your vendor ecosystem for emerging risks, expired certifications, and compliance drift.
+VendorAuditAI uses **Google Gemini 1.5 Flash with RAG architecture** to analyze vendor security documents in minutes, not hours. Upload a SOC 2 report, and AI extracts controls, identifies gaps, and maps findings to 12 compliance frameworks simultaneously. Four autonomous agents continuously monitor your vendor ecosystem for emerging risks, expired certifications, and compliance drift.
 
 **Result: 97% reduction in assessment time. $380K+ annual cost savings. 24/7 continuous monitoring.**
 
@@ -256,7 +256,7 @@ Configure automated assessment schedules, alert thresholds, and notification cha
 | Stage | Description |
 |:------|:------------|
 | **Document Intake** | PDF/DOCX parsing with OCR and auto classification |
-| **AI Analysis** | Claude Opus 4.5 with RAG extracts controls, maps to 12 frameworks |
+| **AI Analysis** | Gemini 1.5 Flash with RAG extracts controls, maps to 12 frameworks |
 | **Analyst Review** | Pre populated findings, one click approval |
 | **Result** | AI handles 90%, humans handle 10%. 6 to 8 hours becomes 15 minutes |
 
@@ -272,7 +272,7 @@ flowchart TD
     end
 
     subgraph Stage2["Stage 2: AI Analysis"]
-        E[Claude Opus 4.5 + RAG]
+        E[Gemini 1.5 Flash + RAG]
         F[Extract Controls & Findings]
         G[Map to 12 Frameworks]
         H[Generate Risk Scores]
@@ -688,9 +688,8 @@ flowchart TD
     end
 
     subgraph AI["AI Services"]
-        J[Claude Opus 4.5]
+        J[Gemini 1.5 Flash]
         K[OpenAI Embeddings]
-        L[Gemini 3.0]
     end
 
     A --> B
@@ -770,7 +769,7 @@ flowchart LR
 <h3 align="center">Prerequisites</h3>
 
 <p align="center">Python 3.12+ | Node.js 18+ | PostgreSQL 16+</p>
-<p align="center">API Keys: Anthropic (Claude), OpenAI (embeddings)</p>
+<p align="center">API Keys: Google Gemini (free tier), OpenAI (embeddings)</p>
 
 ### Installation
 
@@ -811,9 +810,9 @@ DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/vendorauditai
 SECRET_KEY=your-secret-key-min-32-chars
 JWT_SECRET_KEY=your-jwt-secret-min-32-chars
 
-# LLM Provider
-LLM_PROVIDER=anthropic
-ANTHROPIC_API_KEY=sk-ant-...
+# LLM Provider (Get free API key: https://aistudio.google.com/apikey)
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your_google_gemini_api_key_here
 
 # Embeddings
 OPENAI_API_KEY=sk-...
@@ -888,7 +887,7 @@ VendorAuditAI/
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Claude_Opus_4.5-CC785C?style=for-the-badge" alt="Claude"/>
+  <img src="https://img.shields.io/badge/Gemini_1.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini"/>
   <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI"/>
   <img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway"/>
   <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Netlify"/>
@@ -896,7 +895,7 @@ VendorAuditAI/
 
 | Category | Technologies |
 |:--------:|:-------------|
-| **AI and ML** | Claude Opus 4.5, Gemini 3.0, OpenAI Embeddings, RAG Architecture |
+| **AI and ML** | Gemini 1.5 Flash, OpenAI Embeddings, RAG Architecture |
 | **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2, Alembic |
 | **Frontend** | React 18, TypeScript 5, TailwindCSS, Shadcn UI, Framer Motion |
 | **Database** | PostgreSQL 16, pgvector for embeddings, Redis for caching |

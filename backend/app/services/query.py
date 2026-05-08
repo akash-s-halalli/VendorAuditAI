@@ -418,7 +418,7 @@ class QueryService:
         """
         if not self.llm_service.is_configured:
             return QueryResult(
-                answer="LLM service not configured. Please set ANTHROPIC_API_KEY.",
+                answer="LLM service not configured. Please set GEMINI_API_KEY.",
                 confidence=0.0,
                 citations=[],
                 limitations="Service unavailable",

@@ -6,15 +6,12 @@ This module provides LLM integration for:
 - Natural language queries about documents
 
 Supported providers:
-- Anthropic Claude (default)
-- Google Gemini
+- Google Gemini (default)
 """
 
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-
-from anthropic import AsyncAnthropic
 
 from app.config import get_settings
 
@@ -267,267 +264,7 @@ Respond with a JSON object:
         return f"Analysis identified: {', '.join(summary_parts)} findings."
 
 
-class ClaudeService(BaseLLMService):
-    """Service for interacting with Claude API for document analysis.
 
-    Uses Claude to analyze compliance documents against frameworks
-    and generate findings with citations.
-    """
-
-    def __init__(
-        self,
-        api_key: str | None = None,
-        model: str | None = None,
-    ):
-        """Initialize the Claude service.
-
-        Args:
-            api_key: Anthropic API key (uses settings if not provided)
-            model: Model name (uses settings if not provided)
-        """
-        settings = get_settings()
-        self.api_key = api_key or settings.anthropic_api_key
-        self._model = model or settings.claude_model
-
-        if not self.api_key:
-            self._client = None
-        else:
-            self._client = AsyncAnthropic(api_key=self.api_key)
-
-    @property
-    def is_configured(self) -> bool:
-        """Check if the service has valid API credentials."""
-        return self._client is not None
-
-    @property
-    def model(self) -> str:
-        """Return the model name being used."""
-        return self._model
-
-    async def analyze_document(
-        self,
-        chunks: list[dict],
-        framework: str,
-        document_type: str,
-        max_tokens: int = 4096,
-    ) -> AnalysisResult:
-        """Analyze document chunks against a compliance framework.
-
-        Args:
-            chunks: List of chunk dicts with 'content', 'section_header', 'page_number'
-            framework: Framework to analyze against (e.g., 'nist_800_53', 'soc2_tsc')
-            document_type: Type of document (e.g., 'soc2', 'sig_lite')
-            max_tokens: Maximum tokens in response
-
-        Returns:
-            AnalysisResult with findings and metadata
-
-        Raises:
-            ValueError: If service not configured or API error
-        """
-        if not self.is_configured:
-            raise ValueError("Anthropic API key not configured")
-
-        # Build context from chunks
-        context = self._build_context(chunks)
-
-        # Build the analysis prompt
-        prompt = self._build_analysis_prompt(context, framework, document_type)
-
-        try:
-            response = await self._client.messages.create(
-                model=self.model,
-                max_tokens=max_tokens,
-                system=self.ANALYSIS_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            # Parse the response
-            raw_text = response.content[0].text
-            findings = self._parse_findings(raw_text)
-
-            return AnalysisResult(
-                findings=findings,
-                summary=self._extract_summary(findings),
-                raw_response=raw_text,
-                model=self.model,
-                input_tokens=response.usage.input_tokens,
-                output_tokens=response.usage.output_tokens,
-            )
-
-        except Exception as e:
-            raise ValueError(f"Analysis failed: {e!s}") from e
-
-    async def analyze_document_with_prompt(
-        self,
-        prompt: str,
-        framework: str,
-        document_type: str | None = None,
-        max_tokens: int = 8192,
-    ) -> AnalysisResult:
-        """Analyze document using a pre-built prompt with enhanced templates.
-
-        This method accepts a fully constructed prompt (built using the
-        prompts module) and sends it to Claude for analysis. It supports
-        the enhanced prompt formats that include structured framework
-        controls and citation requirements.
-
-        Args:
-            prompt: Pre-built analysis prompt from prompts module
-            framework: Framework being analyzed (for metadata)
-            document_type: Type of document (for metadata)
-            max_tokens: Maximum tokens in response (default higher for detailed output)
-
-        Returns:
-            AnalysisResult with detailed findings including citations
-
-        Raises:
-            ValueError: If service not configured or API error
-        """
-        if not self.is_configured:
-            raise ValueError("Anthropic API key not configured")
-
-        # Import the enhanced system prompt
-        from app.prompts.compliance_analysis import COMPLIANCE_ANALYSIS_SYSTEM_PROMPT
-
-        try:
-            response = await self._client.messages.create(
-                model=self.model,
-                max_tokens=max_tokens,
-                system=COMPLIANCE_ANALYSIS_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            # Parse the response
-            raw_text = response.content[0].text
-            parsed_response = self._parse_enhanced_response(raw_text)
-
-            # Extract findings from parsed response
-            findings = parsed_response.get("findings", [])
-
-            # Build summary from overall assessment
-            overall = parsed_response.get("overall_assessment", {})
-            summary = overall.get("summary", self._extract_summary(findings))
-
-            return AnalysisResult(
-                findings=findings,
-                summary=summary,
-                raw_response=raw_text,
-                model=self.model,
-                input_tokens=response.usage.input_tokens,
-                output_tokens=response.usage.output_tokens,
-            )
-
-        except Exception as e:
-            raise ValueError(f"Analysis failed: {e!s}") from e
-
-    async def generate_finding_details(
-        self,
-        chunk_content: str,
-        framework_control: str,
-        initial_concern: str,
-        max_tokens: int = 2048,
-    ) -> dict:
-        """Generate detailed finding information for a specific concern.
-
-        Args:
-            chunk_content: The document content being analyzed
-            framework_control: The specific control being assessed
-            initial_concern: The initial concern identified
-            max_tokens: Maximum tokens in response
-
-        Returns:
-            Dict with detailed finding information
-        """
-        if not self.is_configured:
-            raise ValueError("Anthropic API key not configured")
-
-        prompt = f"""Analyze this document excerpt and provide a detailed finding assessment.
-
-Document Excerpt:
-{chunk_content}
-
-Framework Control: {framework_control}
-Initial Concern: {initial_concern}
-
-Provide a detailed assessment in JSON format:
-{{
-    "title": "Brief finding title",
-    "severity": "critical|high|medium|low|info",
-    "description": "Detailed description of the finding",
-    "evidence": "Specific quote from the document",
-    "impact": "Business impact of this finding",
-    "remediation": "Recommended remediation steps",
-    "confidence": 0.0-1.0
-}}"""
-
-        try:
-            response = await self._client.messages.create(
-                model=self.model,
-                max_tokens=max_tokens,
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            raw_text = response.content[0].text
-            return self._parse_json_response(raw_text)
-
-        except Exception as e:
-            raise ValueError(f"Finding generation failed: {e!s}") from e
-
-    async def answer_query(
-        self,
-        query: str,
-        context_chunks: list[dict],
-        max_tokens: int = 2048,
-    ) -> dict:
-        """Answer a natural language query about the documents.
-
-        Args:
-            query: User's question
-            context_chunks: Relevant chunks for context
-            max_tokens: Maximum tokens in response
-
-        Returns:
-            Dict with answer and citations
-        """
-        if not self.is_configured:
-            raise ValueError("Anthropic API key not configured")
-
-        context = self._build_context(context_chunks)
-
-        prompt = f"""Based on the following document excerpts, answer the user's question.
-
-Document Context:
-{context}
-
-User Question: {query}
-
-Provide your answer in JSON format:
-{{
-    "answer": "Your detailed answer",
-    "confidence": 0.0-1.0,
-    "citations": [
-        {{
-            "chunk_index": 0,
-            "excerpt": "relevant quote",
-            "relevance": "why this is relevant"
-        }}
-    ],
-    "limitations": "Any limitations or caveats"
-}}"""
-
-        try:
-            response = await self._client.messages.create(
-                model=self.model,
-                max_tokens=max_tokens,
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            raw_text = response.content[0].text
-            return self._parse_json_response(raw_text)
-
-        except Exception as e:
-            raise ValueError(f"Query failed: {e!s}") from e
 
 
 class GeminiService(BaseLLMService):
@@ -541,20 +278,21 @@ class GeminiService(BaseLLMService):
             model: Model name (uses settings if not provided)
         """
         settings = get_settings()
-        self.api_key = api_key or settings.google_api_key
+        self.api_key = api_key or settings.gemini_api_key
         self._model = model or settings.gemini_model
-        self._client = None
+        self._genai_model = None
         if self.api_key:
             try:
-                from google import genai
-                self._client = genai.Client(api_key=self.api_key)
+                import google.generativeai as genai
+                genai.configure(api_key=self.api_key)
+                self._genai_model = genai.GenerativeModel(self._model)
             except ImportError:
                 pass
 
     @property
     def is_configured(self) -> bool:
         """Check if the service has valid API credentials."""
-        return self._client is not None
+        return self._genai_model is not None
 
     @property
     def model(self) -> str:
@@ -578,21 +316,40 @@ class GeminiService(BaseLLMService):
             Tuple of (response_text, input_tokens, output_tokens)
         """
         import asyncio
-        from google.genai import types
+        import google.generativeai as genai
 
         full_prompt = f"{system}\n\n{prompt}" if system else prompt
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(
-            None,
-            lambda: self._client.models.generate_content(
-                model=self._model,
-                contents=full_prompt,
-                config=types.GenerateContentConfig(
-                    max_output_tokens=max_tokens,
-                    temperature=0.1,
+
+        # If system instruction provided, create a new model with it
+        if system:
+            model_with_system = genai.GenerativeModel(
+                model_name=self._model,
+                system_instruction=system
+            )
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: model_with_system.generate_content(
+                    prompt,
+                    generation_config=genai.GenerationConfig(
+                        max_output_tokens=max_tokens,
+                        temperature=0.1,
+                    ),
                 ),
-            ),
-        )
+            )
+        else:
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: self._genai_model.generate_content(
+                    full_prompt,
+                    generation_config=genai.GenerationConfig(
+                        max_output_tokens=max_tokens,
+                        temperature=0.1,
+                    ),
+                ),
+            )
+
         input_tokens = getattr(response.usage_metadata, "prompt_token_count", 0) or 0
         output_tokens = getattr(response.usage_metadata, "candidates_token_count", 0) or 0
         return response.text, input_tokens, output_tokens
@@ -725,19 +482,11 @@ Provide your answer in JSON format:
         return self._parse_json_response(raw_text)
 
 
-LLMService = ClaudeService | GeminiService
+LLMService = GeminiService
 
 
-_claude_service: ClaudeService | None = None
 _gemini_service: GeminiService | None = None
 _llm_service: LLMService | None = None
-
-
-def get_claude_service() -> ClaudeService:
-    global _claude_service
-    if _claude_service is None:
-        _claude_service = ClaudeService()
-    return _claude_service
 
 
 def get_gemini_service() -> GeminiService:
@@ -750,11 +499,9 @@ def get_gemini_service() -> GeminiService:
 def create_llm_service(provider: str | None = None) -> LLMService:
     settings = get_settings()
     provider = provider or settings.llm_provider
-    if provider == "anthropic":
-        return ClaudeService()
-    elif provider == "gemini":
+    if provider == "gemini":
         return GeminiService()
-    raise ValueError(f"Unsupported LLM provider: {provider}")
+    raise ValueError(f"Unsupported LLM provider: {provider}. Only 'gemini' is supported.")
 
 
 def get_llm_service() -> LLMService:

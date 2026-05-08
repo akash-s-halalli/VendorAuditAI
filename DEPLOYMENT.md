@@ -208,8 +208,7 @@ This is the only demo account. Use it to explore all platform features.
 | DEBUG | No | "true" or "false" |
 | LLM_PROVIDER | No | "anthropic" or "gemini" (default: anthropic) |
 | EMBEDDING_PROVIDER | No | "openai" or "gemini" (default: openai) |
-| GOOGLE_API_KEY | No | For Gemini AI features |
-| ANTHROPIC_API_KEY | No | For Claude AI features |
+| GEMINI_API_KEY | Yes | For Gemini AI (get free key: https://aistudio.google.com/apikey) |
 | OPENAI_API_KEY | No | For OpenAI embeddings |
 
 ### Frontend (Netlify)

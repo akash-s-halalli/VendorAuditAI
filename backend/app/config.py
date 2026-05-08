@@ -41,22 +41,18 @@ class Settings(BaseSettings):
     minio_secure: bool = False
 
     # AI/ML - Provider Selection
-    llm_provider: str = "anthropic"  # "anthropic" or "gemini"
+    llm_provider: str = "gemini"  # "gemini" (default)
     embedding_provider: str = "openai"  # "openai" or "gemini"
 
-    # Anthropic (Claude) - Using Claude Opus 4.5 (Latest as of Jan 2026)
-    anthropic_api_key: str | None = None
-    claude_model: str = "claude-opus-4-5-20251101"
+    # Google Gemini - Using Gemini 1.5 Flash (free tier, fast, handles long docs)
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-1.5-flash"
+    gemini_embedding_model: str = "text-embedding-004"
 
     # OpenAI
     openai_api_key: str | None = None
     embedding_model: str = "text-embedding-3-large"
     embedding_dimensions: int = 3072
-
-    # Google Gemini - Using Gemini 3.0 (latest, enhanced capabilities)
-    google_api_key: str | None = None
-    gemini_model: str = "gemini-3.0-flash"
-    gemini_embedding_model: str = "text-embedding-005"
 
     # Document Processing
     azure_doc_intel_endpoint: str | None = None
